@@ -1,0 +1,1604 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"file",
+				"filetype"
+			],
+			[
+				"eBoo",
+				"eBookLib〔module〕"
+			],
+			[
+				"start",
+				"startswith"
+			],
+			[
+				"path",
+				"path_len"
+			],
+			[
+				"process_",
+				"process_UserProfile"
+			],
+			[
+				"press",
+				"presscontrolPower"
+			],
+			[
+				"ph",
+				"phase_interval"
+			],
+			[
+				"bu",
+				"buzzer_ON"
+			],
+			[
+				"buzze",
+				"buzzer_duration"
+			],
+			[
+				"buzz",
+				"buzzer_frequency"
+			],
+			[
+				"fre",
+				"buzzer_frequency"
+			],
+			[
+				"phase",
+				"isPhaseTime"
+			],
+			[
+				"fP",
+				"fPrint_BEEP"
+			],
+			[
+				"f",
+				"fPrint_VERBOSE"
+			],
+			[
+				"BU",
+				"BUZZER_DURATION"
+			],
+			[
+				"is",
+				"isPhaseTime"
+			],
+			[
+				"nex",
+				"next_phase_time"
+			],
+			[
+				"ho",
+				"hornState"
+			],
+			[
+				"PH",
+				"PHASE_INTERVAL"
+			],
+			[
+				"PHA",
+				"PHASE_ALARM_INTERVAL"
+			],
+			[
+				"buz",
+				"buzzer_frequency"
+			],
+			[
+				"phas",
+				"phase_ON"
+			],
+			[
+				"buzzer",
+				"buzzer_interval"
+			],
+			[
+				"inter",
+				"buzzer_interval"
+			],
+			[
+				"prin",
+				"print6Str"
+			],
+			[
+				"BUZZ",
+				"BUZZER_FREQUENCY"
+			],
+			[
+				"freq",
+				"frequency"
+			],
+			[
+				"check",
+				"checkPassiveBuzzer_New"
+			],
+			[
+				"fPrint_",
+				"fPrint_BEEP"
+			],
+			[
+				"pre",
+				"previousHornTime"
+			],
+			[
+				"hor",
+				"hornState"
+			],
+			[
+				"led",
+				"led_interval"
+			],
+			[
+				"led_",
+				"led_duration"
+			],
+			[
+				"HORN",
+				"HORN_PERIOD_PUMP_OFF"
+			],
+			[
+				"horn",
+				"horn_ON_time"
+			],
+			[
+				"fD",
+				"fDEBUG_BEEP"
+			],
+			[
+				"set",
+				"setPhase"
+			],
+			[
+				"che",
+				"checkPumpState"
+			],
+			[
+				"pres",
+				"pressControl"
+			],
+			[
+				"digit",
+				"digitalWrite"
+			],
+			[
+				"pri",
+				"print"
+			],
+			[
+				"next",
+				"next_beep_time"
+			],
+			[
+				"pump",
+				"pumpStatus"
+			],
+			[
+				"pup",
+				"pumpStatus"
+			],
+			[
+				"pum",
+				"pumpStatus"
+			],
+			[
+				"inp_P",
+				"inp_PumpState"
+			],
+			[
+				"inp",
+				"inp_DEBUG"
+			],
+			[
+				"bee",
+				"buzzer_period"
+			],
+			[
+				"LE",
+				"LED_PERIOD_DEFAULT"
+			],
+			[
+				"Bu",
+				"BusserFlag"
+			],
+			[
+				"PC",
+				"PC_Pulsante"
+			],
+			[
+				"E",
+				"ElettroValvola"
+			],
+			[
+				"del",
+				"delay"
+			],
+			[
+				"pu",
+				"pumpState"
+			],
+			[
+				"BEE",
+				"BEEP"
+			],
+			[
+				"LED",
+				"LED_INTERVAL"
+			],
+			[
+				"let",
+				"led_interval"
+			],
+			[
+				"beep",
+				"beepMS"
+			],
+			[
+				"durat",
+				"durataNote"
+			],
+			[
+				"count",
+				"counter"
+			],
+			[
+				"counter",
+				"counter_prev"
+			],
+			[
+				"counte",
+				"counter_prev"
+			],
+			[
+				"time",
+				"time_for_beep"
+			],
+			[
+				"du",
+				"durataNote"
+			],
+			[
+				"base",
+				"base_dir〔variable〕"
+			],
+			[
+				"_my",
+				"_my_data〔variable〕"
+			],
+			[
+				"Ln",
+				"Ln_pdfViewer"
+			],
+			[
+				"quote",
+				"quoted_text"
+			],
+			[
+				"quo",
+				"quoted_text〔variable〕"
+			],
+			[
+				"con",
+				"config_default〔variable〕"
+			],
+			[
+				"Pyth",
+				"Python_default"
+			],
+			[
+				"pyt",
+				"python_version"
+			],
+			[
+				"modul",
+				"module_map〔variable〕"
+			],
+			[
+				"Set",
+				"SetTotalCommander"
+			],
+			[
+				"modu",
+				"moduleToCall〔variable〕"
+			],
+			[
+				"progra",
+				"program_names〔argument〕"
+			],
+			[
+				"my",
+				"myPath〔variable〕"
+			],
+			[
+				"Lo",
+				"LookupError〔class〕"
+			],
+			[
+				"yaml_",
+				"yaml_filenames"
+			],
+			[
+				"yaml",
+				"yaml_filename〔variable〕"
+			],
+			[
+				"_",
+				"_I_AM_ZIP"
+			],
+			[
+				"confi",
+				"config_dirs〔variable〕"
+			],
+			[
+				"config",
+				"config_dir"
+			],
+			[
+				"progr",
+				"programToStart〔variable〕"
+			],
+			[
+				"erro",
+				"errorOnPathNotFound"
+			],
+			[
+				"st_",
+				"st_size"
+			],
+			[
+				"new",
+				"newPATH〔variable〕"
+			],
+			[
+				"pa",
+				"parent"
+			],
+			[
+				"__",
+				"__name__ == '__main__':〔variable〕"
+			],
+			[
+				"proce",
+				"processed_vars〔variable〕"
+			],
+			[
+				"git",
+				"gitdir"
+			],
+			[
+				"da",
+				"skip-day-light"
+			],
+			[
+				"use",
+				"username〔argument〕"
+			],
+			[
+				"force",
+				"FORCE"
+			],
+			[
+				"Pr",
+				"Process_LnDisk"
+			],
+			[
+				"rea",
+				"reason"
+			],
+			[
+				"vali",
+				"valid_profiles〔variable〕"
+			],
+			[
+				"tra",
+				"set_trace〔function〕"
+			],
+			[
+				"data",
+				"data_str〔variable〕"
+			],
+			[
+				"gmai",
+				"gmail_account"
+			],
+			[
+				"user",
+				"user_name〔variable〕"
+			],
+			[
+				"pro",
+				"profile_data"
+			],
+			[
+				"local",
+				"local_files"
+			],
+			[
+				"loc",
+				"local_files"
+			],
+			[
+				"seq",
+				"seqNo"
+			],
+			[
+				"cyan",
+				"cyanH"
+			],
+			[
+				"drive",
+				"drive_file"
+			],
+			[
+				"removed",
+				"removed_items"
+			],
+			[
+				"remov",
+				"removed"
+			],
+			[
+				"fold",
+				"folder_name〔variable〕"
+			],
+			[
+				"fol",
+				"folder_name"
+			],
+			[
+				"_local",
+				"_localIsNewer〔variable〕"
+			],
+			[
+				"folde",
+				"folders_to_sync"
+			],
+			[
+				"folder_",
+				"folder_to_sync〔variable〕"
+			],
+			[
+				"log",
+				"log_dir"
+			],
+			[
+				"re",
+				"redH"
+			],
+			[
+				"resol",
+				"resolve_yaml_vars〔function〕"
+			],
+			[
+				"my_",
+				"my_json"
+			],
+			[
+				"incl",
+				"include_path"
+			],
+			[
+				"fil",
+				"filename〔argument〕"
+			],
+			[
+				"foldrs",
+				"folders"
+			],
+			[
+				"ski",
+				"skipping_keys〔variable〕"
+			],
+			[
+				"skipp",
+				"skipping_keys"
+			],
+			[
+				"si",
+				"sizeof_fmt"
+			],
+			[
+				"uploaded",
+				"uploaded_folders"
+			],
+			[
+				"matchi",
+				"matching_size〔variable〕"
+			],
+			[
+				"downloa",
+				"downloaded"
+			],
+			[
+				"refre",
+				"refreshed_size"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/eBookProcess/eBookLib.py",
+			"settings":
+			{
+				"buffer_size": 4278,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/LnLib/LnColor.py",
+			"settings":
+			{
+				"buffer_size": 5405,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/config/eBooks.yml",
+			"settings":
+			{
+				"buffer_size": 508,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"del",
+				"File: Delete"
+			],
+			[
+				"inc",
+				"Increment Selection"
+			],
+			[
+				"in",
+				"Increment Selection"
+			],
+			[
+				"incre",
+				"Increment Selection"
+			],
+			[
+				"i",
+				"Increment Selection"
+			],
+			[
+				"ren",
+				"File: Rename"
+			],
+			[
+				"dele",
+				"File: Delete"
+			],
+			[
+				"re",
+				"File: Rename"
+			],
+			[
+				"json",
+				"Pretty JSON: Format and Sort JSON"
+			],
+			[
+				"rena",
+				"File: Rename"
+			],
+			[
+				"compa",
+				"Compare with..."
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"remov",
+				"Package Control: Remove Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"syn",
+				"Side Bar: Enable Syncing"
+			],
+			[
+				"color hi",
+				"Color Scheme Editor: Goto next matching scope"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"prv",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"them",
+				"UI: Select Theme"
+			],
+			[
+				"pvr",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"colo",
+				"UI: Select Color Scheme"
+			],
+			[
+				"box",
+				"Boxy Theme: Configuration"
+			],
+			[
+				"boxy",
+				"Boxy Theme: Preferences"
+			],
+			[
+				"theme",
+				"UI: Select Theme"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"color",
+				"Color Scheme Editor: Goto next matching scope"
+			],
+			[
+				"vrc",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"case",
+				"Convert Case: Title Case"
+			],
+			[
+				"git",
+				"GitHub: Open Starred Gist in Editor"
+			],
+			[
+				"dis",
+				"Package Control: Disable Package"
+			],
+			[
+				"jnj",
+				"Set Syntax: Jinja2"
+			],
+			[
+				"anaco",
+				"Anaconda: Vagrant Status"
+			],
+			[
+				"enab",
+				"Package Control: Enable Package"
+			],
+			[
+				"ena",
+				"Package Control: Enable Package"
+			],
+			[
+				"disab",
+				"Package Control: Disable Package"
+			],
+			[
+				"anaconda",
+				"Anaconda: Goto object definition"
+			],
+			[
+				"anaconda sho",
+				"Anaconda: Show error list"
+			],
+			[
+				"insal",
+				"Package Control: Install Package"
+			],
+			[
+				"instak",
+				"Package Control: Install Package"
+			],
+			[
+				"ana",
+				"Anaconda: McCabe complexity check"
+			],
+			[
+				"anaconda sh",
+				"Anaconda: Show error list"
+			],
+			[
+				"goto",
+				"Anaconda: Goto object definition"
+			],
+			[
+				"Package Control: insta",
+				"Package Control: Install Package"
+			],
+			[
+				"de",
+				"File: Delete"
+			],
+			[
+				"todo",
+				"TodoReview: Project Files"
+			],
+			[
+				"incr",
+				"Increment Selection"
+			],
+			[
+				"sftp",
+				"SFTP: Edit Remote Mapping…"
+			],
+			[
+				"sft",
+				"SFTP: Browse Server…"
+			],
+			[
+				"sort",
+				"SortBy: Alphabetically"
+			],
+			[
+				"renam",
+				"File: Rename"
+			],
+			[
+				"tod",
+				"TodoReview: Open Files"
+			],
+			[
+				"match",
+				"BracketHighlighter: Find Matching Offscreen Bracket"
+			]
+		],
+		"width": 476.0
+	},
+	"console":
+	{
+		"height": 249.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/K/Filu/LnDisk/GIT-REPO/eBooks",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/config",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/Source",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/Source/eBookProcess",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/Source/LnLib"
+	],
+	"file_history":
+	[
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/eBookProcess/eBookLib.py",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/Source/Google/Ln_Upload.py",
+		"/K/Filu/LnDisk/LnStart/LnToDo.ini",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/LnLib/__init__.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/LnLib/LnLogger.py",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/__main__.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/.vscode/settings.json",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/.vscode/launch.json",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/LnLib/LnUtils.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/config/LnEbook.yml",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/Main/ParseInput.py",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/.vscode/launch.json",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/eBookProcess/eBookConverter.py",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/Source/LnLib/LnYamlLoader.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/__main__.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnModules/LnColor/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/conf/LnStartProgram.yml",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/log/LnStartProgram.log",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/config/googleDriveSync.yml",
+		"/C/Users/Loreto/AppData/Local/Temp/_tc/conf/LnStartProgram.yml",
+		"/K/Filu/LnDisk/GIT-REPO/Arduino-Projects/Crepuscolare/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/Arduino-Projects/Crepuscolare/Arduino/Crepuscolare.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Crepuscolare/Arduino/Crepuscolare.ino",
+		"/K/Filu/LnDisk/LnFree/Desktop/Executor_099/Executor.cmd",
+		"/K/Filu/LnDisk/LnStart/Executor.cmd",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/Source/Main/Executor.py",
+		"/K/Filu/LnDisk/LnFree/SynchBackup/FreeFileSync/LnFreeFileSync.sh",
+		"/K/Filu/Ln_Windows_utils.txt",
+		"/K/Filu/LnDisk/LnFree/SynchBackup/FreeFileSync/_LnProfiles/Main/LnFree.ffs_gui",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/log/googleDriveSync.stdout",
+		"/K/Filu/LnDisk/LnFree/SynchBackup/FreeFileSync/_LnProfiles/Main/@LnTemplate.ffs_gui",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/log/etonota_stdout.log",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/log/googleDriveSync.log",
+		"/K/Filu/LnDisk/Ln-System-doc.txt",
+		"/K/Filu/LnDisk/LnFree/Files/Manager/TotalCommander/TotalCmd.cmd",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/Launch.sh",
+		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/Source/Google/GDrive.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/TEST/replyChars/.gitignore",
+		"/K/Filu/LnDisk/LnStart/.gitignore",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/.gitignore",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/.gitignore",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/kiCad/.gitignore",
+		"/K/Filu/LnDisk/LnFree/Security/MyKeys/Loreto/PcSilvia/PcSilvia_id_rsa.ppk",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/Source/Main/VSCode.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/Source/Main/SetPython.py",
+		"/K/Filu/LnDisk/LnFree/Bench/Disk/LnData/Kingston_A400_pcSilvia_UsbSx.txt",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/.git/config",
+		"/C/Windows/System32/drivers/etc/hosts",
+		"/K/Filu/LnDisk/LnFree/Security/MyKeys/Loreto/Convert_keys.txt",
+		"/K/Filu/LnDisk/LnFree/Security/MyKeys/Loreto/Ln-Convert_keys.txt",
+		"/K/Filu/LnDisk/LnFree/Security/MyKeys/Loreto/pcsilvia_id_rsa.pub",
+		"/K/Filu/LnDisk/getProductKey.vbs",
+		"/K/Filu/LnDisk/LnFree/SynchBackup/FreeFileSync/_LnProfiles/dynProfile/GIT-REPO.ffs_gui",
+		"/K/Filu/LnDisk/LP_2019-08-11.txt",
+		"/K/Filu/LnDisk/LnFree/_Tools/cACLs/iCacls.cmd",
+		"/K/Filu/LnDisk/LnFree/SynchBackup/FreeFileSync/_LnProfiles/dynProfile/BdI.ffs_gui",
+		"/C/Users/Pc/AppData/Local/Temp/_tc/conf/LnStartProgram.yml",
+		"/C/Users/Loreto/AppData/Local/Temp/scp49116/HOME%2FLnPi23%2F192.168.1.23/home/pi/GIT-REPO/Ln_433/ln_Sniffer/Send-Code.py",
+		"/C/Users/Loreto/AppData/Local/Temp/scp10808/HOME%2FLnPi3B1%2FLnPi3B1-eth0/home/pi/GIT-REPO/homeAutomation/ln_Sniffer/rpi-rf_send.py",
+		"/C/Users/Loreto/AppData/Local/Temp/scp35010/HOME%2FLnPi3B1%2FLnPi3B1-eth0/home/pi/GIT-REPO/homeAutomation/ln_Sniffer/Send-Code.py",
+		"/K/Filu/LnDisk/LnFree/SynchBackup/FreeFileSync/LnFreeFileSync.cmd",
+		"/K/Filu/LnDisk/LnFree/Desktop/Executor/scancache.dat",
+		"/K/Filu/LnDisk/LnFree/Desktop/Executor/executor.ini",
+		"/K/Filu/LnDisk/LnStart/FreeCommander.cmd",
+		"/K/Filu/LnDisk/LnStart/LnStart_test.cmd",
+		"/K/Filu/LnDisk/LnStart/LnStart_VSCode.cmd",
+		"/K/Filu/LnDisk/LnStart/TotalCommander.cmd",
+		"/C/Filu_C/LnDisk/LnFree/SynchBackup/FreeFileSync/LnFreeFileSync.sh",
+		"/K/Filu/LnDisk/LnStart/TotalCommander_test.cmd",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/Source/Utils/LnYamlLoader.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/platformio.ini",
+		"/K/Filu/LnDisk/LnFree/_LnPortable/Version_V003_2012-08-03/Copia_Base.cmd",
+		"/K/Filu/LnDisk/GIT-REPO/C-Cpp/Sample/.vscode/launch.json",
+		"/K/Filu/LnDisk/GIT-REPO/C-Cpp/Sample/main.c",
+		"/K/Filu/LnDisk/LnStart/LnStart.cmd",
+		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/Source/Main/TotalCommander.py",
+		"/C/Users/Loreto/AppData/Local/Temp/scp20557/STEVE%2FDirect%2Fsteve.static.ip (88.149.198.156)/home/pi/TOR/steve/programmi_pi/serialread2.py",
+		"/C/Users/Loreto/AppData/Local/Temp/scp20976/STEVE%2FDirect%2Fsteve.static.ip (88.149.198.156)/home/pi/TOR/steve/programmi_pi/serialwrite2.py",
+		"/C/Users/Loreto/AppData/Local/Temp/scp21580/STEVE%2FDirect%2Fsteve.static.ip (88.149.198.156)/home/pi/TOR/steve/programmi_ar/irriga/src/irriga.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/kiCad/Ln_ReadMe.txt",
+		"/K/Download/Telegram/The Mandalorian.txt",
+		"/K/Download/Telegram/The Wire.txt",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/src/Pump_Alarm.h",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/src/Pump_Alarm.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_Arduino/Pump_Alarm.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/src/Pump_Alarm_vscode.code-workspace",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/Ln_Description.txt",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/Pump_Alarm.h",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/Pump_Alarm.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/TEST/rs485/my485Slave.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/LnPrint.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/LnLibraries/LnFunctions/LnFunctions.h",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src_appo/strCatv_with_nArgs.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/LnJoinStr.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/strCatv_with_nArgs.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/LnLibraries/LnFunctions/LnJoinStr.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/LnFunctions.h",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/appo/lnprint.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/Pump_Alarm.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm_vscode/src/main.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/appo/Pump_Alarm_Working.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/LnLibraries/LnFunctions/LnPrint.cpp",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/appo/Pump_Alarm_FULL.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/lnprint.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/appo/checkLed.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/Pump_Alarm.h",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkBuzzer.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkPumpState.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkPassiveBuzzer.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/appo/Pump_Alarm.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/Pump_Alarm.ino_prev",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/setPhase.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkLed.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkHorn.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/Pump_Alarm.ino_prev_2",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduinoo/.gitignore",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduinoo/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/TEST/Scheduler/Scheduler.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Pump_Alarm_IRQ/Pump_Alarm_IRQ.ino",
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Pump_Alarm/Pump_Alarm.ino",
+		"/K/Filu/LnDisk/GIT-REPO/HW-Projects/KiCAD/LnLibrary/LnDiodiTransistors.lib",
+		"/C/Users/Loreto/AppData/Roaming/kicad/sym-lib-table",
+		"/K/Filu/LnDisk/GIT-REPO/HW-Projects/KiCAD/LnLibrary/LnDevice.lib",
+		"/K/Filu/LnDisk/GIT-REPO/HW-Projects/Casetta/Cisterne_TEST/Cisterna vano pompe-cache.lib",
+		"/K/Filu/LnDisk/Technical-DOC/Stufe a pellet/Vescovi/Ln_Valori Menu segreto.txt"
+	],
+	"find":
+	{
+		"height": 29.0
+	},
+	"find_in_files":
+	{
+		"height": 169.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"gv",
+			"getReqAttribute",
+			"DotMap",
+			"dotmap",
+			"DotMap",
+			"python",
+			"IDLE_COUNTER_MAX",
+			"Opera",
+			"Browser",
+			"Opera",
+			"oper",
+			"2020/03/03 07:53:18 - [GDrive._execute_upload: 324] INFO -> updating:",
+			"updating:",
+			"uploaded",
+			"refreshed",
+			"efresh_remote_file",
+			"compare_file",
+			"keyboardPrompt",
+			"tab",
+			"keyboardPrompt",
+			"ACCOUNT",
+			"LnVerify",
+			"gitdir",
+			"git",
+			"Execute",
+			"FreeFileSync.exe",
+			".exe",
+			"Execute",
+			"java",
+			"f602250",
+			"J:\\LnFree",
+			"C:\\ProgramData\\Microsoft\\Windows",
+			"C:\\Users\\f602250",
+			"pdfs",
+			"Ln_pythonDir",
+			"python",
+			"Ln_pythonDir",
+			"Ln_PythonExe",
+			"K:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"k:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"K:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"k:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"K:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"k:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"K:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"k:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"K:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"k:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"K:\\Filu\\LnDisk\\LnFree\\Pgm\\WPy-3710\\python-3.7.1.amd64",
+			"config_default",
+			"python",
+			"python_versions",
+			"python",
+			"Ln_PythonExe",
+			"PYTHON_PATHS",
+			"PYTHONHOME",
+			"Ln_pythonDir",
+			"Ln_PythonExe",
+			"Ln_pythonDir",
+			"Python_default",
+			"Ln_pythonDir",
+			"RD",
+			"LD",
+			"RS485Serial",
+			"SoftwareSerial",
+			"nl",
+			"LnFuncWorkingBuff",
+			"printnl",
+			"presscontrolPower",
+			"previousLedTime",
+			"ledState",
+			"isLedTime",
+			"led_duration",
+			"LED_INTERVAL",
+			"LED_DURATION",
+			"led_duration",
+			"previousLedTime",
+			"ledState",
+			"blinkingLED",
+			"presscontrolPower",
+			"buzzer_duration",
+			"LOW",
+			"fALARM",
+			"setPhase",
+			"1000",
+			"BUZZER_FREQUENCY",
+			"BUZZER_ALARM_FREQUENCY",
+			"phase",
+			"previousLedTime",
+			"ledState",
+			"hornState",
+			"horn_duration",
+			"previousHornTime",
+			"horn_duration",
+			"PHASE_INTERVAL",
+			"const int",
+			"phase_interval",
+			"digita",
+			"LED_PUMP_DURATION",
+			"LED_PUMP_INTERVAL",
+			"LED_PUMP_DURATION",
+			"buzzer_ON",
+			"previousBuzzerTime",
+			"buzzer_volume",
+			"buzzer_frequency",
+			"buzzer_interval",
+			"buzzer_duration",
+			"buzzer_cycle",
+			"buzzerState",
+			"hornState",
+			"horn_interval",
+			"previousHornTime",
+			"now",
+			"fALARM",
+			"setPhase",
+			"next_phase_time",
+			"LED_PUMP_DURATION",
+			"next_phase_time",
+			"isPhaseTime",
+			"buzzer_ON",
+			"previous_beep_time",
+			"isPhaseTime",
+			"lnprint",
+			"buzzer_ON",
+			"isPhaseTime",
+			"isBeepTime",
+			"next_beep_time",
+			"previous_beep_time"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/eBookProcess/eBookLib.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4278,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2662,
+								2662
+							]
+						],
+						"settings":
+						{
+							"apply_syntax_touched": true,
+							"auto_complete": false,
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2670,
+										2671
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2656,
+										2657
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"function_name_status_row": 93,
+							"incomplete_sync": null,
+							"origPos":
+							[
+								0.0,
+								2320.0
+							],
+							"remote_loading": false,
+							"syncScroll": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2140.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/LnLib/LnColor.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5405,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2931,
+								2931
+							]
+						],
+						"settings":
+						{
+							"apply_syntax_touched": true,
+							"auto_complete": false,
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2937,
+										2938
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2924,
+										2925
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"function_name_status_row": 94,
+							"incomplete_sync": null,
+							"origPos":
+							[
+								0.0,
+								1800.0
+							],
+							"remote_loading": false,
+							"syncScroll": false,
+							"synced": false,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1800.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/config/eBooks.yml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 508,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								412,
+								412
+							]
+						],
+						"settings":
+						{
+							"apply_syntax_touched": true,
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"function_name_status_row": 12,
+							"incomplete_sync": null,
+							"origPos":
+							[
+								189.0,
+								0.0
+							],
+							"remote_loading": false,
+							"syncScroll": false,
+							"synced": false,
+							"syntax": "Packages/YAML/YAML.sublime-syntax"
+						},
+						"translation.x": 189.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 29.0
+	},
+	"input":
+	{
+		"height": 59.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 346.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.help":
+	{
+		"height": 132.0
+	},
+	"output.hex_viewer_inspector":
+	{
+		"height": 144.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"output.sftp":
+	{
+		"height": 130.0
+	},
+	"output.stino_build_panel":
+	{
+		"height": 0.0
+	},
+	"output.stino_panel":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "eBooks.sublime-project",
+	"replace":
+	{
+		"height": 54.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 139.0,
+		"last_filter": "vi",
+		"selected_items":
+		[
+			[
+				"vi",
+				"viewitems"
+			],
+			[
+				"",
+				"__getitem__"
+			]
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 254.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
