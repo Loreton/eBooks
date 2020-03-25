@@ -7,9 +7,23 @@ if [ -z "$comment" ]; then
     echo
     exit 1
 fi
+
+echo git add --all
 git add --all
-# git commit --all --message '"'$comment'"'
+echo
+
+echo git commit --all --message "$comment"
 git commit --all --message "$comment"
-# git push gitHub $branch
-# git push gitLab $branch
-# git push gitBucket $branch
+echo
+
+echo git push gitHub $branch
+git push gitHub $branch
+echo
+
+echo git push gitLab $branch
+git push gitLab $branch
+echo
+
+echo git push gitBucket $branch
+git push gitBucket $branch
+echo
