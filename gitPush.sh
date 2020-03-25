@@ -8,7 +8,8 @@ if [ -z "$comment" ]; then
     exit 1
 fi
 git add --all
-git commit --all --message '"'$comment'"'
+# git commit --all --message '"'$comment'"'
+git commit --all --message "$comment"
 # git push gitHub $branch
 # git push gitLab $branch
 # git push gitBucket $branch
