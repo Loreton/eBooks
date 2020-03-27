@@ -519,33 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/eBookProcess/eBookLib.py",
-			"settings":
-			{
-				"buffer_size": 4278,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/LnLib/LnColor.py",
-			"settings":
-			{
-				"buffer_size": 5405,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/config/eBooks.yml",
-			"settings":
-			{
-				"buffer_size": 508,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -811,6 +784,19 @@
 	],
 	"file_history":
 	[
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/Source/eBookProcess/eBookLib.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnModules/LnYamlLoader/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/gitUtils/gitPush_SA.sh",
+		"/K/Filu/LnDisk/GIT-REPO/LnModules/SqLite/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnModules/LnPyUtils/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnPythonLib/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnModules/LnColor/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnPythonLib/SqLite/LnSqLite_Class.py",
+		"/K/Filu/LnDisk/GIT-REPO/LnModules/LnLogger/.git/config",
+		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/LnLib/LnUtils.py",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/config/eBooks.yml",
+		"/K/Filu/LnDisk/GIT-REPO/eBooks/Source/LnLib/LnColor.py",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/eBookProcess/eBookLib.py",
 		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/Source/Google/Ln_Upload.py",
@@ -820,14 +806,12 @@
 		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/__main__.py",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/.vscode/settings.json",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/.vscode/launch.json",
-		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/LnLib/LnUtils.py",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/config/LnEbook.yml",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/Main/ParseInput.py",
 		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/.vscode/launch.json",
 		"/K/Filu/LnDisk/GIT-REPO/LnEbook/Source/eBookProcess/eBookConverter.py",
 		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/Source/LnLib/LnYamlLoader.py",
 		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/__main__.py",
-		"/K/Filu/LnDisk/GIT-REPO/LnModules/LnColor/.git/config",
 		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/conf/LnStartProgram.yml",
 		"/K/Filu/LnDisk/GIT-REPO/googleDriveSync/.git/config",
 		"/K/Filu/LnDisk/GIT-REPO/LnStartProgram/log/LnStartProgram.log",
@@ -927,18 +911,7 @@
 		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/Pump_Alarm.ino_prev",
 		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/setPhase.ino",
 		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkLed.ino",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkHorn.ino",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/Pump_Alarm.ino_prev_2",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduinoo/.gitignore",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduinoo/.git/config",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduino/TEST/Scheduler/Scheduler.ino",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Pump_Alarm_IRQ/Pump_Alarm_IRQ.ino",
-		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Pump_Alarm/Pump_Alarm.ino",
-		"/K/Filu/LnDisk/GIT-REPO/HW-Projects/KiCAD/LnLibrary/LnDiodiTransistors.lib",
-		"/C/Users/Loreto/AppData/Roaming/kicad/sym-lib-table",
-		"/K/Filu/LnDisk/GIT-REPO/HW-Projects/KiCAD/LnLibrary/LnDevice.lib",
-		"/K/Filu/LnDisk/GIT-REPO/HW-Projects/Casetta/Cisterne_TEST/Cisterna vano pompe-cache.lib",
-		"/K/Filu/LnDisk/Technical-DOC/Stufe a pellet/Vescovi/Ln_Valori Menu segreto.txt"
+		"/K/Filu/LnDisk/GIT-REPO/LnArduino/Allarme_Pompa/Pump_Alarm/checkHorn.ino"
 	],
 	"find":
 	{
@@ -957,6 +930,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"LnYamlLoader",
+			"LnColor",
 			"gv",
 			"getReqAttribute",
 			"DotMap",
@@ -1082,9 +1057,7 @@
 			"lnprint",
 			"buzzer_ON",
 			"isPhaseTime",
-			"isBeepTime",
-			"next_beep_time",
-			"previous_beep_time"
+			"isBeepTime"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1102,384 +1075,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/eBookProcess/eBookLib.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4278,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2662,
-								2662
-							]
-						],
-						"settings":
-						{
-							"apply_syntax_touched": true,
-							"auto_complete": false,
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										2670,
-										2671
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										2656,
-										2657
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"function_name_status_row": 93,
-							"incomplete_sync": null,
-							"origPos":
-							[
-								0.0,
-								2320.0
-							],
-							"remote_loading": false,
-							"syncScroll": false,
-							"synced": false,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2140.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/Source/LnLib/LnColor.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5405,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2931,
-								2931
-							]
-						],
-						"settings":
-						{
-							"apply_syntax_touched": true,
-							"auto_complete": false,
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										2937,
-										2938
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										2924,
-										2925
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"function_name_status_row": 94,
-							"incomplete_sync": null,
-							"origPos":
-							[
-								0.0,
-								1800.0
-							],
-							"remote_loading": false,
-							"syncScroll": false,
-							"synced": false,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1800.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/K/Filu/LnDisk/GIT-REPO/eBooks/config/eBooks.yml",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 508,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								412,
-								412
-							]
-						],
-						"settings":
-						{
-							"apply_syntax_touched": true,
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
-							],
-							"function_name_status_row": 12,
-							"incomplete_sync": null,
-							"origPos":
-							[
-								189.0,
-								0.0
-							],
-							"remote_loading": false,
-							"syncScroll": false,
-							"synced": false,
-							"syntax": "Packages/YAML/YAML.sublime-syntax"
-						},
-						"translation.x": 189.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				}
 			]
 		}
 	],
