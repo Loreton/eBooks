@@ -1,22 +1,18 @@
-# xxx!/usr/bin/python3
+#!/usr/bin/python3
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 24-03-2020 15.46.52
+# Version ......: 27-03-2020 17.36.08
 #
 import sys; sys.dont_write_bytecode = True
 import os
-# import yaml
-# from   pathlib import Path
-# import pdb
-# from collections import OrderedDict
 from dotmap import DotMap
-# import fnmatch
 
 
 
 import Source.LnLib  as Ln
 import Source.Main  as Prj
+from  Source.Mongo.LnMongo import MongoDB
 import Source.eBookProcess.eBookLib  as Process
 
 TAB1 = '    '
@@ -35,16 +31,16 @@ TAB1 = '    '
 #  // by Loreto VSCode --> https://code.visualstudio.com/docs/python/debugging
 ######################################
 if __name__ == '__main__':
-    inpArgs = Prj.ParseInput()
-    _data = Prj.readConfigFile()
+    inpArgs          = Prj.ParseInput()
+    _data            = Prj.readConfigFile()
     config           = DotMap(_data['content'])
     prj_name         = _data['prjname']
     script_path      = _data['script_path']
     yaml_config_file = _data['yaml_config_file']
 
-    log_dir = os.path.join(script_path, 'log')
 
-    """ setting account logger """
+    # --- setting logger
+    log_dir     = os.path.join(script_path, 'log')
     _basename   = os.path.abspath(os.path.join(log_dir,prj_name))
     log_file    = _basename + '.log'
     stdout_file = _basename + '_stdout.log'
@@ -54,16 +50,22 @@ if __name__ == '__main__':
     lnLogger.info('input arguments', vars(inpArgs))
 
 
-    ''' set global variables '''
+    # --- set global variables
     gv          = DotMap(_dynamic=False)
     gv.Ln       = Ln
     gv.lnLogger = lnLogger
     gv.Color    = C
-    gv.search    = inpArgs.search
+    gv.search   = inpArgs.search
+
+    MY_COLLECTION = 'posts'
+    myDB = MongoDB(dbname='db01', logger=lnLogger)
+    myDB.deleteCollection(MY_COLLECTION)
+    myColl = myDB.openCollection(MY_COLLECTION)
 
 
-    for epub_path in config.directories.epub:
-        Process.eBookLib(gVars=gv, base_path=epub_path, filetype=inpArgs.extension)
+
+    # for epub_path in config.directories.epub:
+    #     Process.eBookLib(gVars=gv, base_path=epub_path, filetype=inpArgs.extension)
     # ePubConverter(script_path)
     # ePubConverter_lineByline(script_path)
 
