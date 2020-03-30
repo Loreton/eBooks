@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 27-03-2020 17.36.34
+# Version ......: 30-03-2020 17.55.11
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -11,36 +11,42 @@ import json, yaml
 # https://realpython.com/introduction-to-mongodb-and-python/
 # http://docs.mongoengine.org/tutorial.html
 class MongoDB:
-# class LnMongo:
 
         # ***********************************************
-        # * dictType can be:
-        # *     a. OrderedDict
-        # *     b. gv.Ln.LnDict
         # ***********************************************
-    def __init__(self, dbname, logger):
-        self._logger = logger
-        self._dbname = dbname
-        # self._conn = False
+    def __init__(self, db_name, myLogger, server_name='127.0.0.1', server_port='27017'):
+        global logger
+        logger = myLogger
+        self._db_name = db_name
+        self._client  = self.dbConnect(server_name, server_port)
+        self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
 
+
+
+
+    ################################################
+    #
+    ################################################
+    def dbConnect(self, server_name, server_port):
         # epoch time before API call
         start = time.time()
+        # db = None
 
-        # https://kb.objectrocket.com/mongo-db/check-if-a-mongodb-server-is-running-using-the-pymongo-python-driver-643
         try:
             # attempt to create a client instance of PyMongo driver
-            client = pymongo.MongoClient(host = ["mongodb://localhost:27017/"], serverSelectionTimeoutMS=1500)
+            DBserver="mongodb://{server_name}:{server_port}/".format(**locals())
+            client = pymongo.MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=1500)
             # call the server_info() to verify that client instance is valid
             client.server_info() # will throw an exception
-            # self._conn = True
 
         except:
             logger.error("Connection error. mongoDB server may be down!")
             logger.error("elapsed time", time.time() - start)
             sys.exit(1)
 
+        logger.console ('CLIENT:', client)
+        return client
 
-        self._mydb = client[dbname]
 
 
     ################################################
@@ -59,3 +65,25 @@ class MongoDB:
             mycoll = mydb[MY_COLLECTION]       # create collection/Table In MongoDB, a collection is not created until it gets content!
             rCode = mycoll.drop()
             print("collection {coll_name} has been deleted RCode:{rCode}".format(**locals()))
+
+
+class LnCollection:
+
+    def __init__(self, db, collection_name):
+        self.db = db
+        self.collection_name = collection_name
+
+    @property
+    def client(self):
+        if not hasattr(self.__class__, '_client'):
+            self.__class__._client = MongoClient()
+
+        return self.__class__._client
+
+    @property
+    def collection(self):
+        if not hasattr(self, '_collection'):
+            database = getattr(self.client, self.db)
+            self._collection = getattr(database, self.collection_name)
+
+        return self._collection

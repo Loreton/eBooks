@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 27-03-2020 17.36.08
+# Version ......: 30-03-2020 17.55.36
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -13,15 +13,42 @@ from dotmap import DotMap
 import Source.LnLib  as Ln
 import Source.Main  as Prj
 from  Source.Mongo.LnMongo import MongoDB
+from  Source.Mongo.LnMongo import LnCollection
 import Source.eBookProcess.eBookLib  as Process
 
 TAB1 = '    '
 
 
+def main1():
+    DB_NAME = 'db01'
+    MY_COLLECTION = 'posts'
+    myDB = MongoDB(db_name=DB_NAME, myLogger=lnLogger)
+    myDB.deleteCollection(MY_COLLECTION)
+    eBookColl = myDB.openCollection(MY_COLLECTION)
 
-# import platform
-# OS_platform = platform.system()
+    post_data = {
+        'title': 'Python and MongoDB',
+        'content': 'PyMongo is fun, you guys',
+        'author': 'Scott'
+    }
+    result = eBookColl.insert_one(post_data)
+    print('One post: {0}'.format(result.inserted_id))
 
+
+
+def main2():
+    DB_NAME = 'db02'
+    MY_COLLECTION = 'posts'
+    eBookColl = LnCollection(db_name=DB_NAME, coll_name=MY_COLLECTION, myLogger=lnLogger)
+    eBookColl = LnCollection(db_name=DB_NAME, coll_name=MY_COLLECTION, myLogger=lnLogger)
+
+    post_data = {
+        'title': 'Python and MongoDB',
+        'content': 'PyMongo is fun, you guys',
+        'author': 'Scott'
+    }
+    result = eBookColl.insert_one(post_data)
+    print('One post: {0}'.format(result.inserted_id))
 
 
 
@@ -57,18 +84,13 @@ if __name__ == '__main__':
     gv.Color    = C
     gv.search   = inpArgs.search
 
-    MY_COLLECTION = 'posts'
-    myDB = MongoDB(dbname='db01', logger=lnLogger)
-    myDB.deleteCollection(MY_COLLECTION)
-    myColl = myDB.openCollection(MY_COLLECTION)
-
+    main1()
 
 
     # for epub_path in config.directories.epub:
     #     Process.eBookLib(gVars=gv, base_path=epub_path, filetype=inpArgs.extension)
     # ePubConverter(script_path)
     # ePubConverter_lineByline(script_path)
-
 
 
 

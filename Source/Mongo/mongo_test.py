@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 27-03-2020 16.49.51
+# Version ......: 30-03-2020 17.28.11
 #
 import sys; sys.dont_write_bytecode = True
 import pymongo
@@ -28,13 +28,15 @@ def dict_to_yaml(my_dict, sort_keys=True):
 from pymongo import MongoClient
 import time
 
+
 # epoch time before API call
 start = time.time()
 
 try:
 
     # attempt to create a client instance of PyMongo driver
-    client = MongoClient(host = ["localhost:1111"], serverSelectionTimeoutMS = 2000)
+    client = MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS = 2000)
+    # client = pymongo.MongoClient("mongodb://localhost:27017/")
 
     # call the server_info() to verify that client instance is valid
     client.server_info() # will throw an exception
@@ -43,12 +45,13 @@ except:
     print ("connection error")
     # print the time that has elapsed
     print (time.time() - start)
+    sys.exit()
 
+'''
+'''
 
+print ('CLIENT:', client)
 sys.exit()
-
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-print (client)
 
 """
             create DB
@@ -57,7 +60,7 @@ so if this is your first time creating a database, you should complete
 the next two chapters (create collection and create document)
 before you check if the database exists
 """
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+# client = pymongo.MongoClient("mongodb://localhost:27017/")
 # client = pymongo.MongoClient()
 # client = pymongo.MongoClient('localhost', 27017) # connection
 mydb = client["db_test"]        # create DB In MongoDB, a database is not created until it gets content
