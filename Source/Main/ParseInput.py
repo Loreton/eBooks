@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 24-03-2020 10.21.35
+# Version ......: 31-03-2020 10.28.38
 #
 # #############################################
 import sys
@@ -27,7 +27,8 @@ def ParseInput():
 
         # logging and debug options
     parser.add_argument('--display-args', help='Display input paramenters', action='store_true')
-    parser.add_argument('--debug', help='display mai paths and input args', action='store_true')
+    parser.add_argument('--debug', help='display paths and input args', action='store_true')
+    parser.add_argument('--log-console', help='log write to console too.', action='store_true')
     parser.add_argument('--log-modules',
                                 metavar='',
                                 required=False,
@@ -45,5 +46,14 @@ def ParseInput():
     # args = vars(parser.parse_args())
     args = parser.parse_args()
     # print (args); sys.exit()
+
+
+    if args.display_args:
+        import json
+        json_data = json.dumps(vars(args), indent=4, sort_keys=True)
+        print('input arguments: {json_data}'.format(**locals()))
+        # sys.exit(0)
+
+
     return  args
 

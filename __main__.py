@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-03-2020 17.55.36
+# Version ......: 31-03-2020 10.38.22
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -13,6 +13,7 @@ from dotmap import DotMap
 import Source.LnLib  as Ln
 import Source.Main  as Prj
 from  Source.Mongo.LnMongo import MongoDB
+from  Source.Mongo.LnMongo import Mongo2DB
 from  Source.Mongo.LnMongo import LnCollection
 import Source.eBookProcess.eBookLib  as Process
 
@@ -37,10 +38,8 @@ def main1():
 
 
 def main2():
-    DB_NAME = 'db02'
-    MY_COLLECTION = 'posts'
-    eBookColl = LnCollection(db_name=DB_NAME, coll_name=MY_COLLECTION, myLogger=lnLogger)
-    eBookColl = LnCollection(db_name=DB_NAME, coll_name=MY_COLLECTION, myLogger=lnLogger)
+    myColl_instance = Mongo2DB(db_name='db02', collection_name='posts', myLogger=lnLogger)
+    eBookColl = myColl_instance.collection
 
     post_data = {
         'title': 'Python and MongoDB',
@@ -59,6 +58,7 @@ def main2():
 ######################################
 if __name__ == '__main__':
     inpArgs          = Prj.ParseInput()
+    fCONSOLE         = inpArgs.log_console
     _data            = Prj.readConfigFile()
     config           = DotMap(_data['content'])
     prj_name         = _data['prjname']
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     _basename   = os.path.abspath(os.path.join(log_dir,prj_name))
     log_file    = _basename + '.log'
     stdout_file = _basename + '_stdout.log'
-    lnLogger    = Ln.setLogger(filename=log_file, debug_level=3, dry_run=not inpArgs.go, log_modules=inpArgs.log_modules, color=Ln.Color() )
+    lnLogger    = Ln.setLogger(filename=log_file, console=fCONSOLE, debug_level=3, dry_run=not inpArgs.go, log_modules=inpArgs.log_modules, color=Ln.Color() )
     lnStdout    = Ln.setLogger(filename=stdout_file, color=Ln.Color() )
     C           = Ln.Color(filename=stdout_file)
     lnLogger.info('input arguments', vars(inpArgs))
@@ -84,7 +84,23 @@ if __name__ == '__main__':
     gv.Color    = C
     gv.search   = inpArgs.search
 
+
+    if inpArgs.debug:
+        C.setColor(color=C._cyanH)
+        print('     Input arguments:')
+        for k,v in vars(inpArgs).items():
+            print('         {k:<15}: {v}'.format(**locals()))
+        print()
+        C.setColor(color=C._yellowH)
+        print('     {0:<15}: {1}'.format('prj_name', prj_name))
+        print('     {0:<15}: {1}'.format('ScriptDir', str(script_path)))
+        print('     {0:<15}: {1}'.format('config file', yaml_config_file))
+        print()
+        sys.exit(1)
+
+
     main1()
+    main2()
 
 
     # for epub_path in config.directories.epub:
