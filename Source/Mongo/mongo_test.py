@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-03-2020 17.28.11
+# Version ......: 31-03-2020 14.36.08
 #
 import sys; sys.dont_write_bytecode = True
 import pymongo
@@ -51,7 +51,7 @@ except:
 '''
 
 print ('CLIENT:', client)
-sys.exit()
+# sys.exit()
 
 """
             create DB

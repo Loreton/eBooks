@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 31-03-2020 10.38.22
+# Version ......: 31-03-2020 15.33.43
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -13,41 +13,34 @@ from dotmap import DotMap
 import Source.LnLib  as Ln
 import Source.Main  as Prj
 from  Source.Mongo.LnMongo import MongoDB
-from  Source.Mongo.LnMongo import Mongo2DB
-from  Source.Mongo.LnMongo import LnCollection
+# from  Source.Mongo.LnMongo import Mongo2DB
+# from  Source.Mongo.LnMongo import LnCollection
 import Source.eBookProcess.eBookLib  as Process
 
 TAB1 = '    '
 
 
+
+
 def main1():
-    DB_NAME = 'db01'
-    MY_COLLECTION = 'posts'
-    myDB = MongoDB(db_name=DB_NAME, myLogger=lnLogger)
-    myDB.deleteCollection(MY_COLLECTION)
-    eBookColl = myDB.openCollection(MY_COLLECTION)
+    myDB_instance = MongoDB(db_name='db01', collection_name='posts', myLogger=lnLogger)
+    eBookColl = myDB_instance.collection
+
+    myDB_instance.setFields(['title', 'content', 'author'])
+    myDB_instance.setIdFields(['author', 'title'])
 
     post_data = {
+        # '_id': 'Python_and_MongoDB',
         'title': 'Python and MongoDB',
         'content': 'PyMongo is fun, you guys',
         'author': 'Scott'
     }
-    result = eBookColl.insert_one(post_data)
-    print('One post: {0}'.format(result.inserted_id))
+    result = myDB_instance.insert(post_data)
+    # result = eBookColl.insert_one(post_data)
+    print('posts: {0}'.format(result.inserted_ids))
 
-
-
-def main2():
-    myColl_instance = Mongo2DB(db_name='db02', collection_name='posts', myLogger=lnLogger)
-    eBookColl = myColl_instance.collection
-
-    post_data = {
-        'title': 'Python and MongoDB',
-        'content': 'PyMongo is fun, you guys',
-        'author': 'Scott'
-    }
-    result = eBookColl.insert_one(post_data)
-    print('One post: {0}'.format(result.inserted_id))
+    # for index, inserted_id in result:
+    #     print('{index:02} - {inserted_id}'.format(**locals()))
 
 
 
@@ -100,7 +93,6 @@ if __name__ == '__main__':
 
 
     main1()
-    main2()
 
 
     # for epub_path in config.directories.epub:
