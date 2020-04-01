@@ -22,24 +22,7 @@
         },
 
 
-        {
-            "name": "nloreto",
-            "type": "python",
-            "request": "launch",
-            "stopOnEntry": true,
-            "pythonPath": "${config:python.pythonPath}",
-            "program": "K:\\Filu\\LnDisk\\GIT-REPO\\googleDriveSync\\xxx__main__.py",
-            "args": [
-                "--upload",
-                "--skip-d",
-                "--force",
-                "--clean",
-                // "--verbose",
-                "--data=LnDisk",
-            ],
-            "cwd": "${workspaceRoot}",
-
-        },
+ 
         {
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",

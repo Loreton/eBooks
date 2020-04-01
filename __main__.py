@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 31-03-2020 15.33.43
+# Version ......: 01-04-2020 17.18.06
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -24,23 +24,30 @@ TAB1 = '    '
 
 def main1():
     myDB_instance = MongoDB(db_name='db01', collection_name='posts', myLogger=lnLogger)
-    eBookColl = myDB_instance.collection
+    # eBookColl = myDB_instance.collection
 
     myDB_instance.setFields(['title', 'content', 'author'])
     myDB_instance.setIdFields(['author', 'title'])
 
     post_data = {
-        # '_id': 'Python_and_MongoDB',
         'title': 'Python and MongoDB',
         'content': 'PyMongo is fun, you guys',
         'author': 'Scott'
     }
-    result = myDB_instance.insert(post_data)
-    # result = eBookColl.insert_one(post_data)
-    print('posts: {0}'.format(result.inserted_ids))
+    result = myDB_instance.insert(post_data, replace=True)
+    print('posts: {0}'.format(result[0]))
 
-    # for index, inserted_id in result:
-    #     print('{index:02} - {inserted_id}'.format(**locals()))
+
+
+    post_data = {
+        'title': 'Python and MongoDB2',
+        'content': 'PyMongo is fun, you guys',
+        'author': 'Scott'
+    }
+    result = myDB_instance.insert(post_data, replace=True)
+    print('posts: {0}'.format(result[0]))
+
+
 
 
 

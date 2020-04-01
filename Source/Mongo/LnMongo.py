@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 31-03-2020 15.36.59
+# Version ......: 01-04-2020 17.46.41
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -11,6 +11,7 @@ import json, yaml
 # https://realpython.com/introduction-to-mongodb-and-python/
 # http://docs.mongoengine.org/tutorial.html
 
+# https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.replace_one
 class MongoDB:
         # ***********************************************
         # ***********************************************
@@ -57,8 +58,40 @@ class MongoDB:
     def setIdFields(self, fields):
         self._id_fields = fields
 
+        # --- check if record exists
+        # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
+    def exists(self, filter):
+        assert isinstance(filter, (dict))
+        _exists = self._collection.count_documents(filter, limit = 1)
+        if _exists:
+            logger.info('record exists', filter)
 
+        return _exists
+
+
+    def checkFields(self, record):
+        assert isinstance(record, (dict))
+        _keys = record.keys()
+        for _key in self._mandatory_keys:
+            if _key not in _keys:
+                logger.console("Rec: {index} - {_key} is missing".format(**locals()))
+                record[_key] = ''
+
+        """
+            add '_id' field
+            get the self._id_fields contents and join its words
+        """
+        _id = []
+        for fld in self._id_fields:
+            _id.extend(record[fld].split())
+        record['_id'] = '_'.join(_id)
+
+
+        return record
+
+    '''
     def checkFields(self, data):
+        assert isinstance(post_data, (dict))
         for index, record in enumerate(data):
             _keys = record.keys()
             for _key in self._mandatory_keys:
@@ -76,11 +109,61 @@ class MongoDB:
                 sys.exit(1)
 
         return data
+    '''
 
-    def insert(self, post_data):
+    def insert(self, post_data, replace=False):
+        assert isinstance(post_data, (list, dict))
+        records = [post_data] if isinstance(post_data, dict) else post_data
+
+        ret_value = {}
+        # updated_records = result['inserted_ids']
+        for index, record in enumerate(records):
+            my_rec = self.checkFields(record)
+            # --- check if record exists
+            _filter = { '_id': my_rec['_id'] }
+            if self.exists(_filter):
+                if replace:
+                    result = self._collection.replace_one(_filter, my_rec)
+                    if result.modified_count == 1:
+                        status = my_rec['_id']
+                else:
+                    result = 'ignored...'
+
+            else:
+                # import pdb
+                # pdb.set_trace()
+                result = self._collection.insert_one(my_rec)
+                status  = result.inserted_id
+                # if result.inserted_id==my_rec['_id']:
+                #     status  = my_rec['_id']
+
+            ret_value[index] = status
+
+        # result = self._collection.insert_many(my_data)
+
+        return ret_value
+
+
+    def insert_xxx(self, post_data):
+        assert isinstance(post_data, (dict))
+        inp_data = [post_data] if isinstance(post_data, dict) else post_data
+
+        my_data = self.checkFields(inp_data)
+        result = self._collection.insert_many(my_data)
+
+        return result
+
+
+
+
+
+
+
+    def update(self, post_data):
         assert isinstance(post_data, (list, dict))
         inp_data = [post_data] if isinstance(post_data, dict) else post_data
 
+        # result = db.test.update_one({'x': 1}, {'$inc': {'x': 3}})
         my_data = self.checkFields(inp_data)
         result = self._collection.insert_many(my_data)
 
