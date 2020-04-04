@@ -2,16 +2,20 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 24-03-2020 17.18.00
+# Version ......: 04-04-2020 08.31.22
 #
 
 import os
+from pathlib import Path
 
 import ebooklib
 from ebooklib import epub
 from ebooklib.utils import parse_html_string
 import ebooklib.utils as epubUtil
 from bs4 import BeautifulSoup
+import nltk
+# nltk.download('punkt')
+
 
 def get_files_from_path(baseDir, filetype):
     """
@@ -84,7 +88,7 @@ def eBookLib(gVars, base_path, filetype):
 
     files = get_files_from_path(base_path, filetype)
 
-    fDEBUG = True
+    fDEBUG = False
     for file in files:
         C.yellowH(text='working on file: {file}'.format(**locals()))
         lnLogger.info('working on file: {0}'.format(file))
@@ -96,28 +100,53 @@ def eBookLib(gVars, base_path, filetype):
             continue
 
         this_book = {}
-        _title = book.get_metadata('DC', 'title')[0][0]
-        _creator = book.get_metadata('DC', 'creator')[0][0]
+
+        _title = book.get_metadata('DC', 'title')
+        _creator = book.get_metadata('DC', 'creator')
         _description = book.get_metadata('DC', 'description')
-        _date = book.get_metadata('DC', 'date')[0][0].split('T', 1)[0]
-        _identifier = book.get_metadata('DC', 'identifier')[0][0]
+        _date = book.get_metadata('DC', 'date')
+        _identifier = book.get_metadata('DC', 'identifier')
+        _coverage = book.get_metadata('DC', 'coverage')
+
+        _description =_description[0][0] if _description else ''
+        _identifier =_identifier[0][0] if _identifier else 'null'
+        _title = _title[0][0] if _title else Path(file).name
+        _creator =_creator[0][0] if _creator else ""
+        _date =_date[0][0].split('T', 1)[0] if _date else ""
+
+        # _title = book.get_metadata('DC', 'title')[0][0]
+        # _creator = book.get_metadata('DC', 'creator')[0][0]
+        # _description = book.get_metadata('DC', 'description')
+        # _date = book.get_metadata('DC', 'date')[0][0].split('T', 1)[0]
+        # _identifier = book.get_metadata('DC', 'identifier')[0][0]
         # _identifier = book.IDENTIFIER_ID
 
         this_book['title'] = _title
         this_book['creator'] = _creator
         this_book['identifier'] = _identifier
-        this_book['description'] = _description
+        # this_book['description'] = _description
+        this_book['coverage'] = _coverage
         this_book['date'] = _date
 
-        lnLogger.info('working on file: {this_book}'.format(**locals()))
-        if fDEBUG:
-            print('title        {_title}'.format(**locals()))
-            print('creator      {_creator}'.format(**locals()))
-            print('ID           {_identifier}'.format(**locals()))
-            print('description  {_description}'.format(**locals()))
-            print('date         {_date}'.format(**locals()))
-            print()
+        # lnLogger.info('processing file: {this_book}'.format(**locals()))
+        # lnLogger.info('processing book', book)
+        lnLogger.console('processing book', this_book)
+        # Ln.prompt('continue....')
 
+        # german_corpus=[]
+        # for doc in book.get_items():
+        #     doc_content = str(doc.content)
+        #     for w in nltk.word_tokenize(doc_content):
+        #         german_corpus.append(w.lower())
+        # Ln.prompt('continue....')
+        # if fDEBUG:
+        #     print('title        {_title}'.format(**locals()))
+        #     print('creator      {_creator}'.format(**locals()))
+        #     print('ID           {_identifier}'.format(**locals()))
+        #     print('description  {_description}'.format(**locals()))
+        #     print('date         {_date}'.format(**locals()))
+        #     print()
+        '''
         chapters = epub2text(file)
         STR_FOUND=False
         for chap in chapters:
@@ -132,5 +161,5 @@ def eBookLib(gVars, base_path, filetype):
 
         if STR_FOUND:
             Ln.prompt('continue....')
-
+        '''
 

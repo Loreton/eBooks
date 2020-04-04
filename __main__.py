@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 01-04-2020 17.18.06
+# Version ......: 03-04-2020 16.56.11
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -22,7 +22,7 @@ TAB1 = '    '
 
 
 
-def main1():
+def mongo():
     myDB_instance = MongoDB(db_name='db01', collection_name='posts', myLogger=lnLogger)
     # eBookColl = myDB_instance.collection
 
@@ -99,11 +99,11 @@ if __name__ == '__main__':
         sys.exit(1)
 
 
-    main1()
+    # mongo()
 
 
-    # for epub_path in config.directories.epub:
-    #     Process.eBookLib(gVars=gv, base_path=epub_path, filetype=inpArgs.extension)
+    for epub_path in config.directories.epub:
+        Process.eBookLib(gVars=gv, base_path=epub_path, filetype=inpArgs.extension)
     # ePubConverter(script_path)
     # ePubConverter_lineByline(script_path)
 
