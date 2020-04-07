@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 03-04-2020 16.56.11
+# Version ......: 07-04-2020 13.41.26
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -21,31 +21,6 @@ TAB1 = '    '
 
 
 
-
-def mongo():
-    myDB_instance = MongoDB(db_name='db01', collection_name='posts', myLogger=lnLogger)
-    # eBookColl = myDB_instance.collection
-
-    myDB_instance.setFields(['title', 'content', 'author'])
-    myDB_instance.setIdFields(['author', 'title'])
-
-    post_data = {
-        'title': 'Python and MongoDB',
-        'content': 'PyMongo is fun, you guys',
-        'author': 'Scott'
-    }
-    result = myDB_instance.insert(post_data, replace=True)
-    print('posts: {0}'.format(result[0]))
-
-
-
-    post_data = {
-        'title': 'Python and MongoDB2',
-        'content': 'PyMongo is fun, you guys',
-        'author': 'Scott'
-    }
-    result = myDB_instance.insert(post_data, replace=True)
-    print('posts: {0}'.format(result[0]))
 
 
 
@@ -75,15 +50,7 @@ if __name__ == '__main__':
     lnStdout    = Ln.setLogger(filename=stdout_file, color=Ln.Color() )
     C           = Ln.Color(filename=stdout_file)
     lnLogger.info('input arguments', vars(inpArgs))
-
-
-    # --- set global variables
-    gv          = DotMap(_dynamic=False)
-    gv.Ln       = Ln
-    gv.lnLogger = lnLogger
-    gv.Color    = C
-    gv.search   = inpArgs.search
-
+    lnLogger.info('configuration data', _data)
 
     if inpArgs.debug:
         C.setColor(color=C._cyanH)
@@ -98,15 +65,110 @@ if __name__ == '__main__':
         print()
         sys.exit(1)
 
+    # --- set global variables
+    gv          = DotMap(_dynamic=False)
+    gv.Ln       = Ln
+    gv.lnLogger = lnLogger
+    gv.Color    = C
+    # gv.search   = inpArgs.search
+    # import pymongo
+    # mongow3school()
+    # sys.exit()
+    # - initialize Mongo
+    myDB_instance = MongoDB(db_name='eBooks', collection_name='epub', myLogger=lnLogger)
+    myDB_instance.setFields(['title',
+                            'author',
+                            "date",
+                            "description",
+                            "identifier",
+                            'coverage',
+                            'content',
+                            'chapters',
+                            ])
 
-    # mongo()
+    myDB_instance.setIdFields(['author', 'title'])
 
 
-    for epub_path in config.directories.epub:
-        Process.eBookLib(gVars=gv, base_path=epub_path, filetype=inpArgs.extension)
-    # ePubConverter(script_path)
-    # ePubConverter_lineByline(script_path)
+    if 'search' in inpArgs:
+        # srcStr=inpArgs.search
+        mycol=myDB_instance.collection
+        # ebook_coll.create_index([('content', 'text')])
+        # ebook_coll.create_index([('author', 'text')])
+        # cursor = myDB_instance.search(inpArgs.search)
 
+        # myquery = { "content": srcStr }
+        # cursor = ebook_coll.find(myquery)
+        # print(cursor.count())
+        # for x in cursor:
+        #     print(x)
+
+
+        '''
+        # https://docs.mongodb.com/manual/reference/operator/query/regex/
+        print()
+        print('Find documents where the address starts with the letter "C":')
+        myquery = { "author": { "$regex": "^C" }}, { "content": 0 }
+        # myquery = {"author": { "$regex": "^C" }},{ "address": 0 }
+        mydoc = mycol.find({ "author": { "$regex": "^C" }}, { "content": 0 })
+        for x in mydoc:
+            print(x['_id'])
+
+        print()
+        print('Find document(s) with the title "L\'ora tra la donna e la chitarra":')
+        myquery = { "title": "L'ora tra la donna e la chitarra" }
+        mydoc = mycol.find(myquery)
+        for x in mydoc:
+            print(x['_id'])
+
+        print()
+        myquery = { "author": '/{inpArgs.search}/i'.format(**locals()) }
+        print('Find document(s) containing the string:', end='')
+        print(myquery)
+        mydoc = mycol.find(myquery)
+        for x in mydoc:
+            print(x['_id'])
+
+        print()
+        print('Find document(s) containing the string:')
+        mydoc = myDB_instance.search('author', '^Clemens')
+        for x in mydoc:
+            print(x['_id'])
+
+        '''
+        print()
+        print('Search word:')
+        mydoc = myDB_instance.search(field_name='title', regex='chitarra', ignore_case=True)
+        for x in mydoc:
+            print(x['_id'])
+
+        print()
+        print('Search word:')
+        mydoc = myDB_instance.search(field_name='description', regex='impaurita', ignore_case=True)
+        for x in mydoc:
+            print(x['_id'])
+
+        print()
+        print('Search word:')
+        mydoc = myDB_instance.search(field_name=inpArgs.fieldname, regex=inpArgs.pattern, ignore_case=True)
+        for x in mydoc:
+            print(x['_id'])
+
+        '''
+        print('Search word in all:')
+        mydoc = myDB_instance.searchWord('impaurita')
+        for x in mydoc:
+            print(x['_id'])
+        '''
+
+    elif 'load' in inpArgs:
+        for epub_path in config.directories.epub_input:
+            files = Prj.ListFiles(epub_path, filetype=inpArgs.extension)
+            for index, file in enumerate(files):
+                if index > 10: sys.exit(1)
+                C.yellowH(text='working on file {index}: {file}'.format(**locals()))
+                book = Process.eBookLib(gVars=gv, file=file)
+                # lnLogger.console('book data', book)
+                result = myDB_instance.insert(book, replace=True)
 
 
 

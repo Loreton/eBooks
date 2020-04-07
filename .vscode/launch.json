@@ -15,7 +15,9 @@
             // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [
-                "--search=sensa",
+                "search",
+                "--field=content",
+                "--patt=ospiti",
                 // "--verbose",
             ],
             "cwd": "${workspaceRoot}",

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 01-04-2020 17.46.41
+# Version ......: 07-04-2020 08.57.45
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -53,7 +53,7 @@ class MongoDB:
 
 
     def setFields(self, fields):
-        self._mandatory_keys = fields
+        self._record_fields = fields
 
     def setIdFields(self, fields):
         self._id_fields = fields
@@ -72,51 +72,41 @@ class MongoDB:
     def checkFields(self, record):
         assert isinstance(record, (dict))
         _keys = record.keys()
-        for _key in self._mandatory_keys:
+        for _key in self._record_fields:
             if _key not in _keys:
-                logger.console("Rec: {index} - {_key} is missing".format(**locals()))
+                logger.info("{_key} is missing. Assigning ''".format(**locals()))
                 record[_key] = ''
 
         """
             add '_id' field
             get the self._id_fields contents and join its words
         """
+
+        # - check for extra fields
+        for _key in record.keys():
+            if not _key in self._record_fields:
+                print("field {_key} is not included in the record_fields".format(**locals()))
+                logger.error('record', record)
+                logger.error('fields', self._record_fields)
+                _json = json.dumps(record, indent=4, sort_keys=True)
+                print("Record:\n    ", _json)
+                _json = json.dumps(self._record_fields, indent=4, sort_keys=True)
+                print("Record Fields:\n    ", _json)
+                sys.exit(1)
+
         _id = []
         for fld in self._id_fields:
             _id.extend(record[fld].split())
         record['_id'] = '_'.join(_id)
 
-
         return record
 
-    '''
-    def checkFields(self, data):
-        assert isinstance(post_data, (dict))
-        for index, record in enumerate(data):
-            _keys = record.keys()
-            for _key in self._mandatory_keys:
-                if _key not in _keys:
-                    logger.console("Rec: {index} - {_key} is missing".format(**locals()))
-                    record[_key] = ''
-
-            # --- add '_id' field
-            _id = []
-            for fld in self._id_fields:
-                _id.extend(record[fld].split())
-            record['_id'] = '_'.join(_id)
-            if self._collection.count_documents({ '_id': record['_id'] }, limit = 1):
-                print('record exixsts')
-                sys.exit(1)
-
-        return data
-    '''
 
     def insert(self, post_data, replace=False):
         assert isinstance(post_data, (list, dict))
         records = [post_data] if isinstance(post_data, dict) else post_data
 
         ret_value = {}
-        # updated_records = result['inserted_ids']
         for index, record in enumerate(records):
             my_rec = self.checkFields(record)
             # --- check if record exists
@@ -130,33 +120,12 @@ class MongoDB:
                     result = 'ignored...'
 
             else:
-                # import pdb
-                # pdb.set_trace()
                 result = self._collection.insert_one(my_rec)
                 status  = result.inserted_id
-                # if result.inserted_id==my_rec['_id']:
-                #     status  = my_rec['_id']
 
             ret_value[index] = status
 
-        # result = self._collection.insert_many(my_data)
-
         return ret_value
-
-
-    def insert_xxx(self, post_data):
-        assert isinstance(post_data, (dict))
-        inp_data = [post_data] if isinstance(post_data, dict) else post_data
-
-        my_data = self.checkFields(inp_data)
-        result = self._collection.insert_many(my_data)
-
-        return result
-
-
-
-
-
 
 
     def update(self, post_data):
@@ -169,6 +138,43 @@ class MongoDB:
 
         return result
 
+    # https://docs.mongodb.com/manual/reference/operator/query/regex/
+    def searchWord(self, search_text):
+        # db.articles.find( { $text: { $search: "coffee" } } )
+        return self._collection.find({"$text": {"$search": search_text}})
+
+
+       # https://docs.mongodb.com/manual/reference/operator/query/regex/
+    def search(self, field_name, regex, ignore_case=False):
+        '''
+            use $regex to find docs that start with case-sensitive "obje"
+            The .* included at the end of the "$regex" key’s value
+            acts as a wildcard along with the string match.
+              query = { "field": { "$regex": 'obje.*' } }
+              docs = col.count_documents( query )
+
+            For an exact string match, just put the
+            specified string between the ^ and $ characters:
+                query = { "field": { "$regex": '^ObjectRocket 2$' } }
+                docs = col.count_documents( query )
+
+            In the following example, we’ll create an "$options" key,
+            in addition to our "$regex", and we’ll set the value of
+            this key to "i" to make the query case-insensitive
+                query = { "field": { "$regex": 'oBjEcT', "$options" :'i' } }
+                docs = col.count_documents( query )
+        '''
+        _ic='i' if ignore_case else ''
+        query = {
+            field_name: {
+            "$regex": regex,
+            "$options" : _ic # case-insensitive
+            }
+        }
+        logger.console('my_query', query)
+        result = self._collection.find(query).limit(10)
+        logger.console('    record found', result.count())
+        return result
 
 
     ################################################
@@ -216,3 +222,102 @@ class MongoDB:
             rCode = mycoll.drop()
             print("collection {coll_name} has been deleted RCode:{rCode}".format(**locals()))
 
+
+
+
+# https://www.w3schools.com/python/python_mongodb_getstarted.asp
+def mongow3school():
+    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+    mydb = myclient["mydatabase"]
+    mycol = mydb["customers"]
+    rCode = mycol.drop()
+    mycol = mydb["customers"]
+
+    mydict = { "name": "John", "address": "Highway 37" }
+    x = mycol.insert_one(mydict)
+    mydict = { "name": "Peter", "address": "Lowstreet 27" }
+    x = mycol.insert_one(mydict)
+
+    mylist = [
+      { "name": "Amy", "address": "Apple st 652"},
+      { "name": "Hannah", "address": "Mountain 21"},
+      { "name": "Michael", "address": "Valley 345"},
+      { "name": "Sandy", "address": "Ocean blvd 2"},
+      { "name": "Betty", "address": "Green Grass 1"},
+      { "name": "Richard", "address": "Sky st 331"},
+      { "name": "Susan", "address": "One way 98"},
+      { "name": "Vicky", "address": "Yellow Garden 2"},
+      { "name": "Ben", "address": "Park Lane 38"},
+      { "name": "William", "address": "Central st 954"},
+      { "name": "Chuck", "address": "Main Road 989"},
+      { "name": "Viola", "address": "Sideway 1633"}
+    ]
+
+    x = mycol.insert_many(mylist)
+
+    mylist = [
+      { "_id": 1, "name": "John", "address": "Highway 37"},
+      { "_id": 2, "name": "Peter", "address": "Lowstreet 27"},
+      { "_id": 3, "name": "Amy", "address": "Apple st 652"},
+      { "_id": 4, "name": "Hannah", "address": "Mountain 21"},
+      { "_id": 5, "name": "Michael", "address": "Valley 345"},
+      { "_id": 6, "name": "Sandy", "address": "Ocean blvd 2"},
+      { "_id": 7, "name": "Betty", "address": "Green Grass 1"},
+      { "_id": 8, "name": "Richard", "address": "Sky st 331"},
+      { "_id": 9, "name": "Susan", "address": "One way 98"},
+      { "_id": 10, "name": "Vicky", "address": "Yellow Garden 2"},
+      { "_id": 11, "name": "Ben", "address": "Park Lane 38"},
+      { "_id": 12, "name": "William", "address": "Central st 954"},
+      { "_id": 13, "name": "Chuck", "address": "Main Road 989"},
+      { "_id": 14, "name": "Viola", "address": "Sideway 1633"}
+    ]
+
+    x = mycol.insert_many(mylist)
+
+    x = mycol.find_one()
+    print("FIND ONE:")
+    print(x)
+
+    print()
+    print("FIND ALL:")
+    for x in mycol.find():
+        print(x)
+
+
+    print()
+    print("Return only the names and addresses, not the _ids:")
+    for x in mycol.find({},{ "_id": 0, "name": 1, "address": 1 }):
+      print(x)
+
+    print()
+    print('This example will exclude "address" from the result:')
+    for x in mycol.find({},{ "address": 0 }):
+      print(x)
+
+    print()
+    print('Find document(s) with the address "Park Lane 38":')
+    myquery = { "address": "Park Lane 38" }
+    mydoc = mycol.find(myquery)
+    for x in mydoc:
+      print(x)
+
+    print()
+    print('Find documents where the address starts with the letter "S" or higher:')
+    myquery = { "address": { "$gt": "S" } }
+    mydoc = mycol.find(myquery)
+    for x in mydoc:
+      print(x)
+
+    print()
+    print('Find documents where the address starts with the letter "S":')
+    myquery = { "address": { "$regex": "^S" } }
+    mydoc = mycol.find(myquery)
+    for x in mydoc:
+      print(x)
+
+
+
+
+
+if __name__ == '__main__':
+    mongow3school()
