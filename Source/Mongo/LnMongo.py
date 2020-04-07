@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 07-04-2020 08.57.45
+# Version ......: 07-04-2020 17.59.57
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -53,7 +53,7 @@ class MongoDB:
 
 
     def setFields(self, fields):
-        self._record_fields = fields
+        self._struct_fields = fields
 
     def setIdFields(self, fields):
         self._id_fields = fields
@@ -72,7 +72,7 @@ class MongoDB:
     def checkFields(self, record):
         assert isinstance(record, (dict))
         _keys = record.keys()
-        for _key in self._record_fields:
+        for _key in self._struct_fields:
             if _key not in _keys:
                 logger.info("{_key} is missing. Assigning ''".format(**locals()))
                 record[_key] = ''
@@ -84,14 +84,15 @@ class MongoDB:
 
         # - check for extra fields
         for _key in record.keys():
-            if not _key in self._record_fields:
-                print("field {_key} is not included in the record_fields".format(**locals()))
-                logger.error('record', record)
-                logger.error('fields', self._record_fields)
-                _json = json.dumps(record, indent=4, sort_keys=True)
-                print("Record:\n    ", _json)
-                _json = json.dumps(self._record_fields, indent=4, sort_keys=True)
-                print("Record Fields:\n    ", _json)
+            if not _key in self._struct_fields:
+                print("     {_key} field is not included in the struct_fields".format(**locals()))
+                print('     structure fields:')
+                for index, field in enumerate(sorted(self._struct_fields), start=1):
+                    print('     {index} - {field}'.format(**locals()))
+                print()
+                print('     record  fields:')
+                for index, field in enumerate(sorted(record.keys()), start=1):
+                    print('     {index} - {field}'.format(**locals()))
                 sys.exit(1)
 
         _id = []
@@ -109,19 +110,20 @@ class MongoDB:
         ret_value = {}
         for index, record in enumerate(records):
             my_rec = self.checkFields(record)
+
             # --- check if record exists
             _filter = { '_id': my_rec['_id'] }
             if self.exists(_filter):
                 if replace:
                     result = self._collection.replace_one(_filter, my_rec)
                     if result.modified_count == 1:
-                        status = my_rec['_id']
+                        status = ['replaced', my_rec['_id'] ]
                 else:
-                    result = 'ignored...'
+                    status = ['already exists. Not replaced.', my_rec['_id'] ]
 
             else:
                 result = self._collection.insert_one(my_rec)
-                status  = result.inserted_id
+                status  = ['inserted', result.inserted_id]
 
             ret_value[index] = status
 

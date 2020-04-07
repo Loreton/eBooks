@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 07-04-2020 13.41.26
+# Version ......: 07-04-2020 18.00.12
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -81,9 +81,9 @@ if __name__ == '__main__':
                             "date",
                             "description",
                             "identifier",
-                            'coverage',
+                            # 'coverage',
                             'content',
-                            'chapters',
+                            # 'chapters',
                             ])
 
     myDB_instance.setIdFields(['author', 'title'])
@@ -163,12 +163,13 @@ if __name__ == '__main__':
     elif 'load' in inpArgs:
         for epub_path in config.directories.epub_input:
             files = Prj.ListFiles(epub_path, filetype=inpArgs.extension)
-            for index, file in enumerate(files):
+            for index, file in enumerate(files, start=1):
                 if index > 10: sys.exit(1)
-                C.yellowH(text='working on file {index}: {file}'.format(**locals()))
-                book = Process.eBookLib(gVars=gv, file=file)
-                # lnLogger.console('book data', book)
+                C.yellowH(text='working on file {index:4}: {file}'.format(**locals()), end='')
+                book = DotMap(Process.eBookLib(gVars=gv, file=file), _dynamic=False)
+                C.yellowH(text=' - {book.title}'.format(**locals()))
                 result = myDB_instance.insert(book, replace=True)
+                print(result)
 
 
 

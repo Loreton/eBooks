@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 07-04-2020 13.43.53
+# Version ......: 07-04-2020 17.34.37
 #
 
 import os
@@ -85,17 +85,14 @@ def eBookLib(gVars, file):
     _description = book.get_metadata('DC', 'description')
     _date        = book.get_metadata('DC', 'date')
     _identifier  = book.get_metadata('DC', 'identifier')
-    _coverage    = book.get_metadata('DC', 'coverage')
+    # _coverage    = book.get_metadata('DC', 'coverage')
 
     this_book['description'] = _description[0][0]           if _description else ''
     this_book['identifier']  = _identifier[0][0]            if _identifier else 'null'
     this_book['title']       = _title[0][0]                 if _title else Path(file).stem
     this_book['author']      = _creator[0][0]               if _creator else ""
     this_book['date']        = _date[0][0].split('T', 1)[0] if _date else ""
-    this_book['coverage']    = _coverage
-    # this_book['content']     = {}
-    # this_book['content']['chapters'] = []
-    # chaps = this_book['content']['chapters']
+    # this_book['coverage']    = _coverage
 
     this_book['content'] = []
     chaps = this_book['content']
