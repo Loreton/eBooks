@@ -6,7 +6,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "wsl-ebook",
+            "name": "ebook_search",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
@@ -19,6 +19,22 @@
                 "--field=content",
                 "--patt=ospiti",
                 // "--verbose",
+            ],
+            "cwd": "${workspaceRoot}",
+        },
+
+        {
+            "name": "ebook_load",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": true,
+            // "pythonPath": "/usr/bin/python3",
+            // "pythonPath": "${config:python.pythonPath}",
+            // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
+            "program": "${workspaceFolder}/__main__.py",
+            "args": [
+                "load",
+                "--dir=aaa",
             ],
             "cwd": "${workspaceRoot}",
         },

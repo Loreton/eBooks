@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 07-04-2020 17.59.57
+# Version ......: 08-04-2020 08.39.54
 import sys
 import pymongo
 # from pymongo import MongoClient

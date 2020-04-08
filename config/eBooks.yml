@@ -12,7 +12,7 @@ directories:
         # - /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre Portable/Ln_Library/LoretoBooks/Connelly, Michael/Debito di sangue (9)
         # - /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre Portable/Ln_Library/LoretoBooks
         # - /mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/eBooks_for_test
-        - /mnt/k/Download/ePub
+        - /mnt/k/Download/ePub_work
         # - /mnt/k/Download/ePub/err
     epub_output:
         /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre Portable/Ln_Library/Ln_to_be_processed

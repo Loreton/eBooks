@@ -2,12 +2,12 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 07-04-2020 18.00.12
+# Version ......: 08-04-2020 09.46.50
 #
 import sys; sys.dont_write_bytecode = True
 import os
 from dotmap import DotMap
-
+from pathlib import Path
 
 
 import Source.LnLib  as Ln
@@ -51,6 +51,7 @@ if __name__ == '__main__':
     C           = Ln.Color(filename=stdout_file)
     lnLogger.info('input arguments', vars(inpArgs))
     lnLogger.info('configuration data', _data)
+    Path.setLnMonkey(lnLogger)
 
     if inpArgs.debug:
         C.setColor(color=C._cyanH)
@@ -82,8 +83,8 @@ if __name__ == '__main__':
                             "description",
                             "identifier",
                             # 'coverage',
-                            'content',
-                            # 'chapters',
+                            # 'content',
+                            'chapters',
                             ])
 
     myDB_instance.setIdFields(['author', 'title'])
@@ -164,12 +165,15 @@ if __name__ == '__main__':
         for epub_path in config.directories.epub_input:
             files = Prj.ListFiles(epub_path, filetype=inpArgs.extension)
             for index, file in enumerate(files, start=1):
+                file_path=Path(file)
                 if index > 10: sys.exit(1)
-                C.yellowH(text='working on file {index:4}: {file}'.format(**locals()), end='')
-                book = DotMap(Process.eBookLib(gVars=gv, file=file), _dynamic=False)
+                C.yellowH(text='working on file {index:4}: {file_path}'.format(**locals()), end='')
+                book = DotMap(Process.eBookLib(gVars=gv, file=file_path._str), _dynamic=False)
                 C.yellowH(text=' - {book.title}'.format(**locals()))
                 result = myDB_instance.insert(book, replace=True)
                 print(result)
+                if result[0][0] in ('replaced', 'inserted'):
+                    file_path.moveFile('/mnt/k/tmp/{book.author}/{book.title}.epub'.format(**locals()))
 
 
 
