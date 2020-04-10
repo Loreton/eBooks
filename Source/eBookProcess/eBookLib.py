@@ -2,11 +2,13 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-04-2020 08.38.32
+# Version ......: 10-04-2020 18.04.51
 #
 
 import os
 from pathlib import Path
+from dotmap import DotMap
+import string
 
 import ebooklib
 from ebooklib import epub
@@ -112,6 +114,39 @@ def write_book(my_book):
 
 
 
+def cleanContent(content):
+    chars_to_replace = string.printable.replace(string.ascii_letters, '')
+    chars_to_replace += '’'
+    words_to_discard=[
+                    'dalla', 'dalle', 'dallo', 'dall',
+                    'della', 'dello', 'dell',
+                    'nella', 'nello', 'nelle', 'nell',
+                    'alla',  'alle', 'allo', 'all',
+                    'cosa',
+                    'loro',
+                    ]
+
+    # - split book content in words
+    # t = ''.maketrans(''.join(chars_to_discard),' '*(len(chars_to_discard)+1))
+    # content = content.translate(t)
+    # - rimpiazza i primi con i secondi
+    table = ''.maketrans('òàùèìé', 'oaueie')
+    content = content.translate(table)
+    table = ' '.maketrans(chars_to_replace, ' '*(len(chars_to_replace)))
+    content = content.translate(table)
+
+    content = [w for w in content.split() if len(w)>3 and not w.lower() in words_to_discard]
+    # print (  content)
+    result = []
+    for word in content:
+        word_alfa = [ c for c in word if c.isalpha()]
+        word2 = ''.join(word_alfa)
+        if not word == word2:
+            print(word, word2)
+        result.append(word2)
+    return result
+
+
 def eBookLib(gVars, file):
     global gv
     gv          = gVars
@@ -120,7 +155,7 @@ def eBookLib(gVars, file):
     lnLogger    = gv.lnLogger
     # strToSearch = gv.search
 
-    this_book = {}
+    this_book = DotMap(_dynamic=False)
     lnLogger.info('working on file: {0}'.format(file))
     try:
         book = epub.read_epub(file)
@@ -137,23 +172,23 @@ def eBookLib(gVars, file):
     _identifier  = book.get_metadata('DC', 'identifier')
     # _coverage    = book.get_metadata('DC', 'coverage')
 
-    this_book['description'] = _description[0][0]           if _description else ''
-    this_book['identifier']  = _identifier[0][0]            if _identifier else 'null'
-    this_book['title']       = _title[0][0]                 if _title else Path(file).stem
-    this_book['author']      = _creator[0][0]               if _creator else ""
-    this_book['date']        = _date[0][0].split('T', 1)[0] if _date else ""
+    this_book.description = _description[0][0]           if _description else ''
+    this_book.identifier  = _identifier[0][0]            if _identifier else 'null'
+    this_book.title       = _title[0][0]                 if _title else Path(file).stem
+    this_book.author      = _creator[0][0]               if _creator else ""
+    this_book.date        = _date[0][0].split('T', 1)[0] if _date else ""
+    this_book.chapters    = []
     # this_book['coverage']    = _coverage
 
     # log without content
     lnLogger.info('book data', this_book)
 
-    this_book['chapters'] = []
-    chaps = this_book['chapters']
 
 
     chapters = epub2text(file)
     for chap in chapters:
-        chaps.append(chap)
+        this_book.chapters.append(chap)
+
     # write_book(this_book)
     # import sys;sys.exit(1)
     return this_book

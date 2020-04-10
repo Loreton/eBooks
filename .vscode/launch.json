@@ -34,7 +34,8 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "load",
-                "--dir=aaa",
+                "--dir=aaa"
+                "--log-mod=monkey",
             ],
             "cwd": "${workspaceRoot}",
         },

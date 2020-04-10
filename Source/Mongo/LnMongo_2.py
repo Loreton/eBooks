@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 09-04-2020 16.30.12
+# Version ......: 09-04-2020 16.42.13
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -15,16 +15,16 @@ import json, yaml
 class MongoDB:
         # ***********************************************
         # ***********************************************
-    def __init__(self, db_name, collection_name, myLogger, server_name='127.0.0.1', server_port='27017'):
+    def __init__(self, db_name, myLogger, server_name='127.0.0.1', server_port='27017'):
         global logger
         logger = myLogger
         self._db_name = db_name
-        self._collection_name = collection_name
 
         self._client  = self.dbConnect(server_name, server_port)
         self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
-        self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
+        # self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
 
+        self._collections = {}
 
 
     ################################################
@@ -50,6 +50,11 @@ class MongoDB:
 
         logger.info ('CLIENT:', client)
         return client
+
+
+
+
+
 
 
     def setFields(self, fields):

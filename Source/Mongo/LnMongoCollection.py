@@ -1,17 +1,20 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 09-04-2020 16.30.12
+# Version ......: 10-04-2020 15.19.54
 import sys
 import pymongo
 # from pymongo import MongoClient
 import time
 import json, yaml
+from dotmap import DotMap
+# from Source.LnLib.LnDotMapp import DotMap
 
 # https://www.w3schools.com/python/python_mongodb_create_collection.asp
 # https://realpython.com/introduction-to-mongodb-and-python/
 # http://docs.mongoengine.org/tutorial.html
-
 # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.replace_one
+
+'''
 class MongoDB:
         # ***********************************************
         # ***********************************************
@@ -21,7 +24,66 @@ class MongoDB:
         self._db_name = db_name
         self._collection_name = collection_name
 
+        if not self._DBs:
+            self._DBs={}
+
+        if self._DBs.db_name:
+
         self._client  = self.dbConnect(server_name, server_port)
+        self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
+        self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
+
+        self._DBs.db_name = DotMap(_dynamic=False)
+        self._DBs.db_name.client =
+        self._DBs.db_name.db =
+
+
+################################################
+#
+################################################
+def dbConnect(self, db_name, server_name, server_port):
+    global DBs
+    if not DBs: DBs=DotMap(_dynamic=False)
+    if db_name in DBs.keys():
+        return DBs.db_name.client
+
+    start = time.time()
+
+    try:
+        # attempt to create a client instance of PyMongo driver
+        DBserver="mongodb://{server_name}:{server_port}/".format(**locals())
+        client = pymongo.MongoClient(DBserverq, serverSelectionTimeoutMS=1500)
+
+        # call the server_info() to verify that client instance is valid
+        client.server_info() # will throw an exception
+
+    except:
+        logger.error("Connection error. mongoDB server may be down!")
+        logger.error("elapsed time", time.time() - start)
+        logger.console("Connection error. mongoDB server may be down!")
+        sys.exit(1)
+
+    logger.info ('CLIENT:', client)
+
+    DBs.db_name = DotMap(_dynamic=False)
+    DBs.db_name.client = client
+    DBs.db_name.server = server_name
+    DBs.db_name.port   = server_port
+    DBs.db_name.db     = client[db_name]
+
+    return DBs.db_name.client
+'''
+
+class MongoCollection:
+    DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
+        # ***********************************************
+        # ***********************************************
+    def __init__(self, db_name, collection_name, myLogger, server_name='127.0.0.1', server_port='27017'):
+        global logger
+        logger = myLogger
+        self._db_name = db_name
+        self._collection_name = collection_name
+        self._client  = self._dbConnect(db_name, server_name, server_port)
         self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
         self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
 
@@ -30,26 +92,58 @@ class MongoDB:
     ################################################
     #
     ################################################
-    def dbConnect(self, server_name, server_port):
-        # epoch time before API call
-        start = time.time()
-        # db = None
+    @property
+    def collection(self):
+        if not hasattr(self, '_collection'):
+            database = getattr(self._client, self._db)
+            self._collection = getattr(database, self._collection_name)
 
-        try:
-            # attempt to create a client instance of PyMongo driver
-            DBserver="mongodb://{server_name}:{server_port}/".format(**locals())
-            client = pymongo.MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=1500)
-            # call the server_info() to verify that client instance is valid
-            client.server_info() # will throw an exception
+        return self._collection
 
-        except:
-            logger.error("Connection error. mongoDB server may be down!")
-            logger.error("elapsed time", time.time() - start)
-            logger.console("Connection error. mongoDB server may be down!")
-            sys.exit(1)
+    ################################################
+    #
+    ################################################
+    @property
+    def client(self):
+        if not hasattr(self.__class__, '_client'):
+            self.__class__._client = MongoClient()
 
-        logger.info ('CLIENT:', client)
-        return client
+        return self.__class__._client
+
+    ################################################
+    #
+    ################################################
+    def _dbConnect(self, db_name, server_name, server_port):
+        _DBs = MongoCollection.DBs # accedi alla variabile globale di classe
+        if not db_name in _DBs.keys():
+            start = time.time()
+
+            try:
+                # attempt to create a client instance of PyMongo driver
+                DBserver="mongodb://{server_name}:{server_port}/".format(**locals())
+                client = pymongo.MongoClient(DBserver, serverSelectionTimeoutMS=1500)
+                # client = pymongo.MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=1500)
+
+
+                # call the server_info() to verify that client instance is valid
+                client.server_info() # will throw an exception
+
+            except:
+                logger.error("Connection error. mongoDB server may be down!")
+                logger.error("elapsed time", time.time() - start)
+                logger.console("Connection error. mongoDB server may be down!")
+                sys.exit(1)
+
+            logger.info ('CLIENT:', client)
+
+            _DBs[db_name] = DotMap(_dynamic=False)
+            _DBs[db_name].client = client
+            _DBs[db_name].db     = client[db_name]
+
+        # _DBs.pprint(pformat='json')
+        return _DBs[db_name].client
+
+
 
 
     def setFields(self, fields):
@@ -190,26 +284,6 @@ class MongoDB:
     #     comments = ListField(EmbeddedDocumentField(Comment))
 
 
-    ################################################
-    #
-    ################################################
-    @property
-    def collection(self):
-        if not hasattr(self, '_collection'):
-            database = getattr(self._client, self._db)
-            self._collection = getattr(database, self._collection_name)
-
-        return self._collection
-
-    ################################################
-    #
-    ################################################
-    @property
-    def client(self):
-        if not hasattr(self.__class__, '_client'):
-            self.__class__._client = MongoClient()
-
-        return self.__class__._client
 
     # def openCollection(self, coll_name):
     #     return mydb[coll_name]       # create collection. A collection is not created until it gets content!
