@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 10-04-2020 18.04.51
+# Version ......: 12-04-2020 07.48.15
 #
 
 import os
@@ -126,9 +126,6 @@ def cleanContent(content):
                     'loro',
                     ]
 
-    # - split book content in words
-    # t = ''.maketrans(''.join(chars_to_discard),' '*(len(chars_to_discard)+1))
-    # content = content.translate(t)
     # - rimpiazza i primi con i secondi
     table = ''.maketrans('òàùèìé', 'oaueie')
     content = content.translate(table)
@@ -136,7 +133,11 @@ def cleanContent(content):
     content = content.translate(table)
 
     content = [w for w in content.split() if len(w)>3 and not w.lower() in words_to_discard]
-    # print (  content)
+    logger.info("total words", len(content))
+    # - remove duplicate
+    content = list( dict.fromkeys(content) )
+    logger.info("total words (duplicated removed)", len(content))
+
     result = []
     for word in content:
         word_alfa = [ c for c in word if c.isalpha()]
@@ -144,6 +145,8 @@ def cleanContent(content):
         if not word == word2:
             print(word, word2)
         result.append(word2)
+
+    logger.info("total words (only alpfa)", len(result))
     return result
 
 

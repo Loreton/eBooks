@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 24-03-2020 15.23.07
+# Version ......: 13-04-2020 10.53.58
 #
 # #############################################
 
@@ -21,16 +21,16 @@ import  yaml
 def readConfigFile():
     _this_path          = Path(sys.argv[0]).resolve()
     #_this_path = Path('K:\\Filu\\LnDisk\\LnStart\\LnStartProgram_New.zip').resolve()
+    script_path = _this_path.parent # ... then up one level
+
     if _this_path.suffix == '.zip':
         _I_AM_ZIP = True
-        prj_name    = _this_path.stem # first get name of zip file
-        script_path = _this_path.parent # ... then up one level
+        prj_name    = _this_path.stem # get name of zip file
         zip_filename = _this_path
 
     else:
         _I_AM_ZIP = False
-        script_path = _this_path.parent
-        prj_name  = script_path.name
+        prj_name  = script_path.name # get name of path
 
     yaml_filenames = [
             '{0}.yml'.format(prj_name),

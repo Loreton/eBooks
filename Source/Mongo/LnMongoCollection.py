@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 10-04-2020 15.19.54
+# Version ......: 13-04-2020 16.56.57
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -224,16 +224,33 @@ class MongoCollection:
 
         return ret_value
 
+    # ################################################
+    #   myquery = { "address": "Valley 345" }
+    #   newvalues = { "$set": { "address": "Canyon 123" } }
+    #   mycol.update_one(myquery, newvalues)
+    # ################################################
+    def updateField(self, filter, fieldRec, create=False):
+        assert isinstance(filter, (dict))
+        assert isinstance(fieldRec, (dict))
 
-    def update(self, post_data):
-        assert isinstance(post_data, (list, dict))
-        inp_data = [post_data] if isinstance(post_data, dict) else post_data
+        myquery = filter
+        newvalues = { "$set": fieldRec }
 
-        # result = db.test.update_one({'x': 1}, {'$inc': {'x': 3}})
-        my_data = self.checkFields(inp_data)
-        result = self._collection.insert_many(my_data)
+        if self._collection.count_documents(filter, limit = 1):
+            mycol.update_one(myquery, newvalues)
+            # try {
+            #    self._collection.updateOne(
+            #       { upsert: create} # create if not exists
+            #       { filter},
+            #       { $set: { fieldRec } }
+            #    );
+            # } catch (e) {
+            #    print(e);
+            # }
 
         return result
+    '''
+    '''
 
     # https://docs.mongodb.com/manual/reference/operator/query/regex/
     def searchWord(self, search_text):

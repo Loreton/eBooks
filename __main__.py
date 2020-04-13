@@ -2,18 +2,16 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 10-04-2020 18.05.57
+# Version ......: 13-04-2020 13.50.43
 #
 import sys; sys.dont_write_bytecode = True
 import os
 from dotmap import DotMap
 from pathlib import Path
 
+import Source as Ln
 
-import Source.LnLib  as Ln
-import Source.Main  as Prj
-from   Source.Mongo.LnMongoCollection import MongoCollection
-import Source.eBookProcess.eBookLib  as Process
+from eBooks import main as eBooks_main
 
 TAB1 = '    '
 
@@ -30,9 +28,9 @@ TAB1 = '    '
 #  // by Loreto VSCode --> https://code.visualstudio.com/docs/python/debugging
 ######################################
 if __name__ == '__main__':
-    inpArgs          = Prj.ParseInput()
+    inpArgs          = Ln.parseInput()
     fCONSOLE         = inpArgs.log_console
-    _data            = Prj.readConfigFile()
+    _data            = Ln.readConfigFile()
     config           = DotMap(_data['content'])
     prj_name         = _data['prjname']
     script_path      = _data['script_path']
@@ -71,6 +69,8 @@ if __name__ == '__main__':
     gv.lnLogger = lnLogger
     gv.Color    = C
 
+
+    '''
     # - initialize Mongo
     eBooks = MongoCollection(db_name='eBooks', collection_name='epub', myLogger=lnLogger, server_name='127.0.0.1', server_port='27017')
     eBooks.setFields(['title',
@@ -97,11 +97,11 @@ if __name__ == '__main__':
     # eBooks_DB = MongoDB.dbConnect(db_name='eBooks', server_name='127.0.0.1', server_port='27017', myLogger=lnLogger)
     # eBooks = MongoDB(db=eBooks_DB, collection_name='epub')
     # Dictionary = MongoDB(db=eBooks_DB, collection_name='dictionary')
-
-
+    '''
 
     if 'search' in inpArgs:
-        # srcStr=inpArgs.search
+        pass
+        '''
         mycol=eBooks_coll.collection
 
         print()
@@ -121,12 +121,13 @@ if __name__ == '__main__':
         mydoc = eBooks_coll.search(field_name=inpArgs.fieldname, regex=inpArgs.pattern, ignore_case=True)
         for x in mydoc:
             print(x['_id'])
-
+        '''
 
 
     elif 'load' in inpArgs:
-        # words_to_discard=['\n']
-
+        input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input
+        eBooks_main(gv, input_dir)
+        '''
         for epub_path in config.directories.epub_input:
 
             # - read list of files
@@ -154,9 +155,10 @@ if __name__ == '__main__':
                             'word': word,
                             'ebook': book._id
                         }
-                        result = Dictionary.insert(rec, replace=False)
-                    sys.exit()
+                        result = Dictionary.updateField(rec, create=True)
+        '''
 
+    # sys.exit()
 
 
 
