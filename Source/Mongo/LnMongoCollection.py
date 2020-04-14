@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-04-2020 16.56.57
+# Version ......: 14-04-2020 12.02.37
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -14,65 +14,7 @@ from dotmap import DotMap
 # http://docs.mongoengine.org/tutorial.html
 # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.replace_one
 
-'''
-class MongoDB:
-        # ***********************************************
-        # ***********************************************
-    def __init__(self, db_name, collection_name, myLogger, server_name='127.0.0.1', server_port='27017'):
-        global logger
-        logger = myLogger
-        self._db_name = db_name
-        self._collection_name = collection_name
 
-        if not self._DBs:
-            self._DBs={}
-
-        if self._DBs.db_name:
-
-        self._client  = self.dbConnect(server_name, server_port)
-        self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
-        self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
-
-        self._DBs.db_name = DotMap(_dynamic=False)
-        self._DBs.db_name.client =
-        self._DBs.db_name.db =
-
-
-################################################
-#
-################################################
-def dbConnect(self, db_name, server_name, server_port):
-    global DBs
-    if not DBs: DBs=DotMap(_dynamic=False)
-    if db_name in DBs.keys():
-        return DBs.db_name.client
-
-    start = time.time()
-
-    try:
-        # attempt to create a client instance of PyMongo driver
-        DBserver="mongodb://{server_name}:{server_port}/".format(**locals())
-        client = pymongo.MongoClient(DBserverq, serverSelectionTimeoutMS=1500)
-
-        # call the server_info() to verify that client instance is valid
-        client.server_info() # will throw an exception
-
-    except:
-        logger.error("Connection error. mongoDB server may be down!")
-        logger.error("elapsed time", time.time() - start)
-        logger.console("Connection error. mongoDB server may be down!")
-        sys.exit(1)
-
-    logger.info ('CLIENT:', client)
-
-    DBs.db_name = DotMap(_dynamic=False)
-    DBs.db_name.client = client
-    DBs.db_name.server = server_name
-    DBs.db_name.port   = server_port
-    DBs.db_name.db     = client[db_name]
-
-    return DBs.db_name.client
-'''
 
 class MongoCollection:
     DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
@@ -122,8 +64,6 @@ class MongoCollection:
                 # attempt to create a client instance of PyMongo driver
                 DBserver="mongodb://{server_name}:{server_port}/".format(**locals())
                 client = pymongo.MongoClient(DBserver, serverSelectionTimeoutMS=1500)
-                # client = pymongo.MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=1500)
-
 
                 # call the server_info() to verify that client instance is valid
                 client.server_info() # will throw an exception
@@ -140,7 +80,6 @@ class MongoCollection:
             _DBs[db_name].client = client
             _DBs[db_name].db     = client[db_name]
 
-        # _DBs.pprint(pformat='json')
         return _DBs[db_name].client
 
 
@@ -152,13 +91,23 @@ class MongoCollection:
     def setIdFields(self, fields):
         self._id_fields = fields
 
-        # --- check if record exists
-        # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
-    def exists(self, filter):
+    # --- check if record exists
+    # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
+    def exists(self, filter={}, rec={}):
+        assert isinstance(rec, (dict))
         assert isinstance(filter, (dict))
-        _exists = self._collection.count_documents(filter, limit = 1)
+
+        if filter:
+            _filter = filter
+        else:
+            _filter = self.get_id_filter(rec)
+
+        _exists = self._collection.count_documents(_filter, limit = 1)
         if _exists:
-            logger.info('record exists', filter)
+            logger.info('record exists', _filter)
+            # ret_val = _filter
+        # else:
+            # ret_val = None
 
         return _exists
 
@@ -189,68 +138,107 @@ class MongoCollection:
                     print('     {index} - {field}'.format(**locals()))
                 sys.exit(1)
 
-        _id = []
-        for fld in self._id_fields:
-            _id.extend(record[fld].split())
-        record['_id'] = '_'.join(_id)
+        record['_id'] = self.get_id(record)
 
         return record
 
+    ####################################################
+    # -
+    ####################################################
+    def get_id(self, rec):
+        _id = []
+        for fld in self._id_fields:
+            _id.extend(rec[fld].split())
+        # _id = '_'.join(_id).replace('.', '_')
+        return '_'.join(_id)
 
+
+    ####################################################
+    # -
+    ####################################################
+    def get_id_filter(self, rec):
+        return {'_id': self.get_id(rec)}
+
+
+
+
+
+    ####################################################
+    # -
+    ####################################################
     def insert(self, post_data, replace=False):
         assert isinstance(post_data, (list, dict))
         records = [post_data] if isinstance(post_data, dict) else post_data
 
         ret_value = {}
         for index, record in enumerate(records):
-            my_rec = self.checkFields(record)
-
-            # --- check if record exists
-            _filter = { '_id': my_rec['_id'] }
-            if self.exists(_filter):
-                if replace:
-                    result = self._collection.replace_one(_filter, my_rec)
-                    if result.modified_count == 1:
-                        status = ['replaced', my_rec['_id'] ]
-                else:
-                    status = ['already exists. Not replaced.', my_rec['_id'] ]
-
-            else:
-                result = self._collection.insert_one(my_rec)
-                status  = ['inserted', result.inserted_id]
-
+            status = self._insert_one(record, replace=replace)
             _key='record_{index}'.format(**locals())
             ret_value[_key] = status
 
         return ret_value
 
+
+
+    ####################################################
+    # -
+    ####################################################
+    def insert_one(self, record, replace=False):
+        assert isinstance(record, (dict))
+        record = record.toDict() if isinstance(record, DotMap) else record
+
+        ret_value = []
+        my_rec = self.checkFields(record)
+
+        _filter = {'_id': my_rec['_id']}
+        if self.exists(filter=_filter):
+            if replace:
+                result = self._collection.replace_one(_filter, my_rec)
+                if result.modified_count == 1:
+                    status = ['replaced', my_rec['_id'] ]
+            else:
+                status = ['already exists. Not replaced.', my_rec['_id'] ]
+
+        else:
+            result = self._collection.insert_one(my_rec)
+            status  = ['inserted', result.inserted_id]
+
+        ret_value = status
+
+        return ret_value
+
     # ################################################
+    # - https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.update_one
     #   myquery = { "address": "Valley 345" }
     #   newvalues = { "$set": { "address": "Canyon 123" } }
     #   mycol.update_one(myquery, newvalues)
     # ################################################
-    def updateField(self, filter, fieldRec, create=False):
-        assert isinstance(filter, (dict))
-        assert isinstance(fieldRec, (dict))
+    def updateField(self, newrec, fld_name):
+        assert isinstance(newrec, (dict))
+        assert isinstance(fld_name, (str))
 
-        myquery = filter
-        newvalues = { "$set": fieldRec }
+        filter = {'_id': self.get_id(newrec)}
+        logger.info('updating document', filter)
 
-        if self._collection.count_documents(filter, limit = 1):
-            mycol.update_one(myquery, newvalues)
-            # try {
-            #    self._collection.updateOne(
-            #       { upsert: create} # create if not exists
-            #       { filter},
-            #       { $set: { fieldRec } }
-            #    );
-            # } catch (e) {
-            #    print(e);
-            # }
+        # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
+        _rec=self._collection.find_one(filter) # read current record
+        _val = _rec[fld_name]
+        logger.debug('   field', fld_name)
 
+        if isinstance(_val, (list, tuple)): # if it's a list
+            _val.extend(newrec[fld_name])
+            _val = list( dict.fromkeys(_val) ) # remove duplicates
+        else:
+            _val = newrec[fld_name]
+
+        # myquery = filter
+        newvalue = { "$set": {fld_name: _val } }
+
+        result=self._collection.update_one(filter, newvalue)
+        logger.debug1('   matched', result.matched_count)
+        logger.debug1('   updated', result.modified_count)
         return result
-    '''
-    '''
+
 
     # https://docs.mongodb.com/manual/reference/operator/query/regex/
     def searchWord(self, search_text):

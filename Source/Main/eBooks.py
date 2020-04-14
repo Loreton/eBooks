@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-04-2020 16.57.02
+# Version ......: 14-04-2020 11.54.48
 #
 
 import sys
@@ -114,7 +114,7 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def load_eBooks(self, dir_path, file_pattern):
+    def load_eBooks(self, dir_path, file_pattern, move_file):
 
         # - read list of files
         files = self._listFiles(dir_path, filetype=file_pattern)
@@ -122,7 +122,7 @@ class LnEBooks:
         # - try to insert each file
         for index, file in enumerate(files, start=1):
             file_path=Path(file)
-            if index > 10: sys.exit(1)
+            if index > 2: sys.exit(1)
             C.yellowH(text='working on file {index:4}: {file_path}'.format(**locals()), end='')
 
             # - read the book
@@ -130,22 +130,28 @@ class LnEBooks:
             C.yellowH(text=' - {book.title}'.format(**locals()))
 
             # - insert book into DBase_collection
-            result = self._ebooks.insert(book, replace=True)
-            if result['record_0'][0] in ('replaced', 'inserted'):
+            result = self._ebooks.insert_one(book, replace=True)
+            # import pdb;pdb.set_trace()
+            if result[0] in ('replaced', 'inserted'):
+                book_id = result[1]
                 target_file='/mnt/k/tmp/{book.author}/{book.title}.epub'.format(**locals())
-                # file_path.moveFile(target_file, replace=False)
+                if move_file:
+                    file_path.moveFile(target_file, replace=False)
 
-                content = self.content2words(' '.join(book.chapters))
-                for word in content:
-                    # rec={
-                    #     'word': word,
-                    #     'ebook': book._id
-                    # }
-                    filter = {'_id': word}
-                    field = {'ebook': book._id}
-                    result = self._Dictionary.updateField(filter, field, create=True)
+                words = self.content2words(' '.join(book.chapters))
+                logger.info('inserting {0} words into dictionary'.format(len(words)))
+                for word in words:
+                    rec={
+                        'word': word,
+                        'ebook': [book_id]
+                    }
+                    filter = {'_id': self._Dictionary.get_id(rec)}
+                    if self._Dictionary._collection.count_documents(filter, limit = 1):
+                        resut = self._Dictionary.updateField(rec, fld_name='ebook')
+                    else:
+                        resut = self._Dictionary.insert_one(rec)
 
-                sys.exit()
+                # sys.exit()
 
 
 
@@ -182,10 +188,13 @@ class LnEBooks:
             word_alfa = [ c for c in word if c.isalpha()]
             word2 = ''.join(word_alfa)
             if not word == word2:
-                print(word, word2)
+                # print(word, word2)
+                pass
+                # logger.debug3('alpha word', [word, word2])
             words.append(word2)
 
-        logger.info("total words (only alpfa)", len(words))
+        logger.info("   Words", words)
+        logger.info("   total", len(words))
         return words
 
 
@@ -291,7 +300,7 @@ def openDB(db_name):
 
 
 
-def main(gVars, dir, file_pattern='.epub'):
+def main(gVars, dir, file_pattern='.epub', move_file=False):
     global gv, logger, C
     gv     = gVars
     C      = gVars.Color
@@ -300,7 +309,7 @@ def main(gVars, dir, file_pattern='.epub'):
     Ln          = gv.Ln
     # openDB(db_name='eBooks')
     ebooks=LnEBooks(db_name='eBooks')
-    ebooks.load_eBooks(dir, file_pattern)
+    ebooks.load_eBooks(dir, file_pattern, move_file)
 
 
 

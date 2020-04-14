@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-04-2020 11.43.19
+# Version ......: 14-04-2020 10.05.00
 #
 # #############################################
 
@@ -29,6 +29,7 @@ def parseInput():
     parser_load = subparsers.add_parser ("load", help = "create the orbix environment")
     parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')
     parser_load.add_argument('--dir', help='Directory containing ebooks to be loaded', required=False, default=None)
+    parser_load.add_argument('--move-file', help='move file to destination as in config file', action='store_true')
 
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():
@@ -50,9 +51,9 @@ def parseInput():
                                     default=['*'],
                                     nargs='*',
                                     help="""attivazione log.
-        E' anche possibile indicare una o più stringhe
+        E' anche possibile indicare una o più stringhe separate da BLANK
         per identificare le funzioni che si vogliono filtrare nel log.
-        Possono essere anche porzioni di funcName separate da ' ' Es: --log-module pippo pluto ciao
+        Possono essere anche porzioni di funcName. Es: --log-module pippo pluto ciao
         """)
 
     # args = vars(parser.parse_args())

@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-04-2020 13.50.43
+# Version ......: 14-04-2020 10.08.11
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     elif 'load' in inpArgs:
         input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input
-        eBooks_main(gv, input_dir)
+        eBooks_main(gv, input_dir, file_pattern='.epub', move_file=inpArgs.move_file)
         '''
         for epub_path in config.directories.epub_input:
 
