@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 11.54.48
+# Version ......: 14-04-2020 16.12.08
 #
 
 import sys
@@ -17,24 +17,20 @@ from ebooklib import epub
 from ebooklib.utils import parse_html_string
 import ebooklib.utils as epubUtil
 from bs4 import BeautifulSoup
-import nltk
+# import nltk
 # nltk.download('punkt')
 
 from LnMongoCollection import MongoCollection
 # from Source
 
 class LnEBooks:
-    DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
         # ***********************************************
         # ***********************************************
-    def __init__(self, db_name):
-        # global logger
-        # logger = myLogger
-        # self._db_name = db_name
-        # self._collection_name = collection_name
-        # self._client  = self._dbConnect(db_name, server_name, server_port)
-        # self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
-        # self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
+    def __init__(self, gVars, db_name):
+        global gv, logger, C
+        gv     = gVars
+        C      = gVars.Color
+        logger = gVars.lnLogger
 
         # - creazione DB oer contenere libri
         args={
@@ -86,6 +82,7 @@ class LnEBooks:
         _description = book.get_metadata('DC', 'description')
         _date        = book.get_metadata('DC', 'date')
         _identifier  = book.get_metadata('DC', 'identifier')
+
         # _coverage    = book.get_metadata('DC', 'coverage')
 
         this_book.description = _description[0][0]           if _description else ''
@@ -95,18 +92,15 @@ class LnEBooks:
         this_book.date        = _date[0][0].split('T', 1)[0] if _date else ""
         this_book.chapters    = []
         # this_book['coverage']    = _coverage
-
+        this_book.title = this_book.title.replace('(Italian Edition)', '').replace('#', '')
         # log without content field (to reduce logging data)
         logger.info('book data', this_book)
 
+        # - get all contents
         chapters = self._epub2text(file)
         for chap in chapters:
             this_book.chapters.append(chap)
 
-
-
-        # write_book(this_book)
-        # import sys;sys.exit(1)
         return this_book
 
 
@@ -114,29 +108,29 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def load_eBooks(self, dir_path, file_pattern, move_file):
+    def load_eBooks(self, dir_path, file_pattern, target_dir=None):
 
         # - read list of files
         files = self._listFiles(dir_path, filetype=file_pattern)
 
         # - try to insert each file
         for index, file in enumerate(files, start=1):
-            file_path=Path(file)
-            if index > 2: sys.exit(1)
-            C.yellowH(text='working on file {index:4}: {file_path}'.format(**locals()), end='')
+            epub_file=Path(file)
+            # if not index in range(3,4): continue
+            C.yellowH(text='working on file {index:4}: {epub_file}'.format(**locals()), end='')
 
             # - read the book
-            book = self._readEbook(file=file_path._str)
+            book = self._readEbook(file=epub_file._str)
             C.yellowH(text=' - {book.title}'.format(**locals()))
 
             # - insert book into DBase_collection
-            result = self._ebooks.insert_one(book, replace=True)
-            # import pdb;pdb.set_trace()
+            result = self._ebooks.insert_one(book, replace=False)
             if result[0] in ('replaced', 'inserted'):
                 book_id = result[1]
-                target_file='/mnt/k/tmp/{book.author}/{book.title}.epub'.format(**locals())
-                if move_file:
-                    file_path.moveFile(target_file, replace=False)
+
+                if target_dir:
+                    target_file='{target_dir}/{book.title}.epub'.format(**locals())
+                    epub_file.moveFile(target_file, replace=False)
 
                 words = self.content2words(' '.join(book.chapters))
                 logger.info('inserting {0} words into dictionary'.format(len(words)))
@@ -151,9 +145,25 @@ class LnEBooks:
                     else:
                         resut = self._Dictionary.insert_one(rec)
 
-                # sys.exit()
 
 
+
+
+    ####################################################
+    # -
+    ####################################################
+    def search(self, regex, field_name='word', ignore_case=True):
+        result = self._Dictionary.search(field_name=field_name, regex=regex, ignore_case=ignore_case)
+        # - analyze single eBook
+        ebook_list = []
+        for x in result:
+            # print(x['_id'])
+            # print(x['ebook'])
+            ebook_list.extend(x['ebook'])
+
+        ebook_list = list( dict.fromkeys(ebook_list) ) # remove duplicates
+        logger.console("lista", ebook_list)
+        return ebook_list
 
 
     ####################################################
@@ -265,38 +275,7 @@ class LnEBooks:
         return files
 
 
-####################################################
-# -
-####################################################
-def openDB(db_name):
-    # - initialize Mongo
-    args={
-        'db_name':          db_name,
-        'collection_name':  'epub',
-        'server_name':      '127.0.0.1',
-        'server_port':      '27017',
-        'myLogger':         logger,
-    }
 
-    eBooks = MongoCollection(**args)
-
-    args['collection_name'] = 'Dictionary'
-    Dictionary = MongoCollection(**args)
-
-
-
-    eBooks.setFields(['title',
-                            'author',
-                            "date",
-                            "description",
-                            "identifier",
-                            'chapters',
-                            ])
-
-    eBooks.setIdFields(['author', 'title'])
-    # eBooks_coll=eBooks.collection
-    Dictionary.setFields(['word', 'ebook'])
-    Dictionary.setIdFields(['word'])
 
 
 
@@ -307,9 +286,8 @@ def main(gVars, dir, file_pattern='.epub', move_file=False):
     logger = gVars.lnLogger
 
     Ln          = gv.Ln
-    # openDB(db_name='eBooks')
-    ebooks=LnEBooks(db_name='eBooks')
-    ebooks.load_eBooks(dir, file_pattern, move_file)
+    # ebooks=LnEBooks(db_name='eBooks')
+    # ebooks.load_eBooks(dir, file_pattern, move_file)
 
 
 

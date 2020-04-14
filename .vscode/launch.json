@@ -16,8 +16,8 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "search",
-                "--field=content",
-                "--patt=ospiti",
+                "--field=word",
+                "--text=attese",
                 // "--verbose",
             ],
             "cwd": "${workspaceRoot}",

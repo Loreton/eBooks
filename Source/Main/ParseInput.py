@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 10.05.00
+# Version ......: 14-04-2020 16.14.23
 #
 # #############################################
 
@@ -24,7 +24,7 @@ def parseInput():
     subparsers = parser.add_subparsers(title="actions")
     parser_search = subparsers.add_parser ("search", help = "search books")
     parser_search.add_argument('--fieldname', help='specify field where text must be searched', required=True, default=None)
-    parser_search.add_argument('--pattern', help='specify text to be searched (regex syntax)', required=True, default=None)
+    parser_search.add_argument('--text-to-search', help='specify text to be searched (regex syntax)', required=True, default=None)
 
     parser_load = subparsers.add_parser ("load", help = "create the orbix environment")
     parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')

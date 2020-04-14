@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 10.08.11
+# Version ......: 14-04-2020 16.16.12
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -11,14 +11,19 @@ from pathlib import Path
 
 import Source as Ln
 
-from eBooks import main as eBooks_main
+# from eBooks import main as eBooks_main
+from eBooks import LnEBooks
 
 TAB1 = '    '
 
 
 
 
-
+def search_string(substring, data):
+    import re
+    # All occurrences of substring in string
+    res = [i.start() for i in re.finditer(substring, data)]
+    return res
 
 
 
@@ -99,8 +104,35 @@ if __name__ == '__main__':
     # Dictionary = MongoDB(db=eBooks_DB, collection_name='dictionary')
     '''
 
+    myDB=LnEBooks(gv, db_name='eBooks')
     if 'search' in inpArgs:
-        pass
+        strToSearch = inpArgs.text_to_search
+        ebook_list = myDB.search(regex=strToSearch, field_name=inpArgs.fieldname, ignore_case=True)
+
+        ebook_coll = myDB._ebooks.collection
+        for book_id in ebook_list:
+            myquery = { "_id": book_id }
+            mydoc = ebook_coll.find(myquery)
+            for x in mydoc:
+                print(x['author'], '-', x['title'])
+                STR_FOUND=False
+                for chap in x['chapters']:
+                    occurrencies = search_string(strToSearch, chap)
+                    if occurrencies:
+                        STR_FOUND=True
+                        _before=60
+                        _after=100
+                        for pos in occurrencies:
+                            lun=len(strToSearch)
+                            C.cyan(text=chap[pos-_before:pos], end='')
+                            C.cyanH(text=strToSearch, end='')
+                            C.cyan(text=chap[pos+lun:pos+lun+_after])
+                            print()
+
+                if STR_FOUND:
+                    Ln.prompt('continue....')
+
+
         '''
         mycol=eBooks_coll.collection
 
@@ -125,40 +157,14 @@ if __name__ == '__main__':
 
 
     elif 'load' in inpArgs:
-        input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input
-        eBooks_main(gv, input_dir, file_pattern='.epub', move_file=inpArgs.move_file)
-        '''
-        for epub_path in config.directories.epub_input:
+        input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input_dir
+        target_dir=config.directories.epub_target_dir if inpArgs.move_file else None
 
-            # - read list of files
-            files = Prj.ListFiles(epub_path, filetype=inpArgs.extension)
+        myDB.load_eBooks(input_dir, file_pattern='.epub', target_dir=target_dir)
 
-            # - try to insert each file
-            for index, file in enumerate(files, start=1):
-                file_path=Path(file)
-                if index > 10: sys.exit(1)
-                C.yellowH(text='working on file {index:4}: {file_path}'.format(**locals()), end='')
 
-                # - read the book
-                book = Process.eBookLib(gVars=gv, file=file_path._str)
-                C.yellowH(text=' - {book.title}'.format(**locals()))
+        # eBooks_main(gv, input_dir, file_pattern='.epub', move_file=inpArgs.move_file)
 
-                # - insert book into DBase_collection
-                result = eBooks.insert(book, replace=True)
-                if result['record_0'][0] in ('replaced', 'inserted'):
-                    target_file='/mnt/k/tmp/{book.author}/{book.title}.epub'.format(**locals())
-                    file_path.moveFile(target_file, replace=False)
-
-                    content = Process.cleanContent(' '.join(book.chapters))
-                    for word in content:
-                        rec={
-                            'word': word,
-                            'ebook': book._id
-                        }
-                        result = Dictionary.updateField(rec, create=True)
-        '''
-
-    # sys.exit()
 
 
 
