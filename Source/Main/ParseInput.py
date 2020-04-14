@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 16.14.23
+# Version ......: 14-04-2020 16.40.34
 #
 # #############################################
 
@@ -30,6 +30,7 @@ def parseInput():
     parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')
     parser_load.add_argument('--dir', help='Directory containing ebooks to be loaded', required=False, default=None)
     parser_load.add_argument('--move-file', help='move file to destination as in config file', action='store_true')
+    parser_load.add_argument('--create-dictionary', help='create dictionary collection', action='store_true')
 
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():

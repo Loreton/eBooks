@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 12.02.37
+# Version ......: 14-04-2020 17.55.29
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -197,7 +197,7 @@ class MongoCollection:
                 if result.modified_count == 1:
                     status = ['replaced', my_rec['_id'] ]
             else:
-                status = ['already exists. Not replaced.', my_rec['_id'] ]
+                status = ['exists. Not replaced.', my_rec['_id'] ]
 
         else:
             result = self._collection.insert_one(my_rec)

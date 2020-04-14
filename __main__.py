@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 16.16.12
+# Version ......: 14-04-2020 16.38.53
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -73,6 +73,7 @@ if __name__ == '__main__':
     gv.Ln       = Ln
     gv.lnLogger = lnLogger
     gv.Color    = C
+    gv.args    = inpArgs
 
 
     '''

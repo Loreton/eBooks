@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 16.12.08
+# Version ......: 14-04-2020 17.59.20
 #
 
 import sys
@@ -27,13 +27,15 @@ class LnEBooks:
         # ***********************************************
         # ***********************************************
     def __init__(self, gVars, db_name):
-        global gv, logger, C
+        global gv, logger, C, Ln, inp_args
         gv     = gVars
         C      = gVars.Color
         logger = gVars.lnLogger
+        Ln     = gVars.Ln
+        inp_args   = gVars.args
 
         # - creazione DB oer contenere libri
-        args={
+        _args={
             'db_name':          db_name,
             'collection_name':  'epub',
             'server_name':      '127.0.0.1',
@@ -41,7 +43,7 @@ class LnEBooks:
             'myLogger':         logger,
         }
 
-        self._ebooks = MongoCollection(**args)
+        self._ebooks = MongoCollection(**_args)
         self._ebooks.setFields(['title',
                                 'author',
                                 "date",
@@ -56,8 +58,8 @@ class LnEBooks:
 
 
         # - creazione DB oer contenere dizionario di parole
-        args['collection_name'] = 'Dictionary'
-        self._Dictionary = MongoCollection(**args)
+        _args['collection_name'] = 'Dictionary'
+        self._Dictionary = MongoCollection(**_args)
         self._Dictionary.setFields(['word', 'ebook'])
         self._Dictionary.setIdFields(['word'])
 
@@ -73,7 +75,9 @@ class LnEBooks:
             book = epub.read_epub(file)
         except Exception as why:
             C.error(text=str(why))
-            Ln.prompt('continue....')
+            C.yellowH(text=file, tab=8)
+            Path(file).rename(file + '.err.zip')
+            # Ln.prompt('continue....')
             return this_book
 
 
@@ -92,7 +96,7 @@ class LnEBooks:
         this_book.date        = _date[0][0].split('T', 1)[0] if _date else ""
         this_book.chapters    = []
         # this_book['coverage']    = _coverage
-        this_book.title = this_book.title.replace('(Italian Edition)', '').replace('#', '')
+        this_book.title = this_book.title.replace('(Italian Edition)', '').replace('#', '').strip()
         # log without content field (to reduce logging data)
         logger.info('book data', this_book)
 
@@ -112,39 +116,62 @@ class LnEBooks:
 
         # - read list of files
         files = self._listFiles(dir_path, filetype=file_pattern)
+        nFiles = len(files)
 
         # - try to insert each file
         for index, file in enumerate(files, start=1):
             epub_file=Path(file)
+            _dir = epub_file.parent
             # if not index in range(3,4): continue
-            C.yellowH(text='working on file {index:4}: {epub_file}'.format(**locals()), end='')
+            print()
+            C.yellowH(text='''working on file {index:3}/{nFiles:03}:
+                dir:   {epub_file.parent}'''.format(**locals()), end='')
 
             # - read the book
-            book = self._readEbook(file=epub_file._str)
-            C.yellowH(text=' - {book.title}'.format(**locals()))
+            book = self._readEbook(file=str(epub_file))
+            if not book: continue
+            C.yellowH(text='''
+                fname: {book.title}'''.format(**locals()))
 
             # - insert book into DBase_collection
-            result = self._ebooks.insert_one(book, replace=False)
+            try:
+                result = self._ebooks.insert_one(book, replace=False)
+            except Exception as why:
+                C.error(text=str(why))
+                C.yellowH(text=epub_file, tab=8)
+                epub_file.rename(str(epub_file) + '.err.zip')
+                # Ln.prompt('continue....')
+                continue
+
             if result[0] in ('replaced', 'inserted'):
                 book_id = result[1]
 
                 if target_dir:
                     target_file='{target_dir}/{book.title}.epub'.format(**locals())
-                    epub_file.moveFile(target_file, replace=False)
+                    C.yellowH(text='''                  ... moving to:
+                dir:   {target_dir}
+                fname: {book.title}'''.format(**locals()))
 
-                words = self.content2words(' '.join(book.chapters))
-                logger.info('inserting {0} words into dictionary'.format(len(words)))
-                for word in words:
-                    rec={
-                        'word': word,
-                        'ebook': [book_id]
-                    }
-                    filter = {'_id': self._Dictionary.get_id(rec)}
-                    if self._Dictionary._collection.count_documents(filter, limit = 1):
-                        resut = self._Dictionary.updateField(rec, fld_name='ebook')
-                    else:
-                        resut = self._Dictionary.insert_one(rec)
+                    if not epub_file.moveFile(target_file, replace=False):
+                        epub_file.rename(str(epub_file) + '.not_moved')
 
+
+                if inp_args.create_dictionary:
+                    words = self.content2words(' '.join(book.chapters))
+                    logger.info('inserting {0} words into dictionary'.format(len(words)))
+                    for word in words:
+                        rec={
+                            'word': word,
+                            'ebook': [book_id]
+                        }
+                        filter = {'_id': self._Dictionary.get_id(rec)}
+                        if self._Dictionary._collection.count_documents(filter, limit = 1):
+                            result = self._Dictionary.updateField(rec, fld_name='ebook')
+                        else:
+                            result = self._Dictionary.insert_one(rec)
+
+            elif result[0] in ('exists'):
+                epub_file.rename(str(epub_file) + '.exists')
 
 
 
@@ -284,6 +311,7 @@ def main(gVars, dir, file_pattern='.epub', move_file=False):
     gv     = gVars
     C      = gVars.Color
     logger = gVars.lnLogger
+    args = gVars.args
 
     Ln          = gv.Ln
     # ebooks=LnEBooks(db_name='eBooks')
