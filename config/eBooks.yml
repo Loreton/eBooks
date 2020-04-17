@@ -8,11 +8,12 @@ Main:
 # -             eBook directories
 #########################################################
 directories:
-    epub_input_dir: /mnt/k/Download/ePub_work_1
+    epub_input_dir:
+        /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/Ln_to_be_processed
         # - /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre Portable/Ln_Library/LoretoBooks/Connelly, Michael/Debito di sangue (9)
         # - /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre Portable/Ln_Library/LoretoBooks
         # - /mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/eBooks_for_test
         # - /mnt/k/Download/ePub_work
         # - /mnt/k/Download/ePub/err
     epub_target_dir:
-        /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre Portable/Ln_Library/Ln_to_be_processed
+      /mnt/k/Download/ePub_work

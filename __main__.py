@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 16.38.53
+# Version ......: 17-04-2020 14.34.35
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -110,7 +110,7 @@ if __name__ == '__main__':
         strToSearch = inpArgs.text_to_search
         ebook_list = myDB.search(regex=strToSearch, field_name=inpArgs.fieldname, ignore_case=True)
 
-        ebook_coll = myDB._ebooks.collection
+        ebook_coll = myDB._ePubs.collection
         for book_id in ebook_list:
             myquery = { "_id": book_id }
             mydoc = ebook_coll.find(myquery)
@@ -134,37 +134,17 @@ if __name__ == '__main__':
                     Ln.prompt('continue....')
 
 
-        '''
-        mycol=eBooks_coll.collection
-
-        print()
-        print('Search word:')
-        mydoc = eBooks_coll.search(field_name='title', regex='chitarra', ignore_case=True)
-        for x in mydoc:
-            print(x['_id'])
-
-        print()
-        print('Search word:')
-        mydoc = eBooks_coll.search(field_name='description', regex='impaurita', ignore_case=True)
-        for x in mydoc:
-            print(x['_id'])
-
-        print()
-        print('Search word:')
-        mydoc = eBooks_coll.search(field_name=inpArgs.fieldname, regex=inpArgs.pattern, ignore_case=True)
-        for x in mydoc:
-            print(x['_id'])
-        '''
-
-
     elif 'load' in inpArgs:
         input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input_dir
         target_dir=config.directories.epub_target_dir if inpArgs.move_file else None
 
         myDB.load_eBooks(input_dir, file_pattern='.epub', target_dir=target_dir)
 
+    elif 'dictionary' in inpArgs:
+        if inpArgs.optimize:
+            myDB.optimize_dictionary()
 
-        # eBooks_main(gv, input_dir, file_pattern='.epub', move_file=inpArgs.move_file)
+
 
 
 

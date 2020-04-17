@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 14-04-2020 17.55.29
+# Version ......: 17-04-2020 17.02.41
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -86,10 +86,18 @@ class MongoCollection:
 
 
     def setFields(self, fields):
-        self._struct_fields = fields
+        self._fields = fields
 
     def setIdFields(self, fields):
         self._id_fields = fields
+
+    @property
+    def fields(self):
+        return self._fields
+
+    @property
+    def idFields(self, fields):
+        return self._id_fields
 
     # --- check if record exists
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
@@ -115,7 +123,7 @@ class MongoCollection:
     def checkFields(self, record):
         assert isinstance(record, (dict))
         _keys = record.keys()
-        for _key in self._struct_fields:
+        for _key in self._fields:
             if _key not in _keys:
                 logger.info("{_key} is missing. Assigning ''".format(**locals()))
                 record[_key] = ''
@@ -127,10 +135,10 @@ class MongoCollection:
 
         # - check for extra fields
         for _key in record.keys():
-            if not _key in self._struct_fields:
+            if not _key in self._fields:
                 print("     {_key} field is not included in the struct_fields".format(**locals()))
                 print('     structure fields:')
-                for index, field in enumerate(sorted(self._struct_fields), start=1):
+                for index, field in enumerate(sorted(self._fields), start=1):
                     print('     {index} - {field}'.format(**locals()))
                 print()
                 print('     record  fields:')
@@ -159,6 +167,13 @@ class MongoCollection:
     def get_id_filter(self, rec):
         return {'_id': self.get_id(rec)}
 
+    ####################################################
+    # -
+    ####################################################
+    def get_record(self, filter):
+        return self._collection.find_one(filter) # get current record
+
+
 
 
 
@@ -184,6 +199,12 @@ class MongoCollection:
     # -
     ####################################################
     def insert_one(self, record, replace=False):
+        """ insert document record into collection
+            return:
+                ['replaced', _filter ]
+                ['exists', _filter ]
+                ['inserted', _filter]
+        """
         assert isinstance(record, (dict))
         record = record.toDict() if isinstance(record, DotMap) else record
 
@@ -195,13 +216,14 @@ class MongoCollection:
             if replace:
                 result = self._collection.replace_one(_filter, my_rec)
                 if result.modified_count == 1:
-                    status = ['replaced', my_rec['_id'] ]
+                    # status = ['replaced', my_rec['_id'] ]
+                    status = ['replaced', _filter ]
             else:
-                status = ['exists. Not replaced.', my_rec['_id'] ]
+                status = ['exists', _filter ]
 
         else:
             result = self._collection.insert_one(my_rec)
-            status  = ['inserted', result.inserted_id]
+            status  = ['inserted', _filter]
 
         ret_value = status
 
@@ -213,31 +235,39 @@ class MongoCollection:
     #   newvalues = { "$set": { "address": "Canyon 123" } }
     #   mycol.update_one(myquery, newvalues)
     # ################################################
-    def updateField(self, newrec, fld_name):
-        assert isinstance(newrec, (dict))
-        assert isinstance(fld_name, (str))
+    def updateField(self, filter, fld):
+        # assert isinstance(newrec, (dict))
+        assert isinstance(fld, (dict))
+        assert isinstance(filter, (dict))
+        # tgt_col = coll if coll else self._collection
 
-        filter = {'_id': self.get_id(newrec)}
+        # filter = {'_id': book_id}
         logger.info('updating document', filter)
+        logger.debug('   field', fld)
+        (fld_name, fld_val), = fld.items()
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
-        _rec=self._collection.find_one(filter) # read current record
-        _val = _rec[fld_name]
-        logger.debug('   field', fld_name)
-
-        if isinstance(_val, (list, tuple)): # if it's a list
-            _val.extend(newrec[fld_name])
+        _rec=self._collection.find_one(filter) # get current record
+        cur_value = _rec[fld_name]
+        if isinstance(cur_value, (list, tuple)): # if it's a list
+            _val = cur_value[:]
+            _val.extend(fld_val)
             _val = list( dict.fromkeys(_val) ) # remove duplicates
         else:
-            _val = newrec[fld_name]
+            _val = fld_val
 
-        # myquery = filter
-        newvalue = { "$set": {fld_name: _val } }
+        if _val == cur_value:
+            result = 0
+            logger.debug1('   field already updated')
 
-        result=self._collection.update_one(filter, newvalue)
-        logger.debug1('   matched', result.matched_count)
-        logger.debug1('   updated', result.modified_count)
+        else:
+            newvalue = { "$set": {fld_name: _val } }
+            result=self._collection.update_one(filter, newvalue)
+            logger.debug1('   matched', result.matched_count)
+            logger.debug1('   updated', result.modified_count)
+
         return result
+
 
 
     # https://docs.mongodb.com/manual/reference/operator/query/regex/
