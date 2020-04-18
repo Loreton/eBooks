@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 17-04-2020 17.31.59
+# Version ......: 18-04-2020 17.22.36
 #
 
 import sys
@@ -58,29 +58,18 @@ class LnEBooks:
         self._Dictionary.setFields(['word', 'ebook'])
         self._Dictionary.setIdFields(['word'])
 
+        # - contiene la lista dei libri indicizzati
+        self._Indexed = MongoCollection(collection_name='Indexed', **_args)
+        self._Indexed.setFields(['author', 'title'])
+        self._Indexed.setIdFields(['author', 'title'])
+
         # solo per merge
         # self._wk_Dictionary = MongoCollection(collection_name='wk_Dictionary', **_args)
         # self._wk_Dictionary.setFields(['word', 'ebook'])
         # self._wk_Dictionary.setIdFields(['word'])
 
 
-    ####################################################
-    # -
-    ####################################################
-    def _open_book(self, file):
-        book = None
-        logger.info('opening ebook', file)
-        try:
-            book = epub.read_epub(file)
-        except Exception as why:
-            C.yellowH(text="Error reading file: {file}".format(**locals()), tab=8)
-            C.error(text=str(why), tab=12)
-            target_file=file + '.err.zip'
-            logger.error('renaming file: {file} to {target_file}'.format(**locals()))
-            Path(file).rename(target_file)
-
-        return book
-
+    '''
     ####################################################
     # -
     ####################################################
@@ -107,6 +96,7 @@ class LnEBooks:
 
         return book_data
 
+    '''
 
     ####################################################
     # -
@@ -127,6 +117,23 @@ class LnEBooks:
         return text_chapters
 
 
+    ####################################################
+    # -
+    ####################################################
+    def _open_book(self, file):
+        hBook = None
+        logger.info('opening ebook', file)
+        try:
+            hBook = epub.read_epub(file)
+        except Exception as why:
+            C.yellowH(text="Error reading file: {file}".format(**locals()), tab=8)
+            C.error(text=str(why), tab=12)
+            target_file=file + '.err.zip'
+            logger.error('renaming file: {file} to {target_file}'.format(**locals()))
+            Path(file).rename(target_file)
+
+        return hBook
+
 
 
 
@@ -134,11 +141,29 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def _readEbook(self, file):
+    def _readEbook(self, file, IGNORE_UNKNOWN=True):
+        ''' IGNORE_UNKNOWN:
+                ignora Libri che non hanno il  titolo dentro
+        '''
         hBook = self._open_book(file)
 
+        book_data = DotMap(_dynamic=False)
         try:
-            _data = self._readMetadata(hBook)
+            _title       = hBook.get_metadata('DC', 'title')
+            _creator     = hBook.get_metadata('DC', 'creator')
+            _description = hBook.get_metadata('DC', 'description')
+            _date        = hBook.get_metadata('DC', 'date')
+            _identifier  = hBook.get_metadata('DC', 'identifier')
+            # _coverage    = book.get_metadata('DC', 'coverage')
+
+            book_data.description = _description[0][0]           if _description else ''
+            book_data.identifier  = _identifier[0][0]            if _identifier else 'null'
+            book_data.title       = _title[0][0]                 if _title else ''
+            book_data.author      = _creator[0][0]               if _creator else ""
+            book_data.date        = _date[0][0].split('T', 1)[0] if _date else ""
+            book_data.indexed     = False
+            book_data.chapters    = []
+
         except Exception as why:
             C.error(text=str(why), tab=12)
             target_file=file + '.err.zip'
@@ -146,11 +171,26 @@ class LnEBooks:
             Path(file).rename(target_file)
             return {}
 
-        if not _data.title:
-            _data.title = Path(file).stem
-        _data.chapters = self._readContent(hBook)
 
-        return _data
+        if not book_data.title:
+            if IGNORE_UNKNOWN:
+                book_data={}
+            else:
+                book_data.title = Path(file).stem
+                if not book_data.author:
+                    book_data.author = 'Unknown'
+        else:
+            book_data.title = book_data.title.replace('(Italian Edition)', '').replace('#', '').strip()
+            ''' per fare il reverse del nome dell'autore, ma non conviene
+            _a=book_data.author.split()
+            _a.reverse
+            book_data.author = '_'.join(_a)
+            '''
+
+        logger.info('book data', book_data)
+
+        return book_data
+
 
 
 
@@ -189,7 +229,7 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def index_to_dictionary(self, book, book_id):
+    def add_to_dictionary(self, book, book_id):
         # query = {'_id': {"$regex": 'isbn', "$options" : 'i'}
         words = self.content2words(' '.join(book.chapters))
         logger.info('inserting {0} words into dictionary'.format(len(words)))
@@ -213,43 +253,62 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def load_eBooks(self, dir_path, file_pattern, target_dir=None):
+    def update_field_many(self):
+        result = self._ePubs.updateField_many(
+                {'indexed': False},
+                {'$set': {'indexed': False}}
+            )
+        print(result.matched_count)
+        print(result.modified_count)
+        sys.exit()
 
+    ####################################################
+    # -
+    ####################################################
+    def load_eBooks(self, dir_path, file_pattern, target_dir=None):
         # - read list of files
         files = self._listFiles(dir_path, filetype=file_pattern)
         nFiles = len(files)
 
         # - try to insert each file
-        # import pdb;pdb.set_trace()
-        for index, file in enumerate(files, start=1):
+        for index, file in enumerate(sorted(files), start=1):
             epub_file=Path(file)
             _dir = epub_file.parent
             if inp_args.max_books>0 and index > inp_args.max_books:
                 continue
-            print()
-            C.yellowH(text='''working on file {index:3}/{nFiles:03}:
-                dir:   {epub_file.parent}'''.format(**locals()))
-
-            # - read the book
             book = self._readEbook(file=epub_file.toStr())
-            if not book: continue
-            C.yellowH(text='fname: {book.title}'.format(**locals()), tab=16)
+            if not book: continue # book not valid
 
-            # - insert book into eBooks_collection
-            try:
-                _status, _filter = self._ePubs.insert_one(book, replace=False)
-                (book_id_fld, book_id_val), = _filter.items()
-                # import pdb;pdb.set_trace()
-            except Exception as why:
-                C.error(text=str(why))
-                C.yellowH(text=epub_file, tab=8)
-                epub_file.rename(str(epub_file) + '.err.zip')
-                continue
+            print()
+            C.yellowH(text='[{index:6}] - {book.title} - [{book.author}]'.format(**locals()), tab=16)
 
-            # - if document exists get indexed_flag from existing document
-            if _status == 'exists':
-                _rec=self._ePubs.get_record(_filter) # get current record
-                book.indexed = _rec['indexed']
+            # - check if exists
+            _book = self._ePubs.exists(rec=book)
+
+            if _book.exists:
+                _inx = self._Indexed.exists(rec=book)
+                if not _inx.exists == _book.data['indexed']:
+                    print('Should not occur')
+                    Ln.prompt('continue....')
+
+                C.yellowH(text='already catalogued - indexed: {0}'.format(_book.data['indexed']), tab=16)
+                # - get current record data
+                _filter = _book.filter
+                book.indexed = _book.data['indexed']
+                book.chapters = _book.data['chapters']
+
+            else:   # - insert book into eBooks_collection
+                book.chapters = self._readContent(filename=epub_file.toStr())
+                try:
+                    _status, _filter = self._ePubs.insert_one(book, replace=False)
+                except Exception as why:
+                    C.error(text=str(why))
+                    C.yellowH(text=epub_file, tab=8)
+                    epub_file.rename(str(epub_file) + '.err.zip')
+                    continue
+
+            (book_id_fldname, book_id), = _filter.items()
+            # continue
 
             if target_dir:
                 target_file='{target_dir}/{book.title}.epub'.format(**locals())
@@ -263,12 +322,9 @@ class LnEBooks:
 
             if inp_args.dictionary and not book.indexed:
                 C.yellowH(text='... updating dictionary', tab=16)
-                self.index_to_dictionary(book, book_id_val)
+                self.add_to_dictionary(book, book_id)
                 result = self._ePubs.updateField(filter=_filter, fld={'indexed': True})
-
-
-            # elif result[0] in ('exists'):
-            #     epub_file.rename(str(epub_file) + '.exists')
+                result = self._Indexed.insert_one({'author': book.author, 'title': book.title})
 
 
 
@@ -276,27 +332,52 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def search(self, regex, field_name='word', ignore_case=True):
+    def dictionary_search(self, words, field_name='word', ignore_case=True):
         ebook_list = []
-        if field_name in self._Dictionary.fields:
+        words_result=[]
+        # - potrebbero essere opiù parole che dovranno andare in AND
+        for index, regex in enumerated(words):
             result = self._Dictionary.search(field_name=field_name, regex=regex, ignore_case=ignore_case)
             for x in result:
                 ebook_list.extend(x['ebook'])
+
             ebook_list = list( dict.fromkeys(ebook_list) ) # remove duplicates
 
-        elif field_name in self._ePubs.fields:
+
+        logger.console("lista", ebook_list)
+        return ebook_list
+
+    ####################################################
+    # -
+    ####################################################
+    def ePubs_search(self, words, field_name='word', ignore_case=True):
+        ebook_list = []
+        for regex in words:
             result = self._ePubs.search(field_name=field_name, regex=regex, ignore_case=ignore_case)
             for x in result:
                 # ebook_list.append(x['_id'])
                 print(x['author'], ' - ', x['title'] )
             return []
 
+        logger.console("lista", ebook_list)
+        return ebook_list
+
+    ####################################################
+    # -
+    ####################################################
+    def search(self, words, field_name='word', ignore_case=True):
+        ebook_list = []
+        if field_name in self._Dictionary.fields:
+            result = self.dictionary_search(field_name=field_name, words=regex, ignore_case=ignore_case)
+
+        elif field_name in self._ePubs.fields:
+            result = self.ePubs_search(field_name=field_name, words=regex, ignore_case=ignore_case)
+
         else:
             print('Field: {field_name} NOT found'.format(**locals()))
             return []
 
-        logger.console("lista", ebook_list)
-        return ebook_list
+        return 0
 
 
     ####################################################

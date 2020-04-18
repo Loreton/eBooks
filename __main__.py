@@ -2,12 +2,13 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 17-04-2020 14.34.35
+# Version ......: 18-04-2020 13.17.15
 #
 import sys; sys.dont_write_bytecode = True
 import os
 from dotmap import DotMap
 from pathlib import Path
+import pdb
 
 import Source as Ln
 
@@ -106,7 +107,15 @@ if __name__ == '__main__':
     '''
 
     myDB=LnEBooks(gv, db_name='eBooks')
-    if 'search' in inpArgs:
+    if 'update_fieldx' in inpArgs:
+        result = myDB.update_field_many( )
+
+    elif 'search' in inpArgs:
+        # pdb.set_trace()
+        # for substr in inpArgs.words:
+        result = myDB.search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
+
+        '''
         strToSearch = inpArgs.text_to_search
         ebook_list = myDB.search(regex=strToSearch, field_name=inpArgs.fieldname, ignore_case=True)
 
@@ -132,6 +141,7 @@ if __name__ == '__main__':
 
                 if STR_FOUND:
                     Ln.prompt('continue....')
+        '''
 
 
     elif 'load' in inpArgs:

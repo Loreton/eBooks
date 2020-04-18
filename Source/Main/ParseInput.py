@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 17-04-2020 13.32.42
+# Version ......: 18-04-2020 12.29.49
 #
 # #############################################
 
@@ -24,7 +24,13 @@ def parseInput():
     subparsers = parser.add_subparsers(title="actions")
     parser_search = subparsers.add_parser ("search", help = "search books")
     parser_search.add_argument('--fieldname', help='specify field where text must be searched', required=True, default=None)
-    parser_search.add_argument('--text-to-search', help='specify text to be searched (regex syntax)', required=True, default=None)
+    parser_search.add_argument('--text-to-search', help='specify text to be searched (regex syntax)', required=False, default=None)
+    parser_search.add_argument('--words',
+                                metavar='',
+                                required=True,
+                                default=['*'],
+                                nargs='*',
+                                help="""strings to be searched. BLANK searator""")
 
     parser_load = subparsers.add_parser ("load", help = "create the orbix environment")
     parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')
@@ -36,6 +42,7 @@ def parseInput():
     parser_dictionary = subparsers.add_parser ("dictionary", help = "operate on dictionary")
     parser_dictionary.add_argument('--optimize', help='remove case from words and merge', action='store_true')
 
+    parser_update_field = subparsers.add_parser ("update_field", help = "update specific field")
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():
         # print(name)

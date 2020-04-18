@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 17-04-2020 17.02.41
+# Version ......: 18-04-2020 13.25.06
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -101,10 +101,11 @@ class MongoCollection:
 
     # --- check if record exists
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
-    def exists(self, filter={}, rec={}):
+    def exists(self, rec={}, filter={}):
         assert isinstance(rec, (dict))
         assert isinstance(filter, (dict))
 
+        ret_val=DotMap(_dynamic=False)
         if filter:
             _filter = filter
         else:
@@ -113,11 +114,15 @@ class MongoCollection:
         _exists = self._collection.count_documents(_filter, limit = 1)
         if _exists:
             logger.info('record exists', _filter)
-            # ret_val = _filter
-        # else:
-            # ret_val = None
+            _rec = self.get_record(_filter)
+        else:
+            _rec={}
 
-        return _exists
+        ret_val.filter = _filter
+        ret_val.data = _rec
+        ret_val.exists = True if _exists else False
+
+        return ret_val
 
 
     def checkFields(self, record):
@@ -211,23 +216,35 @@ class MongoCollection:
         ret_value = []
         my_rec = self.checkFields(record)
 
-        _filter = {'_id': my_rec['_id']}
-        if self.exists(filter=_filter):
+        # _filter = {'_id': my_rec['_id']}
+        # _rec = self.exists(filter=_filter)
+        _rec = self.exists(rec=my_rec)
+        if _rec.exists:
             if replace:
-                result = self._collection.replace_one(_filter, my_rec)
+                result = self._collection.replace_one(_rec.filter, my_rec)
                 if result.modified_count == 1:
-                    # status = ['replaced', my_rec['_id'] ]
-                    status = ['replaced', _filter ]
+                    status = ['replaced', _rec.filter ]
             else:
-                status = ['exists', _filter ]
+                status = ['exists', _rec.filter ]
 
         else:
             result = self._collection.insert_one(my_rec)
-            status  = ['inserted', _filter]
+            status  = ['inserted', _rec.filter]
 
         ret_value = status
 
         return ret_value
+
+    # ################################################
+    # - https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.update_one
+    #   myquery = { "address": "Valley 345" }
+    #   newvalues = { "$set": { "address": "Canyon 123" } }
+    #   mycol.update_one(myquery, newvalues)
+    #   db.getCollection('ePubs').update_many({'indexed': true}, {'$inc': {'indexed': false}})
+    # ################################################
+    def updateField_many(self, filter, update):
+        return self._collection.update_many(filter, update)
+
 
     # ################################################
     # - https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.update_one
