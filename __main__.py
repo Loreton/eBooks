@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 18-04-2020 13.17.15
+# Version ......: 19-04-2020 17.49.24
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -35,6 +35,28 @@ def search_string(substring, data):
 ######################################
 if __name__ == '__main__':
     inpArgs          = Ln.parseInput()
+    if 'test' in inpArgs:
+        import textwrap
+        C           = Ln.Color()
+        # pdb.set_trace()
+        _before=100
+        _after=150
+        text='e notti era andato a letto nella stanza degli ospiti con un’erezione che sembrava quella della pubblicità del Viagra, quella che raccomandava ‘ fatti vedere da un dotto'
+        word='ospiti'
+        lun=len(word)
+        pos=text.find(word)
+        _from=pos-_before
+        if _from<0: _from=0
+        print (text)
+        xx = C.yellowH(text=word, get=True)
+        new_text=text.replace(word, xx)
+        print (new_text)
+        tb=textwrap.wrap(new_text, 80, break_long_words=True)
+        for l in tb: print('    ', l)
+
+        sys.exit()
+
+
     fCONSOLE         = inpArgs.log_console
     _data            = Ln.readConfigFile()
     config           = DotMap(_data['content'])
@@ -46,7 +68,7 @@ if __name__ == '__main__':
     # --- setting logger
     log_dir     = os.path.join(script_path, 'log')
     _basename   = os.path.abspath(os.path.join(log_dir,prj_name))
-    log_file    = _basename + '.log'
+    log_file    = _basename + inpArgs.action + '.log'
     lnLogger    = Ln.setLogger(filename=log_file, console=fCONSOLE, debug_level=3, dry_run=not inpArgs.go, log_modules=inpArgs.log_modules, color=Ln.Color() )
     # - STDOUT file if required
     # stdout_file = _basename + '_stdout.log'
@@ -106,6 +128,7 @@ if __name__ == '__main__':
     # Dictionary = MongoDB(db=eBooks_DB, collection_name='dictionary')
     '''
 
+
     myDB=LnEBooks(gv, db_name='eBooks')
     if 'update_fieldx' in inpArgs:
         result = myDB.update_field_many( )
@@ -113,7 +136,7 @@ if __name__ == '__main__':
     elif 'search' in inpArgs:
         # pdb.set_trace()
         # for substr in inpArgs.words:
-        result = myDB.search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
+        result = myDB.main_search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
 
         '''
         strToSearch = inpArgs.text_to_search
@@ -153,6 +176,7 @@ if __name__ == '__main__':
     elif 'dictionary' in inpArgs:
         if inpArgs.optimize:
             myDB.optimize_dictionary()
+
 
 
 

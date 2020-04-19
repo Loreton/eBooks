@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 18-04-2020 12.29.49
+# Version ......: 19-04-2020 17.18.28
 #
 # #############################################
 
@@ -43,6 +43,7 @@ def parseInput():
     parser_dictionary.add_argument('--optimize', help='remove case from words and merge', action='store_true')
 
     parser_update_field = subparsers.add_parser ("update_field", help = "update specific field")
+    parser_test_field = subparsers.add_parser ("test", help = "test something")
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():
         # print(name)
@@ -72,6 +73,10 @@ def parseInput():
     args = parser.parse_args()
     # print (args); sys.exit()
 
+    # - creiamo una entri 'action' con il nome del subparser scelto
+    for name, subp in subparsers.choices.items():
+        if name in args:
+            args.action = name
 
     if args.display_args:
         import json

@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 18-04-2020 17.22.36
+# Version ......: 19-04-2020 17.53.07
 #
 
 import sys
@@ -224,6 +224,7 @@ class LnEBooks:
             else:
                 result = self._wk_Dictionary.insert_one(rec)
 
+        C.white(text='word processed: {index:5}/{nRec}'.format(**locals()), tab=18)
 
 
     ####################################################
@@ -280,7 +281,7 @@ class LnEBooks:
             if not book: continue # book not valid
 
             print()
-            C.yellowH(text='[{index:6}] - {book.title} - [{book.author}]'.format(**locals()), tab=16)
+            C.yellowH(text='[{index:6}/{nFiles:6}] - {book.title} - [{book.author}]'.format(**locals()), tab=4)
 
             # - check if exists
             _book = self._ePubs.exists(rec=book)
@@ -329,28 +330,78 @@ class LnEBooks:
 
 
 
+
+    def search_string(self, substring, data):
+        import re
+        # All occurrences of substring in string
+        res = [i.start() for i in re.finditer(substring, data)]
+        return res
+
     ####################################################
     # -
+    # metodi per mandare in AND più liste
+    #   result = list(set(a) & set(b) & set(c))
+    #   result = list(set(a).intersection(b))
     ####################################################
     def dictionary_search(self, words, field_name='word', ignore_case=True):
-        ebook_list = []
-        words_result=[]
-        # - potrebbero essere opiù parole che dovranno andare in AND
-        for index, regex in enumerated(words):
+        import textwrap
+        _lists = []
+        # words_result=[]
+        # words=['ciao', 'tempo']
+        # - potrebbero essere più parole che dovranno andare in AND
+        for index, regex in enumerate(words):
             result = self._Dictionary.search(field_name=field_name, regex=regex, ignore_case=ignore_case)
+            _list = []
             for x in result:
-                ebook_list.extend(x['ebook'])
+                _list.extend(x['ebook'])
+            _lists.append(list( dict.fromkeys(_list) )) # remove duplicates
 
-            ebook_list = list( dict.fromkeys(ebook_list) ) # remove duplicates
+        # - facciamo l'and tra le varie liste risultate
+        result = _lists[0][:] # copy the first list
+        for l in _lists:
+            result = list(set(result) & set(l))
+
+        result = list( dict.fromkeys(result) ) # remove duplicates
+        logger.console("lista", result)
+
+        nRec = len(result)
+        _before=100
+        _after=150
+        for _id in result:
+            _filter = { "_id": _id }
+            rec = DotMap(self._ePubs.get_record(_filter), _dynamic=False)
+            C.magentaH(text='[{index:6}/{nRec:6}] - {rec.title} - [{rec.author}]'.format(**locals()))
+            STR_FOUND=False
+            for chap in rec['chapters']:
+                for word in words:
+                    colored_word = C.yellowH(text=word, get=True)
+                    occurrencies = self.search_string(word, chap)
+                    if occurrencies:
+                        STR_FOUND=True
+                        for pos in occurrencies:
+                            lun=len(word)
+                            _from=0 if pos-_before<0 else pos-_before
+                            _to=pos+lun+_after
+                            text=chap[_from:_to]
+                            text = ' '.join(text.split()) # remove multiple blanks
+                            new_text=text.replace(word, colored_word)
+                            tb=textwrap.wrap(new_text, 80, break_long_words=True)
+                            for l in tb:
+                                print('    ', l)
+                            print()
+
+            if STR_FOUND:
+                Ln.prompt('continue....')
 
 
-        logger.console("lista", ebook_list)
-        return ebook_list
+
+
+        return result
 
     ####################################################
     # -
     ####################################################
-    def ePubs_search(self, words, field_name='word', ignore_case=True):
+    def ePubs_search(self, words, field_name='word',ignore_case=True):
         ebook_list = []
         for regex in words:
             result = self._ePubs.search(field_name=field_name, regex=regex, ignore_case=ignore_case)
@@ -365,16 +416,16 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def search(self, words, field_name='word', ignore_case=True):
+    def main_search(self, field_name='word', words=[], ignore_case=True):
         ebook_list = []
         if field_name in self._Dictionary.fields:
-            result = self.dictionary_search(field_name=field_name, words=regex, ignore_case=ignore_case)
+            result = self.dictionary_search(field_name=field_name, words=words, ignore_case=ignore_case)
 
         elif field_name in self._ePubs.fields:
-            result = self.ePubs_search(field_name=field_name, words=regex, ignore_case=ignore_case)
+            result = self.ePubs_search(field_name=field_name, words=words, ignore_case=ignore_case)
 
         else:
-            print('Field: {field_name} NOT found'.format(**locals()))
+            logger.console('Field: {field_name} NOT found'.format(**locals()))
             return []
 
         return 0

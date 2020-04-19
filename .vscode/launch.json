@@ -17,7 +17,7 @@
             "args": [
                 "search",
                 "--field=word",
-                "--text=attese",
+                "--words=ciao tempo",
                 // "--verbose",
             ],
             "cwd": "${workspaceRoot}",
@@ -36,6 +36,21 @@
                 "load",
                 "--dictionary",
                 // "--max=2",
+            ],
+            "cwd": "${workspaceRoot}",
+        },
+
+        {
+            "name": "ebook_test",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": true,
+            // "pythonPath": "/usr/bin/python3",
+            // "pythonPath": "${config:python.pythonPath}",
+            // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
+            "program": "${workspaceFolder}/__main__.py",
+            "args": [
+                "test",
             ],
             "cwd": "${workspaceRoot}",
         },
