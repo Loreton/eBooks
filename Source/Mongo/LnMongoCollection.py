@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 18-04-2020 13.25.06
+# Version ......: 20-04-2020 16.00.53
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -320,7 +320,7 @@ class MongoCollection:
             "$options" : _ic # case-insensitive
             }
         }
-        logger.console('my_query', query)
+        logger.info('my_query', query)
         result = self._collection.find(query).limit(10)
         logger.console('    record found', result.count())
         return result

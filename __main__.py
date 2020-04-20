@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 19-04-2020 17.49.24
+# Version ......: 20-04-2020 17.06.29
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -134,9 +134,10 @@ if __name__ == '__main__':
         result = myDB.update_field_many( )
 
     elif 'search' in inpArgs:
-        # pdb.set_trace()
-        # for substr in inpArgs.words:
         result = myDB.main_search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
+
+    elif 'book_search' in inpArgs:
+        result = myDB.eBook_search(words=inpArgs.words, book_id=inpArgs.id, ignore_case=True)
 
         '''
         strToSearch = inpArgs.text_to_search

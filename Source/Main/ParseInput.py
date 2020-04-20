@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 19-04-2020 17.18.28
+# Version ......: 20-04-2020 16.40.12
 #
 # #############################################
 
@@ -24,7 +24,15 @@ def parseInput():
     subparsers = parser.add_subparsers(title="actions")
     parser_search = subparsers.add_parser ("search", help = "search books")
     parser_search.add_argument('--fieldname', help='specify field where text must be searched', required=True, default=None)
-    parser_search.add_argument('--text-to-search', help='specify text to be searched (regex syntax)', required=False, default=None)
+    parser_search.add_argument('--words',
+                                metavar='',
+                                required=True,
+                                default=['*'],
+                                nargs='*',
+                                help="""strings to be searched. BLANK searator""")
+
+    parser_search = subparsers.add_parser ("book_search", help = "search single book")
+    parser_search.add_argument('--id', help='specify book id', required=True, default=None)
     parser_search.add_argument('--words',
                                 metavar='',
                                 required=True,

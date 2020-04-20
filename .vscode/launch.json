@@ -6,7 +6,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ebook_search",
+            "name": "search",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
@@ -24,7 +24,7 @@
         },
 
         {
-            "name": "ebook_load",
+            "name": "load",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
@@ -41,7 +41,7 @@
         },
 
         {
-            "name": "ebook_test",
+            "name": "test",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
@@ -51,6 +51,23 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "test",
+            ],
+            "cwd": "${workspaceRoot}",
+        },
+
+        {
+            "name": "ebook_search",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": true,
+            // "pythonPath": "/usr/bin/python3",
+            // "pythonPath": "${config:python.pythonPath}",
+            // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
+            "program": "${workspaceFolder}/__main__.py",
+            "args": [
+                "book_search",
+                "--id=Jess_L_Oltre_le_bugies",
+                "--words=ciao",
             ],
             "cwd": "${workspaceRoot}",
         },
