@@ -10,13 +10,25 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
-            // "pythonPath": "/usr/bin/python3",
-            // "pythonPath": "${config:python.pythonPath}",
-            // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "search",
                 "--field=word",
+                "--words=ciao tempo",
+                // "--verbose",
+            ],
+            "cwd": "${workspaceRoot}",
+        },
+
+        {
+            "name": "msearch",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": true,
+            "program": "${workspaceFolder}/__main__.py",
+            "args": [
+                "multi_search",
+                "--fields=title",
                 "--words=ciao tempo",
                 // "--verbose",
             ],
@@ -41,7 +53,7 @@
         },
 
         {
-            "name": "test",
+            "name": "dictionary",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
@@ -50,7 +62,10 @@
             // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [
-                "test",
+                "dictionary",
+                "--author",
+                "--title",
+                "--description",
             ],
             "cwd": "${workspaceRoot}",
         },

@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 20-04-2020 16.40.12
+# Version ......: 21-04-2020 16.07.59
 #
 # #############################################
 
@@ -40,18 +40,35 @@ def parseInput():
                                 nargs='*',
                                 help="""strings to be searched. BLANK searator""")
 
-    parser_load = subparsers.add_parser ("load", help = "create the orbix environment")
-    parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')
-    parser_load.add_argument('--dir', help='Directory containing ebooks to be loaded', required=False, default=None)
-    parser_load.add_argument('--move-file', help='move file to destination as in config file', action='store_true')
-    parser_load.add_argument('--dictionary', help='indexing books into dictionary collection', action='store_true')
-    parser_load.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=0)
+    parser_msearch = subparsers.add_parser ("multi_search", help = "search on several fields")
+    parser_msearch.add_argument('--words',
+                                metavar='',
+                                required=True,
+                                # default=['*'],
+                                nargs='*',
+                                help="""strings to be searched. BLANK searator""")
+    parser_msearch.add_argument('--fields',
+                                metavar='',
+                                required=False,
+                                default=['all'],
+                                nargs='*',
+                                help="""fields to be searched. BLANK searator""")
 
-    parser_dictionary = subparsers.add_parser ("dictionary", help = "operate on dictionary")
-    parser_dictionary.add_argument('--optimize', help='remove case from words and merge', action='store_true')
+    parser_load = subparsers.add_parser ("load", help = "create the orbix environment")
+    # parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')
+    # parser_load.add_argument('--dir', help='Directory containing ebooks to be loaded', required=False, default=None)
+    parser_load.add_argument('--move-file', help='move file to destination as in config file', action='store_true')
+    parser_load.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
+
+    parser_dictionary = subparsers.add_parser ("dictionary", help = "rebuild dictionary")
+    parser_dictionary.add_argument('--author', help='indexing author field into dictionary collection', action='store_true')
+    parser_dictionary.add_argument('--title', help='indexing title field into dictionary collection', action='store_true')
+    parser_dictionary.add_argument('--description', help='indexing description field into dictionary collection', action='store_true')
+    parser_dictionary.add_argument('--chapters', help='indexing chapters field into dictionary collection', action='store_true')
 
     parser_update_field = subparsers.add_parser ("update_field", help = "update specific field")
     parser_test_field = subparsers.add_parser ("test", help = "test something")
+
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():
         # print(name)

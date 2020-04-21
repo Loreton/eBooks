@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 20-04-2020 17.06.29
+# Version ......: 21-04-2020 11.52.18
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -35,28 +35,6 @@ def search_string(substring, data):
 ######################################
 if __name__ == '__main__':
     inpArgs          = Ln.parseInput()
-    if 'test' in inpArgs:
-        import textwrap
-        C           = Ln.Color()
-        # pdb.set_trace()
-        _before=100
-        _after=150
-        text='e notti era andato a letto nella stanza degli ospiti con un’erezione che sembrava quella della pubblicità del Viagra, quella che raccomandava ‘ fatti vedere da un dotto'
-        word='ospiti'
-        lun=len(word)
-        pos=text.find(word)
-        _from=pos-_before
-        if _from<0: _from=0
-        print (text)
-        xx = C.yellowH(text=word, get=True)
-        new_text=text.replace(word, xx)
-        print (new_text)
-        tb=textwrap.wrap(new_text, 80, break_long_words=True)
-        for l in tb: print('    ', l)
-
-        sys.exit()
-
-
     fCONSOLE         = inpArgs.log_console
     _data            = Ln.readConfigFile()
     config           = DotMap(_data['content'])
@@ -67,8 +45,8 @@ if __name__ == '__main__':
 
     # --- setting logger
     log_dir     = os.path.join(script_path, 'log')
-    _basename   = os.path.abspath(os.path.join(log_dir,prj_name))
-    log_file    = _basename + inpArgs.action + '.log'
+    log_file   = os.path.abspath(os.path.join(log_dir, '{prj_name}_{inpArgs.action}.log'.format(**locals())))
+    # log_file    = _basename + inpArgs.action + '.log'
     lnLogger    = Ln.setLogger(filename=log_file, console=fCONSOLE, debug_level=3, dry_run=not inpArgs.go, log_modules=inpArgs.log_modules, color=Ln.Color() )
     # - STDOUT file if required
     # stdout_file = _basename + '_stdout.log'
@@ -99,34 +77,6 @@ if __name__ == '__main__':
     gv.args    = inpArgs
 
 
-    '''
-    # - initialize Mongo
-    eBooks = MongoCollection(db_name='eBooks', collection_name='epub', myLogger=lnLogger, server_name='127.0.0.1', server_port='27017')
-    eBooks.setFields(['title',
-                            'author',
-                            "date",
-                            "description",
-                            "identifier",
-                            'chapters',
-                            ])
-
-    eBooks.setIdFields(['author', 'title'])
-    # eBooks_coll=eBooks.collection
-
-    Dictionary = MongoCollection(db_name='eBooks', collection_name='Dictionary', myLogger=lnLogger, server_name='127.0.0.1', server_port='27017')
-    Dictionary.setFields(['word',
-                            'ebook',
-                            ])
-    Dictionary.setIdFields(['word'])
-    # dict_coll=Dictionary.collection
-
-
-
-
-    # eBooks_DB = MongoDB.dbConnect(db_name='eBooks', server_name='127.0.0.1', server_port='27017', myLogger=lnLogger)
-    # eBooks = MongoDB(db=eBooks_DB, collection_name='epub')
-    # Dictionary = MongoDB(db=eBooks_DB, collection_name='dictionary')
-    '''
 
 
     myDB=LnEBooks(gv, db_name='eBooks')
@@ -136,37 +86,11 @@ if __name__ == '__main__':
     elif 'search' in inpArgs:
         result = myDB.main_search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
 
+    elif 'multi_search' in inpArgs:
+        result = myDB.multiple_field_search(fields=inpArgs.fields, words=inpArgs.words, ignore_case=True)
+
     elif 'book_search' in inpArgs:
         result = myDB.eBook_search(words=inpArgs.words, book_id=inpArgs.id, ignore_case=True)
-
-        '''
-        strToSearch = inpArgs.text_to_search
-        ebook_list = myDB.search(regex=strToSearch, field_name=inpArgs.fieldname, ignore_case=True)
-
-        ebook_coll = myDB._ePubs.collection
-        for book_id in ebook_list:
-            myquery = { "_id": book_id }
-            mydoc = ebook_coll.find(myquery)
-            for x in mydoc:
-                print(x['author'], '-', x['title'])
-                STR_FOUND=False
-                for chap in x['chapters']:
-                    occurrencies = search_string(strToSearch, chap)
-                    if occurrencies:
-                        STR_FOUND=True
-                        _before=60
-                        _after=100
-                        for pos in occurrencies:
-                            lun=len(strToSearch)
-                            C.cyan(text=chap[pos-_before:pos], end='')
-                            C.cyanH(text=strToSearch, end='')
-                            C.cyan(text=chap[pos+lun:pos+lun+_after])
-                            print()
-
-                if STR_FOUND:
-                    Ln.prompt('continue....')
-        '''
-
 
     elif 'load' in inpArgs:
         input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input_dir
@@ -175,12 +99,21 @@ if __name__ == '__main__':
         myDB.load_eBooks(input_dir, file_pattern='.epub', target_dir=target_dir)
 
     elif 'dictionary' in inpArgs:
-        if inpArgs.optimize:
-            myDB.optimize_dictionary()
+        myDB.build_dictionary()
 
 
 
 
+def test():
+    '''
+    ./__main__.py book_search --words ciao dopo --id Jess_L_Oltre_le_bugie
+    ./__main__.py search --field title --words sceglier
 
+    - cerca nei int title + author
+    ./__main__.py search --field _id --words domani
+
+    - load book into dictionary
+    ./__main__.py  load --author --chapters --title --description
+    '''
 
 

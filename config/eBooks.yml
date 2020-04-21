@@ -9,7 +9,7 @@ Main:
 #########################################################
 directories:
     epub_input_dir:
-        /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/To_Be_Evalueated
+        /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/To_Be_Evalueated/*.epub
         # /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/Ln_to_be_processed
         # /mnt/k/Filu/LnDisk/GIT-REPO/eBooks/eBooks_for_test
 

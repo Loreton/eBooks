@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-06-2019 19.19.49
+# Version ......: 21-04-2020 15.54.55
 import sys
 
 
-def prompt(msg, validKeys='ENTER', exitKeys='x'):
+def prompt(msg='', validKeys='ENTER', exitKeys='x'):
     # msg = "{0} [{1}] - ({2} to exit) ==> ".format(msg, validKeys, exitKeys)
+    if not msg:
+        msg='Continue....'
     msg = "{msg} [{validKeys}] - ({exitKeys} to exit) ==> ".format(**locals())
     validKeys = validKeys.split('|')
     exitKeys = exitKeys.split('|')

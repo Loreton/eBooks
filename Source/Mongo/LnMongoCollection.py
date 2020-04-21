@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 20-04-2020 16.00.53
+# Version ......: 21-04-2020 16.50.51
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -293,9 +293,9 @@ class MongoCollection:
         return self._collection.find({"$text": {"$search": search_text}})
 
 
-       # https://docs.mongodb.com/manual/reference/operator/query/regex/
     def search(self, field_name, regex, ignore_case=False):
         '''
+        https://docs.mongodb.com/manual/reference/operator/query/regex/
             use $regex to find docs that start with case-sensitive "obje"
             The .* included at the end of the "$regex" key’s value
             acts as a wildcard along with the string match.
@@ -321,24 +321,13 @@ class MongoCollection:
             }
         }
         logger.info('my_query', query)
-        result = self._collection.find(query).limit(10)
-        logger.console('    record found', result.count())
+        # result = self._collection.find(query).limit(10)
+        result = self._collection.find(query)
+        logger.info('    record found', result.count())
         return result
 
 
-    ################################################
-    #
-    ################################################
-    # def fields(self):
-    #     title = StringField(max_length=120, required=True)
-    #     author = ReferenceField(User)
-    #     tags = ListField(StringField(max_length=30))
-    #     comments = ListField(EmbeddedDocumentField(Comment))
 
-
-
-    # def openCollection(self, coll_name):
-    #     return mydb[coll_name]       # create collection. A collection is not created until it gets content!
 
 
     ################################################
