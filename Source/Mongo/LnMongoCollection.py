@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 21-04-2020 16.50.51
+# Version ......: 24-04-2020 18.10.03
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -99,39 +99,52 @@ class MongoCollection:
     def idFields(self, fields):
         return self._id_fields
 
+
     # --- check if record exists
+    # --- if exists return existing record
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
-    def exists(self, rec={}, filter={}):
+    def exists(self, rec):
         assert isinstance(rec, (dict))
-        assert isinstance(filter, (dict))
 
-        ret_val=DotMap(_dynamic=False)
-        if filter:
-            _filter = filter
-        else:
-            _filter = self.get_id_filter(rec)
-
-        _exists = self._collection.count_documents(_filter, limit = 1)
+        _exists = self._collection.count_documents(rec.filter, limit = 1)
         if _exists:
-            logger.info('record exists', _filter)
-            _rec = self.get_record(_filter)
+            logger.info('record exists', rec.filter)
+            _rec = self.get_record(rec.filter)
         else:
+            logger.error('record NOT found', rec.filter)
             _rec={}
 
-        ret_val.filter = _filter
-        ret_val.data = _rec
-        ret_val.exists = True if _exists else False
+        # ret_val.filter = rec.filter
+        # ret_val.data = _rec
+        # ret_val.exists = True if _exists else False
 
-        return ret_val
+        return _rec
 
-
+        ############################################################
+        # https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference
+        # diff_a = set(record.keys()).difference(set(self._fields))
+        # diff_b = set(self._fields).difference(set(record.keys()))
+        ############################################################
     def checkFields(self, record):
         assert isinstance(record, (dict))
-        _keys = record.keys()
-        for _key in self._fields:
-            if _key not in _keys:
-                logger.info("{_key} is missing. Assigning ''".format(**locals()))
-                record[_key] = ''
+        diff = set(record.keys()).symmetric_difference(set(self._fields))
+        if diff:
+            print("     {diff} field(s) is(are) not included in both structure fields:".format(**locals()))
+            print('     structure fields:')
+            for index, field in enumerate(sorted(self._fields), start=1):
+                print('     {index} - {field}'.format(**locals()))
+            print()
+            print('     record  fields:')
+            for index, field in enumerate(sorted(record.keys()), start=1):
+                print('     {index} - {field}'.format(**locals()))
+            sys.exit(1)
+
+
+        # _keys = record.keys()
+        # for _key in self._fields:
+        #     if _key not in _keys:
+        #         logger.info("{_key} is missing. Assigning ''".format(**locals()))
+        #         record[_key] = ''
 
         """
             add '_id' field
@@ -139,44 +152,71 @@ class MongoCollection:
         """
 
         # - check for extra fields
-        for _key in record.keys():
-            if not _key in self._fields:
-                print("     {_key} field is not included in the struct_fields".format(**locals()))
-                print('     structure fields:')
-                for index, field in enumerate(sorted(self._fields), start=1):
-                    print('     {index} - {field}'.format(**locals()))
-                print()
-                print('     record  fields:')
-                for index, field in enumerate(sorted(record.keys()), start=1):
-                    print('     {index} - {field}'.format(**locals()))
-                sys.exit(1)
+        # for _key in record.keys():
+        #     if not _key in self._fields:
 
-        record['_id'] = self.get_id(record)
+        # record['_id'] = self.get_id(record)
 
         return record
 
     ####################################################
     # -
     ####################################################
-    def get_id(self, rec):
-        _id = []
-        for fld in self._id_fields:
-            _id.extend(rec[fld].split())
-        # _id = '_'.join(_id).replace('.', '_')
-        return '_'.join(_id)
+    # def get_id_prev(self, rec):
+    #     _id = []
+    #     for fld in self._id_fields:
+    #         _id.extend(rec[fld].split())
+    #     return '_'.join(_id)
 
 
     ####################################################
     # -
     ####################################################
-    def get_id_filter(self, rec):
-        return {'_id': self.get_id(rec)}
+    # def get_id(self, rec):
+    #     _id = []
+    #     for fld in self._id_fields:
+    #         words = rec[fld].split()
+    #         for word in words:
+    #             word=[ c for c in word if c.isalnum()]
+    #             _id.append(''.join(word))
+
+    #     return '_'.join(_id)
+
+    ####################################################
+    # - Calcola ID ed imposta i seguenti campi nel record:
+    # -  _id:     IDvalue
+    # -  filter: {'_id': IDvalue}
+    ####################################################
+    def set_id(self, rec):
+        _id = []
+        for fld in self._id_fields:
+            words = rec[fld].split()
+            for word in words:
+                word=[ c for c in word if c.isalnum()]
+                _id.append(''.join(word))
+
+        IDvalue ='_'.join(_id)
+        if not '_id' in rec:
+            rec['_id'] = IDvalue
+
+        if not 'filter' in rec:
+            rec['filter'] = {'_id': IDvalue}
+
+        # return rec
+
+
+    ####################################################
+    # -
+    ####################################################
+    # def get_id_filter(self, rec):
+    #     return {'_id': self.get_id(rec)}
 
     ####################################################
     # -
     ####################################################
     def get_record(self, filter):
-        return self._collection.find_one(filter) # get current record
+        book = self._collection.find_one(filter) # get current record
+        return DotMap(book)
 
 
 
@@ -186,17 +226,17 @@ class MongoCollection:
     ####################################################
     # -
     ####################################################
-    def insert(self, post_data, replace=False):
-        assert isinstance(post_data, (list, dict))
-        records = [post_data] if isinstance(post_data, dict) else post_data
+    # def insert(self, post_data, replace=False):
+    #     assert isinstance(post_data, (list, dict))
+    #     records = [post_data] if isinstance(post_data, dict) else post_data
 
-        ret_value = {}
-        for index, record in enumerate(records):
-            status = self._insert_one(record, replace=replace)
-            _key='record_{index}'.format(**locals())
-            ret_value[_key] = status
+    #     ret_value = {}
+    #     for index, record in enumerate(records):
+    #         status = self._insert_one(record, replace=replace)
+    #         _key='record_{index}'.format(**locals())
+    #         ret_value[_key] = status
 
-        return ret_value
+    #     return ret_value
 
 
 
@@ -211,25 +251,22 @@ class MongoCollection:
                 ['inserted', _filter]
         """
         assert isinstance(record, (dict))
-        record = record.toDict() if isinstance(record, DotMap) else record
 
         ret_value = []
-        my_rec = self.checkFields(record)
+        self.checkFields(record)
 
-        # _filter = {'_id': my_rec['_id']}
-        # _rec = self.exists(filter=_filter)
-        _rec = self.exists(rec=my_rec)
-        if _rec.exists:
+        curr_rec = self.exists(rec=record)
+        if curr_rec:
             if replace:
-                result = self._collection.replace_one(_rec.filter, my_rec)
+                result = self._collection.replace_one(record.filter, record.toDict()) # non riconosce bene DotMap
                 if result.modified_count == 1:
-                    status = ['replaced', _rec.filter ]
+                    status = ['replaced', record.filter ]
             else:
-                status = ['exists', _rec.filter ]
+                status = ['exists', record.filter ]
 
         else:
-            result = self._collection.insert_one(my_rec)
-            status  = ['inserted', _rec.filter]
+            result = self._collection.insert_one(record.toDict()) # non riconosce bene DotMap
+            status  = ['inserted', record.filter]
 
         ret_value = status
 
@@ -252,36 +289,35 @@ class MongoCollection:
     #   newvalues = { "$set": { "address": "Canyon 123" } }
     #   mycol.update_one(myquery, newvalues)
     # ################################################
-    def updateField(self, filter, fld):
-        # assert isinstance(newrec, (dict))
-        assert isinstance(fld, (dict))
-        assert isinstance(filter, (dict))
-        # tgt_col = coll if coll else self._collection
-
-        # filter = {'_id': book_id}
-        logger.info('updating document', filter)
-        logger.debug('   field', fld)
-        (fld_name, fld_val), = fld.items()
+    def updateField(self, rec, fld_name, create=False):
+        logger.info('Updating field {fld_name} in record {rec._id}.'.format(**locals()))
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
-        _rec=self._collection.find_one(filter) # get current record
-        cur_value = _rec[fld_name]
-        if isinstance(cur_value, (list, tuple)): # if it's a list
-            _val = cur_value[:]
-            _val.extend(fld_val)
-            _val = list( dict.fromkeys(_val) ) # remove duplicates
-        else:
-            _val = fld_val
+        new_value = rec[fld_name]
+        cur_rec=self._collection.find_one(rec.filter) # get current record
+        if cur_rec:
+            cur_value = cur_rec[fld_name]
+            if isinstance(cur_value, (list, tuple)): # if it's a list
+                _val = cur_value[:]
+                _val.extend(new_value)
+                _val = list( dict.fromkeys(_val) ) # remove duplicates ... anche list(set(_val))
+            else:
+                _val = new_value
 
-        if _val == cur_value:
-            result = 0
-            logger.debug1('   field already updated')
+            if _val == cur_value:
+                result = 0
+                logger.debug1('   nothing to update.')
 
-        else:
-            newvalue = { "$set": {fld_name: _val } }
-            result=self._collection.update_one(filter, newvalue)
-            logger.debug1('   matched', result.matched_count)
-            logger.debug1('   updated', result.modified_count)
+            else:
+                logger.info('   record found. Updating field.')
+                upd_cmd = { "$set": {fld_name: _val } }
+                result=self._collection.update_one(rec.filter, upd_cmd)
+                logger.debug1('   matched', result.matched_count)
+                logger.debug1('   updated', result.modified_count)
+
+        elif create:
+            logger.info('   record not found. Creating it.')
+            result = self.insert_one(rec)
 
         return result
 

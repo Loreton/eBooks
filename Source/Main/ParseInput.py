@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 21-04-2020 16.07.59
+# Version ......: 23-04-2020 16.16.16
 #
 # #############################################
 
@@ -22,52 +22,41 @@ def parseInput():
     parser = argparse.ArgumentParser(description='Main parser')
 
     subparsers = parser.add_subparsers(title="actions")
-    parser_search = subparsers.add_parser ("search", help = "search books")
-    parser_search.add_argument('--fieldname', help='specify field where text must be searched', required=True, default=None)
+
+    parser_search = subparsers.add_parser ("search", help = "search on several fields")
+    parser_search.add_argument('--book-id', help='Book_ID to search only on it', required=False, default=None)
     parser_search.add_argument('--words',
                                 metavar='',
                                 required=True,
-                                default=['*'],
+                                default=[],
                                 nargs='*',
                                 help="""strings to be searched. BLANK searator""")
-
-    parser_search = subparsers.add_parser ("book_search", help = "search single book")
-    parser_search.add_argument('--id', help='specify book id', required=True, default=None)
-    parser_search.add_argument('--words',
-                                metavar='',
-                                required=True,
-                                default=['*'],
-                                nargs='*',
-                                help="""strings to be searched. BLANK searator""")
-
-    parser_msearch = subparsers.add_parser ("multi_search", help = "search on several fields")
-    parser_msearch.add_argument('--words',
-                                metavar='',
-                                required=True,
-                                # default=['*'],
-                                nargs='*',
-                                help="""strings to be searched. BLANK searator""")
-    parser_msearch.add_argument('--fields',
+    parser_search.add_argument('--fields',
                                 metavar='',
                                 required=False,
-                                default=['all'],
+                                default=['author', 'title'],
+                                choices=['author', 'title', 'chapters', 'date', 'description', 'indexed' ],
                                 nargs='*',
-                                help="""fields to be searched. BLANK searator""")
+                                help="""fields to be searched. BLANK searator [DEFAULT: author title] """)
 
-    parser_load = subparsers.add_parser ("load", help = "create the orbix environment")
-    # parser_load.add_argument('--extension', help='specify extension to be searched', required=False, default='.epub')
-    # parser_load.add_argument('--dir', help='Directory containing ebooks to be loaded', required=False, default=None)
-    parser_load.add_argument('--move-file', help='move file to destination as in config file', action='store_true')
+    parser_load = subparsers.add_parser ("load", help = "Load book in DB")
+    parser_load.add_argument('--dir', help='input dir [DEFAULT=as defined in config_file]', default=None)
+    parser_load.add_argument('--ftype', help='file type to be included [DEFAULT=.epub]', default='*.epub')
+    parser_load.add_argument('--dictionary', help='update dictionary with words', action='store_true')
+    parser_load.add_argument('--move-file', help='move file to destination defined in config file', action='store_true')
     parser_load.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
 
     parser_dictionary = subparsers.add_parser ("dictionary", help = "rebuild dictionary")
-    parser_dictionary.add_argument('--author', help='indexing author field into dictionary collection', action='store_true')
-    parser_dictionary.add_argument('--title', help='indexing title field into dictionary collection', action='store_true')
-    parser_dictionary.add_argument('--description', help='indexing description field into dictionary collection', action='store_true')
-    parser_dictionary.add_argument('--chapters', help='indexing chapters field into dictionary collection', action='store_true')
+    parser_dictionary.add_argument('--all-records', help='update all records regardless indexed=true', action='store_true')
+    parser_dictionary.add_argument('--fields',
+                                metavar='',
+                                default=['author', 'title'],
+                                choices=['author', 'title', 'chapters', 'description' ],
+                                nargs='+',
+                                help="""fields to be indexed. BLANK searator""")
 
     parser_update_field = subparsers.add_parser ("update_field", help = "update specific field")
-    parser_test_field = subparsers.add_parser ("test", help = "test something")
+    parser_test_field = subparsers.add_parser ("change_id", help = "change id")
 
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():
@@ -78,20 +67,21 @@ def parseInput():
         subp.add_argument('--{0}'.format(name), action='store_true', default=True)
 
         # --- common
-        subp.add_argument('--go', help='specify if command must be executed. (dry-run is default)', action='store_true')
+        # subp.add_argument('--go', help='specify if command must be executed. (dry-run is default)', action='store_true')
         subp.add_argument('--display-args', help='Display input paramenters', action='store_true')
         subp.add_argument('--debug', help='display paths and input args', action='store_true')
         subp.add_argument('--verbose', help='Display all messages', action='store_true')
-        subp.add_argument('--log-console', help='log write to console too.', action='store_true')
+        subp.add_argument('--log', help='activate log.', action='store_true')
+        subp.add_argument('--log-console', help='activate log and write to console too.', action='store_true')
         subp.add_argument('--log-modules',
                                     metavar='',
                                     required=False,
-                                    default=['*'],
+                                    default=[],
                                     nargs='*',
-                                    help="""attivazione log.
+                                    help="""activate log.
         E' anche possibile indicare una o più stringhe separate da BLANK
         per identificare le funzioni che si vogliono filtrare nel log.
-        Possono essere anche porzioni di funcName. Es: --log-module pippo pluto ciao
+        Possono essere anche porzioni di funcName. Es: --log-module nudule1 modul module3
         """)
 
     # args = vars(parser.parse_args())
@@ -102,6 +92,9 @@ def parseInput():
     for name, subp in subparsers.choices.items():
         if name in args:
             args.action = name
+
+    if args.log_console or args.log_modules:
+        args.log=True
 
     if args.display_args:
         import json

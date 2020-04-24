@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 21-04-2020 17.10.28
+# Version ......: 24-04-2020 18.00.07
 #
 
 import sys
@@ -46,26 +46,28 @@ class LnEBooks:
 
 
         self._ePubs = MongoCollection(collection_name='ePubs', **_args)
-        self._ePubs.setFields(['title',
-                                'author',
+        self._ePubs.setFields([ '_id',
                                 "date",
                                 "description",
-                                "identifier",
+                                'author',
+                                'author_CN', # Cognome+None mi server per l'id
                                 'chapters',
+                                'filter', # comodo per fare la ricerca
                                 'indexed', # True/False id words into dictionary collection
+                                'title',
                                 ])
 
-        self._ePubs.setIdFields(['author', 'title'])
+        self._ePubs.setIdFields(['author_CN', 'title'])
         # eBooks_coll=eBooks.collection
 
         self._Dictionary = MongoCollection(collection_name='Dictionary', **_args)
-        self._Dictionary.setFields(['word', 'ebook'])
-        self._Dictionary.setIdFields(['word'])
+        self._Dictionary.setFields(['_id', 'filter', 'ebook'])
+        # self._Dictionary.setIdFields(['word'])
 
         # - contiene la lista dei libri indicizzati
-        self._Indexed = MongoCollection(collection_name='Indexed', **_args)
-        self._Indexed.setFields(['author', 'title'])
-        self._Indexed.setIdFields(['author', 'title'])
+        # self._Indexed = MongoCollection(collection_name='Indexed', **_args)
+        # self._Indexed.setFields(['author', 'title'])
+        # self._Indexed.setIdFields(['author', 'title'])
 
         # solo per merge
         # self._wk_Dictionary = MongoCollection(collection_name='wk_Dictionary', **_args)
@@ -110,15 +112,24 @@ class LnEBooks:
 
         return hBook
 
+    def author_reverse(self, data):
+        # Inversione nome dell'autore
+        ret_val = []
+        words=data.split()
+        words.reverse()
+        for word in words:
+            c_word=[ c for c in word if c.isalnum()]
+            ret_val.append(''.join(c_word))
 
+        return ' '.join(ret_val)
 
 
 
     ####################################################
     # -
     ####################################################
-    def _readEbook(self, file, IGNORE_UNKNOWN=True):
-        ''' IGNORE_UNKNOWN:
+    def _readEbook(self, file, SKIP_UNKNOWN=True):
+        ''' SKIP_UNKNOWN:
                 ignora Libri che non hanno il  titolo dentro
         '''
         hBook = self._open_book(file)
@@ -129,11 +140,11 @@ class LnEBooks:
             _creator     = hBook.get_metadata('DC', 'creator')
             _description = hBook.get_metadata('DC', 'description')
             _date        = hBook.get_metadata('DC', 'date')
-            _identifier  = hBook.get_metadata('DC', 'identifier')
+            # _identifier  = hBook.get_metadata('DC', 'identifier')
             # _coverage    = book.get_metadata('DC', 'coverage')
 
             book_data.description = _description[0][0]           if _description else ''
-            book_data.identifier  = _identifier[0][0]            if _identifier else 'null'
+            # book_data.identifier  = _identifier[0][0]            if _identifier else 'null'
             book_data.title       = _title[0][0]                 if _title else ''
             book_data.author      = _creator[0][0]               if _creator else ""
             book_data.date        = _date[0][0].split('T', 1)[0] if _date else ""
@@ -149,19 +160,19 @@ class LnEBooks:
 
 
         if not book_data.title:
-            if IGNORE_UNKNOWN:
+            if SKIP_UNKNOWN:
                 book_data={}
             else:
                 book_data.title = Path(file).stem
-                if not book_data.author:
-                    book_data.author = 'Unknown'
         else:
-            book_data.title = book_data.title.replace('(Italian Edition)', '').replace('#', '').strip()
-            ''' per fare il reverse del nome dell'autore, ma non conviene
-            _a=book_data.author.split()
-            _a.reverse
-            book_data.author = '_'.join(_a)
-            '''
+            replace_string=['Italian Edition', '#', ':']
+            for item in replace_string:
+                book_data.title = book_data.title.replace(item, '')
+            book_data.title = book_data.title.strip()
+
+
+        if not book_data.author: book_data.author = 'Unknown'
+        book_data.author_CN = self.author_reverse(book_data.author)
 
         logger.info('book data', book_data)
 
@@ -175,21 +186,26 @@ class LnEBooks:
     ####################################################
     def build_dictionary(self, book={}):
         if book:
-            book = DotMap(book)
-            C.yellowH(text='[1/1] - working on book: {book.title} [{book.author}]'.format(**locals()), tab=4)
-            self.add_to_dictionary(book)
-            _filter = {'_id': book['_id']}
-            result = self._ePubs.updateField(filter=_filter, fld={'indexed': True})
+            # book =self._ePubs.get_record(filter)
+            # force flag
+            if inp_args.all_records: book.indexed = False
+            if not book.indexed:
+                C.yellowH(text='[1/1] - working on book: {book.title} [{book.author}]'.format(**locals()), tab=4)
+                self.add_to_dictionary(book)
+                result = self._ePubs.updateField(filter=book.filter, fld={'indexed': True})
 
         else:
             result = self._ePubs._collection.find()
             nrec=result.count()
             for index, book in enumerate(result, start=1):
                 book = DotMap(book)
-                C.yellowH(text='[{index:5}/{nrec:5}] - working on book: {book.title} [{book.author}]'.format(**locals()), tab=4)
-                self.add_to_dictionary(book)
-                _filter = {'_id': book['_id']}
-                result = self._ePubs.updateField(filter=_filter, fld={'indexed': True})
+                # force flag
+                if inp_args.all_records: book.indexed = False
+                C.yellowH(text='[{index:5}/{nrec:5}] - indexed: {book.indexed} - book: {book.title} [{book.author}]'.format(**locals()), tab=4)
+                if not book.indexed:
+                    self.add_to_dictionary(book)
+                    _filter = {'_id': book['_id']}
+                    result = self._ePubs.updateField(filter=_filter, fld={'indexed': True})
 
 
 
@@ -197,12 +213,11 @@ class LnEBooks:
     # - indexing book content, title author and description
     ####################################################
     def add_to_dictionary(self, book):
-        book_id = book._id
         _data = []
-        if inp_args.chapters    and book.chapters:        _data.extend(book.chapters)
-        if inp_args.title       and book.title:           _data.append(book.title)
-        if inp_args.author      and book.author:          _data.append(book.author)
-        if inp_args.description and book.description:     _data.append(book.description)
+        if 'chapters'    in inp_args.fields and book.chapters:    _data.extend(book.chapters)
+        if 'title'       in inp_args.fields and book.title:       _data.append(book.title)
+        if 'author'      in inp_args.fields and book.author:      _data.append(book.author)
+        if 'description' in inp_args.fields and book.description: _data.append(book.description)
 
         words = self.content2words(' '.join(_data))
         logger.info('inserting {0} words into dictionary'.format(len(words)))
@@ -211,15 +226,24 @@ class LnEBooks:
             if not index%500:
                 C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
 
+            # - preparazione record del dictionary
             rec={
-                'word': word.lower(),
-                'ebook': [book_id]
+                '_id': word.lower(),
+                'ebook': [book._id],
+                'filter': {'_id':word.lower()},
+                # 'word': word.lower(), # non serve perché==_id
             }
-            filter = {'_id': self._Dictionary.get_id(rec)}
-            if self._Dictionary._collection.count_documents(filter, limit = 1):
-                result = self._Dictionary.updateField(filter=filter, fld={'ebook': rec['ebook']})
-            else:
-                result = self._Dictionary.insert_one(rec)
+
+            rec=DotMap(
+                _id = word.lower(),
+                ebook = [book._id],
+                filter = {'_id':word.lower()},
+                # 'word': word.lower(), # non serve perché==_id
+            )
+
+
+            # - updating record o create it if not exists
+            result = self._Dictionary.updateField(rec, fld_name='ebook', create=True)
 
         C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
         print()
@@ -241,41 +265,48 @@ class LnEBooks:
     ####################################################
     def load_eBooks(self, dir_path, file_pattern, target_dir=None):
         # - read list of files
-        files = self._listFiles(dir_path, filetype=file_pattern)
-        nFiles = len(files)
+        '''
+        https://rednafi.github.io/digressions/python/2020/04/13/python-pathlib.html#pathglob
+            top_level_py_files = Path("src").glob("*.py")
+            all_py_files = Path("src").rglob("*.py")
+            print(list(top_level_py_files))
+            print(list(all_py_files))
+            la lettura di un iterator automaticamente lo azzera.
+            quindi utilizzarlo direttamente oppure con list salvare i dati
+        '''
+        all_files = list(Path(dir_path).rglob(file_pattern))
+        nFiles = len(all_files)
 
         # - try to insert each file
-        for index, file in enumerate(sorted(files), start=1):
-            epub_file=Path(file)
+        for index, epub_file in enumerate(sorted(all_files), start=1):
             _dir = epub_file.parent
             if index > inp_args.max_books:
                 continue
-            book = self._readEbook(file=epub_file.toStr())
+            book = self._readEbook(file=epub_file)
             if not book: continue # book not valid
 
             print()
-            C.yellowH(text='[{index:6}/{nFiles:6}] - {book.title} - [{book.author}]'.format(**locals()), tab=4)
+            C.yellowH(text='[{index:06}/{nFiles:06}] - {book.title} - [{book.author}]'.format(**locals()), tab=4)
 
-            _book = self._ePubs.exists(rec=book)
-            if _book.exists:
-                C.yellowH(text='already catalogued - indexed: {0}'.format(_book.data['indexed']), tab=16)
+            self._ePubs.set_id(book)
+            curr_book = self._ePubs.exists(rec=book)
+            if curr_book:
+                C.yellowH(text='already catalogued - indexed: {0}'.format(curr_book['indexed']), tab=16)
 
             else:   # - insert book into eBooks_collection
-                book.chapters = self._readContent(filename=epub_file.toStr())
+                book.chapters = self._readContent(filename=epub_file)
                 try:
                     _status, _filter = self._ePubs.insert_one(book, replace=False)
                 except Exception as why:
                     C.error(text=str(why))
                     C.yellowH(text=epub_file, tab=8)
-                    epub_file.rename(str(epub_file) + '.err.zip')
+                    epub_file.rename(epub_file / '.err.zip')
                     continue
 
-            if inp_args.dictionary and not book.indexed:
                 # - forcing dictionary update
-                inp_args.chapters = True
-                inp_args.title = True
-                inp_args.author = True
-                inp_args.description = True
+            if inp_args.dictionary and not book.indexed:
+                inp_args.fields = ['chapters' 'title', 'author', 'description']
+                inp_args.all_records = True
                 self.build_dictionary(book)
 
 
@@ -319,7 +350,7 @@ class LnEBooks:
 
             # - append and remove duplicates
             _lists.append(list( dict.fromkeys(_list) ))
-            C.yellowH(text='Word {0:<20} FOUND {1:5} books'.format(regex, len(_list)), tab=4)
+            C.yellowH(text='Word {0:} found in {1:5} books'.format(regex, len(_list)), tab=4)
 
 
         # - AND tra le varie liste
@@ -329,7 +360,7 @@ class LnEBooks:
             result = list(set(result) & set(l))
 
         result = list( dict.fromkeys(result) ) # remove duplicates
-        C.yellowH(text='After AND FOUND {0} books'.format(len(result)), tab=4)
+        C.yellowH(text='After filter remaining {0} books'.format(len(result)), tab=4)
         print()
 
         return result
@@ -377,11 +408,15 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def multiple_field_search(self, fields=[], words=[], ignore_case=True):
+    def multiple_field_search(self, fields=[], words=[], book_id=None, ignore_case=True):
         if 'all' in fields:
             fields=self._ePubs.fields
         # words=['ciao', 'tempo']
-        books = self.dictionary_search(words=words, ignore_case=ignore_case)
+        if book_id:
+            books = [book_id]
+        else:
+            books = self.dictionary_search(words=words, ignore_case=ignore_case)
+
         for book_id in books:
             _filter = { "_id": book_id }
             rec = self._ePubs.get_record(_filter)
@@ -389,117 +424,20 @@ class LnEBooks:
             for fld_name in fields:
                 res = self._find_words_in_text(data=rec[fld_name], words=words, fPRINT=False)
                 if res:
-                    C.yellowH(text='result for field [{0}] - book: {1} - [{2}]'.format(fld_name, rec['title'], rec['author']), tab=4)
+                    rec = DotMap(rec)
+                    C.yellowH(text='''
+                        result for field [{fld_name}]
+                            - id: {rec._id}
+                            - book: {rec.title} - [{rec.author}]\
+                        '''.format(**locals()), tab=4)
+
                     for k, v in res.items():
                         for item in v:
-                            print('     ', item)
+                            print(' '*7, item)
                         print()
                     Ln.prompt()
 
 
-    ####################################################
-    # -
-    # metodi per mandare in AND più liste
-    #   result = list(set(a) & set(b) & set(c))
-    #   result = list(set(a).intersection(b))
-    ####################################################
-    def display_searched_result(self, result, words, book_id=None):
-        import textwrap
-        if not book_id: logger.console("lista", result)
-        nRec = len(result)
-
-        _before=100
-        _after=150
-        _filter = None
-        for index, _id in enumerate(result):
-            if book_id and _id in [book_id]:
-                _filter = { "_id": _id }
-                rec = DotMap(self._ePubs.get_record(_filter), _dynamic=False)
-                C.magentaH(text='[{index:6}/{nRec:6}] - {rec.title} - [{rec.author}]'.format(**locals()))
-                STR_FOUND=False
-                for chap in rec['chapters']:
-                    for word in words:
-                        colored_word = C.yellowH(text=word, get=True)
-                        occurrencies = self.search_string(word, chap)
-                        if occurrencies:
-                            STR_FOUND=True
-                            for pos in occurrencies:
-                                lun=len(word)
-                                _from=0 if pos-_before<0 else pos-_before
-                                _to=pos+lun+_after
-                                text=chap[_from:_to]
-                                text = ' '.join(text.split()) # remove multiple blanks
-                                new_text=text.replace(word, colored_word)
-                                tb=textwrap.wrap(new_text, 80, break_long_words=True)
-                                for l in tb:
-                                    print('    ', l)
-                                print()
-
-                if STR_FOUND and not book_id:
-                    Ln.prompt()
-
-        if not _filter:
-            logger.console('NO records found for words', words)
-
-    ####################################################
-    # -
-    ####################################################
-    def ePubs_search(self, words, field_name='word',ignore_case=True):
-        ebook_list = []
-        for regex in words:
-            result = self._ePubs.search(field_name=field_name, regex=regex, ignore_case=ignore_case)
-            for x in result:
-                print(x['author'], ' - ', x['title'] )
-            return []
-
-        logger.console("lista", ebook_list)
-        return ebook_list
-
-
-
-
-
-
-    ####################################################
-    # -
-    ####################################################
-    def eBook_search(self, book_id, words ,ignore_case=True):
-        result = self.dictionary_search(words=words, ignore_case=ignore_case)
-        self.display_searched_result( result, words=words, book_id=book_id)
-
-
-
-    ####################################################
-    # -
-    ####################################################
-    def main_search(self, field_name, words=[], ignore_case=True):
-        ebook_list = []
-        if field_name in self._Dictionary.fields:
-            result = self.dictionary_search(words=words, ignore_case=ignore_case)
-            self.display_searched_result( result, words)
-
-        elif field_name in self._ePubs.fields:
-            result = self.ePubs_search(field_name=field_name, words=words, ignore_case=ignore_case)
-
-        elif field_name in ['id', '_id']:
-            import json
-            _my_list=[]
-            remove_fields=['chapters', 'description','identifier',]
-            for regex in words:
-                result = self._ePubs.search(field_name='_id', regex=regex, ignore_case=ignore_case)
-                for x in result:
-                    _my_list.append(x['author'] + ' - ' + x['title'])
-                    for fld in remove_fields: x.pop(fld, None)
-                    C.yellowH(text=json.dumps(x, indent=4, sort_keys=True), tab=4)
-
-                for index, item in enumerate(sorted(_my_list)):
-                    print('{index} - {item}'.format(**locals()))
-
-        else:
-            logger.console('Field: {field_name} NOT found'.format(**locals()))
-            return []
-
-        return 0
 
 
     ####################################################
@@ -587,7 +525,28 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
+    def change_ID(self):
+        result = self._ePubs._collection.find()
+        nrec=result.count()
+        for index, book in enumerate(result, start=1):
+            book = DotMap(book)
+            book.author_CN= self.author_reverse(book.author)
+            new_id = self._ePubs.get_id(book)
+            C.yellowH(text='''
+                record [{index:5}/{nrec:5}]]
+                    - book: {book.title} - [{book.author}]
+                    - author_CN: {book.author_CN}
+                    - id_old: {book._id}
+                    - id_new: {new_id}\
+                '''.format(**locals()), tab=4)
 
+
+        # db.account_data.find({"_id" : "1232014"}).forEach(function(doc) {
+        #     var oldId = doc._id;
+        #     var doc._id = doc._id + doc.country;
+        #     db.collection.remove({ _id: oldId });
+        #     db.collection.save(doc);
+        # });
 
 
     ####################################################

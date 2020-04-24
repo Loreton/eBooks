@@ -34,6 +34,17 @@
             ],
             "cwd": "${workspaceRoot}",
         },
+        {
+            "name": "change_id",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": true,
+            "program": "${workspaceFolder}/__main__.py",
+            "args": [
+                "change_id",
+            ],
+            "cwd": "${workspaceRoot}",
+        },
 
         {
             "name": "load",
