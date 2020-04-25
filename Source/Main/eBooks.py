@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 24-04-2020 18.00.07
+# Version ......: 25-04-2020 12.32.32
 #
 
 import sys
@@ -55,6 +55,7 @@ class LnEBooks:
                                 'filter', # comodo per fare la ricerca
                                 'indexed', # True/False id words into dictionary collection
                                 'title',
+                                'tags',
                                 ])
 
         self._ePubs.setIdFields(['author_CN', 'title'])
@@ -64,15 +65,6 @@ class LnEBooks:
         self._Dictionary.setFields(['_id', 'filter', 'ebook'])
         # self._Dictionary.setIdFields(['word'])
 
-        # - contiene la lista dei libri indicizzati
-        # self._Indexed = MongoCollection(collection_name='Indexed', **_args)
-        # self._Indexed.setFields(['author', 'title'])
-        # self._Indexed.setIdFields(['author', 'title'])
-
-        # solo per merge
-        # self._wk_Dictionary = MongoCollection(collection_name='wk_Dictionary', **_args)
-        # self._wk_Dictionary.setFields(['word', 'ebook'])
-        # self._wk_Dictionary.setIdFields(['word'])
 
 
 
@@ -150,6 +142,7 @@ class LnEBooks:
             book_data.date        = _date[0][0].split('T', 1)[0] if _date else ""
             book_data.indexed     = False
             book_data.chapters    = []
+            book_data.tags        = []
 
         except Exception as why:
             C.error(text=str(why), tab=12)
@@ -182,17 +175,21 @@ class LnEBooks:
 
 
     ####################################################
-    # -
+    # - input:
+    #      book: single book record
+    #      {}:   works on all records
     ####################################################
-    def build_dictionary(self, book={}):
-        if book:
-            # book =self._ePubs.get_record(filter)
+    def build_dictionary(self, filter=None):
+        if filter:
+            book = self._ePubs.get_record(filter)
+            book = DotMap(book)
             # force flag
             if inp_args.all_records: book.indexed = False
             if not book.indexed:
                 C.yellowH(text='[1/1] - working on book: {book.title} [{book.author}]'.format(**locals()), tab=4)
                 self.add_to_dictionary(book)
-                result = self._ePubs.updateField(filter=book.filter, fld={'indexed': True})
+                # book.pprint(pformat=dict)
+                result = self._ePubs.updateField(rec=book, fld_name='indexed')
 
         else:
             result = self._ePubs._collection.find()
@@ -204,8 +201,7 @@ class LnEBooks:
                 C.yellowH(text='[{index:5}/{nrec:5}] - indexed: {book.indexed} - book: {book.title} [{book.author}]'.format(**locals()), tab=4)
                 if not book.indexed:
                     self.add_to_dictionary(book)
-                    _filter = {'_id': book['_id']}
-                    result = self._ePubs.updateField(filter=_filter, fld={'indexed': True})
+                    result = self._ePubs.updateField(rec=book, fld_name='indexed')
 
 
 
@@ -213,8 +209,11 @@ class LnEBooks:
     # - indexing book content, title author and description
     ####################################################
     def add_to_dictionary(self, book):
+        assert isinstance(book, (DotMap))
+        # pdb.set_trace()
         _data = []
-        if 'chapters'    in inp_args.fields and book.chapters:    _data.extend(book.chapters)
+        if 'tags'        in inp_args.fields and book.tags:        _data.extend(book.tags)
+        if 'chaptersx'    in inp_args.fields and book.chapters:    _data.extend(book.chapters)
         if 'title'       in inp_args.fields and book.title:       _data.append(book.title)
         if 'author'      in inp_args.fields and book.author:      _data.append(book.author)
         if 'description' in inp_args.fields and book.description: _data.append(book.description)
@@ -223,17 +222,12 @@ class LnEBooks:
         logger.info('inserting {0} words into dictionary'.format(len(words)))
         lun=len(words)
         for index, word in enumerate(words, start=1):
-            if not index%500:
+            if not index%2:
                 C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
+                break
+
 
             # - preparazione record del dictionary
-            rec={
-                '_id': word.lower(),
-                'ebook': [book._id],
-                'filter': {'_id':word.lower()},
-                # 'word': word.lower(), # non serve perché==_id
-            }
-
             rec=DotMap(
                 _id = word.lower(),
                 ebook = [book._id],
@@ -277,7 +271,7 @@ class LnEBooks:
         all_files = list(Path(dir_path).rglob(file_pattern))
         nFiles = len(all_files)
 
-        # - try to insert each file
+        # - insert each file
         for index, epub_file in enumerate(sorted(all_files), start=1):
             _dir = epub_file.parent
             if index > inp_args.max_books:
@@ -305,9 +299,9 @@ class LnEBooks:
 
                 # - forcing dictionary update
             if inp_args.dictionary and not book.indexed:
-                inp_args.fields = ['chapters' 'title', 'author', 'description']
+                inp_args.fields = ['chapters', 'title', 'author', 'tags', 'description']
                 inp_args.all_records = True
-                self.build_dictionary(book)
+                self.build_dictionary(book.filter)
 
 
             # move file if required
