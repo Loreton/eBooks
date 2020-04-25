@@ -58,6 +58,7 @@
             "args": [
                 "load",
                 "--dictionary",
+                "--log",
                 // "--max=2",
             ],
             "cwd": "${workspaceRoot}",

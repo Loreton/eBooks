@@ -1,6 +1,8 @@
 #!/usr/bin/python3
+#
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 12.29.46
+# Version ......: 25-04-2020 14.39.40
+#
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -17,7 +19,8 @@ from dotmap import DotMap
 
 
 class MongoCollection:
-    DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
+    # DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
+    DBs={} # Global var per gestire più DBases
         # ***********************************************
         # ***********************************************
     def __init__(self, db_name, collection_name, myLogger, server_name='127.0.0.1', server_port='27017'):
@@ -76,11 +79,11 @@ class MongoCollection:
 
             logger.info ('CLIENT:', client)
 
-            _DBs[db_name] = DotMap(_dynamic=False)
-            _DBs[db_name].client = client
-            _DBs[db_name].db     = client[db_name]
+            _DBs[db_name] = {}
+            _DBs[db_name]['client'] = client
+            _DBs[db_name]['db']     = client[db_name]
 
-        return _DBs[db_name].client
+        return _DBs[db_name]['client']
 
 
 
@@ -100,26 +103,32 @@ class MongoCollection:
         return self._id_fields
 
 
+    ############################################################
     # --- check if record exists
     # --- if exists return existing record
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
+    ############################################################
     def exists(self, rec):
         assert isinstance(rec, (DotMap))
 
-        _exists = self._collection.count_documents(rec.filter, limit = 1)
+        _exists = self._collection.count_documents(rec['filter'], limit = 1)
         if _exists:
-            logger.info('record exists', rec.filter)
-            _rec = self.get_record(rec.filter)
+            logger.info('record exists', rec['filter'])
+            _rec = self.get_record(rec['filter'])
         else:
-            logger.error('record NOT found', rec.filter)
+            logger.error('record NOT found', rec['filter'])
             _rec={}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> no_dotmap
         return _rec
 
         ############################################################
         # https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference
-        # diff_a = set(record.keys()).difference(set(self._fields))
-        # diff_b = set(self._fields).difference(set(record.keys()))
+        # diff_a = set(record['keys']()).difference(set(self._fields))
+        # diff_b = set(self._fields).difference(set(record['keys']()))
         ############################################################
     def checkFields(self, record):
         assert isinstance(record, (dict))
@@ -159,13 +168,22 @@ class MongoCollection:
             rec['filter'] = {'_id': IDvalue}
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> no_dotmap
     ####################################################
     # -
     ####################################################
     def get_record(self, filter):
         book = self._collection.find_one(filter) # get current record
+<<<<<<< HEAD
         return DotMap(book)
+=======
+        # return DotMap(book)
+        return book
+
+>>>>>>> no_dotmap
 
 
 
@@ -181,27 +199,25 @@ class MongoCollection:
                 ['exists', _filter ]
                 ['inserted', _filter]
         """
-        assert isinstance(record, (dict))
+        # assert isinstance(record, (dict))
 
-        ret_value = []
         self.checkFields(record)
 
         curr_rec = self.exists(rec=record)
         if curr_rec:
             if replace:
-                result = self._collection.replace_one(record.filter, record.toDict()) # non riconosce bene DotMap
+                result = self._collection.replace_one(record['filter'], record) # non riconosce bene DotMap
                 if result.modified_count == 1:
-                    status = ['replaced', record.filter ]
+                    status = ['replaced', record['filter'] ]
             else:
-                status = ['exists', record.filter ]
+                status = ['exists', record['filter'] ]
 
         else:
-            result = self._collection.insert_one(record.toDict()) # non riconosce bene DotMap
-            status  = ['inserted', record.filter]
+            result = self._collection.insert_one(record) # non riconosce bene DotMap
+            status  = ['inserted', record['filter']]
 
-        ret_value = status
 
-        return ret_value
+        return status
 
     # ################################################
     # - https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.update_one
@@ -221,34 +237,42 @@ class MongoCollection:
     #   mycol.update_one(myquery, newvalues)
     # ################################################
     def updateField(self, rec, fld_name, create=False):
+<<<<<<< HEAD
         assert isinstance(rec, (DotMap))
         logger.info('Updating field {fld_name} in record {rec._id}.'.format(**locals()))
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
         new_value = rec[fld_name]
         cur_rec=self._collection.find_one(rec.filter, limit=1) # get current record
+=======
+        # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
+        _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['filter'], **locals())
+
+        fld_new_value = rec[fld_name]
+        cur_rec=self._collection.find_one(rec['filter']) # get current record
+>>>>>>> no_dotmap
         if cur_rec:
             cur_value = cur_rec[fld_name]
             if isinstance(cur_value, (list, tuple)): # if it's a list
                 _val = cur_value[:]
-                _val.extend(new_value)
+                _val.extend(fld_new_value)
                 _val = list( dict.fromkeys(_val) ) # remove duplicates ... anche list(set(_val))
             else:
-                _val = new_value
+                _val = fld_new_value
 
             if _val == cur_value:
                 result = 0
-                logger.debug1('   nothing to update.')
+                logger.debug1(_base_msg, ' matching, nothig to do.')
 
             else:
-                logger.info('   record found. Updating field.')
+                logger.info(_base_msg, ' ... updating')
                 upd_cmd = { "$set": {fld_name: _val } }
-                result=self._collection.update_one(rec.filter, upd_cmd)
+                result=self._collection.update_one(rec['filter'], upd_cmd)
                 logger.debug1('   matched', result.matched_count)
                 logger.debug1('   updated', result.modified_count)
 
         elif create:
-            logger.info('   record not found. Creating it.')
+            logger.info(_base_msg, ' record not found. Creating it.')
             result = self.insert_one(rec)
 
         return result
