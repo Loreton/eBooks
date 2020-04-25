@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 12.58.44
+# Version ......: 25-04-2020 14.25.13
 #
 # #############################################
 
@@ -46,7 +46,7 @@ def parseInput():
     parser_load.add_argument('--move-file', help='move file to destination defined in config file', action='store_true')
     parser_load.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
 
-    parser_dictionary = subparsers.add_parser ("dictionary", help = "rebuild dictionary")
+    parser_dictionary = subparsers.add_parser ("build", help = "rebuild dictionary")
     parser_dictionary.add_argument('--all-records', help='update all records regardless indexed=true', action='store_true')
     parser_dictionary.add_argument('--fields',
                                 metavar='',

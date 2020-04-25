@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 13.57.37
+# Version ......: 25-04-2020 14.31.33
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -223,9 +223,9 @@ class MongoCollection:
     #   mycol.update_one(myquery, newvalues)
     # ################################################
     def updateField(self, rec, fld_name, create=False):
-        logger.info('Updating field {fld_name} in record {0}.'.format(rec['_id'], **locals()))
-
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
+        _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['filter'], **locals())
+
         fld_new_value = rec[fld_name]
         cur_rec=self._collection.find_one(rec['filter']) # get current record
         if cur_rec:
@@ -239,17 +239,17 @@ class MongoCollection:
 
             if _val == cur_value:
                 result = 0
-                logger.debug1('   nothing to update.')
+                logger.debug1(_base_msg, ' matching, nothig to do.')
 
             else:
-                logger.info('   record found. Updating field.')
+                logger.info(_base_msg, ' ... updating')
                 upd_cmd = { "$set": {fld_name: _val } }
                 result=self._collection.update_one(rec['filter'], upd_cmd)
                 logger.debug1('   matched', result.matched_count)
                 logger.debug1('   updated', result.modified_count)
 
         elif create:
-            logger.info('   record not found. Creating it.')
+            logger.info(_base_msg, ' record not found. Creating it.')
             result = self.insert_one(rec)
 
         return result
