@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 14.00.09
+# Version ......: 25-04-2020 14.09.23
 #
 
 import sys
@@ -177,8 +177,11 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def build_dictionary(self, book={}):
-        if book:
+    # def build_dictionary(self, book={}):
+    def build_dictionary(self, filter=None):
+        if filter:
+            book = self._ePubs.get_record(filter)
+        # if book:
             # book =self._ePubs.get_record(filter)
             # force flag
             if inp_args.all_records: book['indexed'] = False
@@ -197,7 +200,6 @@ class LnEBooks:
                 # C.yellowH(text='[{index:5}/{nrec:5}] - indexed: {book['indexed']} - book: {book['title']} [{book['author']}]'.format(**locals()), tab=4)
                 if not book['indexed']:
                     self.add_to_dictionary(book)
-                    _filter = {'_id': book['_id']}
                     result = self._ePubs.updateField(rec=book, fld_name='indexed')
 
 
@@ -280,7 +282,7 @@ class LnEBooks:
             if not book: continue # book not valid
 
             print()
-            # C.yellowH(text='[{index:06}/{nFiles:06}] - {book['title']} - [{book['author']}]'.format(**locals()), tab=4)
+            C.yellowH(text='[{index:06}/{nFiles:06}] - {0} - [{1}]'.format(book['title'], book['author'], **locals()), tab=4)
 
             self._ePubs.set_id(book)
             curr_book = self._ePubs.exists(rec=book)
@@ -301,7 +303,7 @@ class LnEBooks:
             if inp_args.dictionary and not book['indexed']:
                 inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
                 inp_args.all_records = True
-                self.build_dictionary(book)
+                self.build_dictionary(book['filter'])
 
 
             # move file if required
