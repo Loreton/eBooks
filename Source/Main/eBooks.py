@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 14.45.00
+# Version ......: 25-04-2020 14.49.10
 #
 
 import sys
@@ -224,9 +224,8 @@ class LnEBooks:
         logger.info('inserting {0} words into dictionary'.format(len(words)))
         lun=len(words)
         for index, word in enumerate(words, start=1):
-            if not index%2:
+            if not index%500:
                 C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
-                break
 
             # - preparazione record del dictionary
             rec={
