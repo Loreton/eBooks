@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 14.39.40
+# Version ......: 25-04-2020 14.45.24
 #
 import sys
 import pymongo
@@ -109,8 +109,6 @@ class MongoCollection:
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
     ############################################################
     def exists(self, rec):
-        assert isinstance(rec, (DotMap))
-
         _exists = self._collection.count_documents(rec['filter'], limit = 1)
         if _exists:
             logger.info('record exists', rec['filter'])
@@ -119,10 +117,7 @@ class MongoCollection:
             logger.error('record NOT found', rec['filter'])
             _rec={}
 
-<<<<<<< HEAD
-=======
 
->>>>>>> no_dotmap
         return _rec
 
         ############################################################
@@ -168,22 +163,16 @@ class MongoCollection:
             rec['filter'] = {'_id': IDvalue}
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> no_dotmap
     ####################################################
     # -
     ####################################################
     def get_record(self, filter):
         book = self._collection.find_one(filter) # get current record
-<<<<<<< HEAD
-        return DotMap(book)
-=======
-        # return DotMap(book)
+
         return book
 
->>>>>>> no_dotmap
+
 
 
 
@@ -192,7 +181,6 @@ class MongoCollection:
     # -
     ####################################################
     def insert_one(self, record, replace=False):
-        assert isinstance(record, (DotMap))
         """ insert document record into collection
             return:
                 ['replaced', _filter ]
@@ -237,20 +225,12 @@ class MongoCollection:
     #   mycol.update_one(myquery, newvalues)
     # ################################################
     def updateField(self, rec, fld_name, create=False):
-<<<<<<< HEAD
-        assert isinstance(rec, (DotMap))
-        logger.info('Updating field {fld_name} in record {rec._id}.'.format(**locals()))
 
-        # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
-        new_value = rec[fld_name]
-        cur_rec=self._collection.find_one(rec.filter, limit=1) # get current record
-=======
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
         _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['filter'], **locals())
 
         fld_new_value = rec[fld_name]
         cur_rec=self._collection.find_one(rec['filter']) # get current record
->>>>>>> no_dotmap
         if cur_rec:
             cur_value = cur_rec[fld_name]
             if isinstance(cur_value, (list, tuple)): # if it's a list

@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 14.39.13
+# Version ......: 25-04-2020 14.45.00
 #
 
 import sys
@@ -65,10 +65,7 @@ class LnEBooks:
         self._Dictionary.setFields(['_id', 'filter', 'ebook'])
         # self._Dictionary.setIdFields(['word'])
 
-<<<<<<< HEAD
 
-=======
->>>>>>> no_dotmap
 
 
     ####################################################
@@ -139,16 +136,7 @@ class LnEBooks:
             # _identifier  = hBook.get_metadata('DC', 'identifier')
             # _coverage    = book['get_metadata']('DC', 'coverage')
 
-<<<<<<< HEAD
-            book_data.description = _description[0][0]           if _description else ''
-            # book_data.identifier  = _identifier[0][0]            if _identifier else 'null'
-            book_data.title       = _title[0][0]                 if _title else ''
-            book_data.author      = _creator[0][0]               if _creator else ""
-            book_data.date        = _date[0][0].split('T', 1)[0] if _date else ""
-            book_data.indexed     = False
-            book_data.chapters    = []
-            book_data.tags        = []
-=======
+
             # book_data['identifier']  = _identifier[0][0]            if _identifier else 'null'
             book_data['description'] = _description[0][0]           if _description else ''
             book_data['title']       = _title[0][0]                 if _title else ''
@@ -157,7 +145,6 @@ class LnEBooks:
             book_data['indexed']     = False
             book_data['chapters']    = []
             book_data['tags']        = []
->>>>>>> no_dotmap
 
         except Exception as why:
             C.error(text=str(why), tab=12)
@@ -194,28 +181,18 @@ class LnEBooks:
     #      book: single book record
     #      {}:   works on all records
     ####################################################
-<<<<<<< HEAD
-    def build_dictionary(self, filter=None):
-        if filter:
-            book = self._ePubs.get_record(filter)
-            book = DotMap(book)
-=======
+
     # def build_dictionary(self, book={}):
     def build_dictionary(self, filter=None):
         if filter:
             book = self._ePubs.get_record(filter)
-        # if book:
-            # book =self._ePubs.get_record(filter)
->>>>>>> no_dotmap
+
             # force flag
             if inp_args.all_records: book['indexed'] = False
             if not book['indexed']:
                 C.yellowH(text='[1/1] - working on book: {} [{}]'.format(book['title'],book['author']), tab=4)
                 self.add_to_dictionary(book)
-<<<<<<< HEAD
-                # book.pprint(pformat=dict)
-=======
->>>>>>> no_dotmap
+
                 result = self._ePubs.updateField(rec=book, fld_name='indexed')
 
         else:
@@ -236,22 +213,12 @@ class LnEBooks:
     # - indexing book content, title author and description
     ####################################################
     def add_to_dictionary(self, book):
-        assert isinstance(book, (DotMap))
-        # pdb.set_trace()
         _data = []
-<<<<<<< HEAD
-        if 'tags'        in inp_args.fields and book.tags:        _data.extend(book.tags)
-        if 'chaptersx'    in inp_args.fields and book.chapters:    _data.extend(book.chapters)
-        if 'title'       in inp_args.fields and book.title:       _data.append(book.title)
-        if 'author'      in inp_args.fields and book.author:      _data.append(book.author)
-        if 'description' in inp_args.fields and book.description: _data.append(book.description)
-=======
         if 'tags'        in inp_args.fields and book['tags']:    _data.extend(book['tags'])
         if 'chapters'    in inp_args.fields and book['chapters']:    _data.extend(book['chapters'])
         if 'title'       in inp_args.fields and book['title']:       _data.append(book['title'])
         if 'author'      in inp_args.fields and book['author']:      _data.append(book['author'])
         if 'description' in inp_args.fields and book['description']: _data.append(book['description'])
->>>>>>> no_dotmap
 
         words = self.content2words(' '.join(_data))
         logger.info('inserting {0} words into dictionary'.format(len(words)))
@@ -261,16 +228,6 @@ class LnEBooks:
                 C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
                 break
 
-<<<<<<< HEAD
-
-            # - preparazione record del dictionary
-            rec=DotMap(
-                _id = word.lower(),
-                ebook = [book._id],
-                filter = {'_id':word.lower()},
-                # 'word': word.lower(), # non serve perché==_id
-            )
-=======
             # - preparazione record del dictionary
             rec={
                 '_id':    word.lower(),
@@ -278,14 +235,6 @@ class LnEBooks:
                 'filter': {'_id': word.lower()},
                 # 'word': word.lower(), # non serve perché==_id
             }
-
-            # rec=DotMap(
-            #     _id = word.lower(),
-            #     ebook = [book['_id']],
-            #     filter = {'_id':word.lower()},
-            #     # 'word': word.lower(), # non serve perché==_id
-            # )
->>>>>>> no_dotmap
 
 
             # - updating record o create it if not exists
@@ -350,17 +299,10 @@ class LnEBooks:
                     continue
 
                 # - forcing dictionary update
-<<<<<<< HEAD
-            if inp_args.dictionary and not book.indexed:
-                inp_args.fields = ['chapters', 'title', 'author', 'tags', 'description']
-                inp_args.all_records = True
-                self.build_dictionary(book.filter)
-=======
             if inp_args.dictionary and not book['indexed']:
                 inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
                 inp_args.all_records = True
                 self.build_dictionary(book['filter'])
->>>>>>> no_dotmap
 
 
             # move file if required
