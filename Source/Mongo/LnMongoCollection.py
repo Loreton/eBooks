@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 13.00.40
+# Version ......: 25-04-2020 13.57.37
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -101,9 +101,11 @@ class MongoCollection:
         return self._id_fields
 
 
+    ############################################################
     # --- check if record exists
     # --- if exists return existing record
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
+    ############################################################
     def exists(self, rec):
         assert isinstance(rec, (dict))
 
@@ -115,9 +117,6 @@ class MongoCollection:
             logger.error('record NOT found', rec['filter'])
             _rec={}
 
-        # ret_val.filter = rec['filter']
-        # ret_val.data = _rec
-        # ret_val.exists = True if _exists else False
 
         return _rec
 
@@ -140,48 +139,8 @@ class MongoCollection:
                 print('     {index} - {field}'.format(**locals()))
             sys.exit(1)
 
-
-        # _keys = record['keys']()
-        # for _key in self._fields:
-        #     if _key not in _keys:
-        #         logger.info("{_key} is missing. Assigning ''".format(**locals()))
-        #         record[_key] = ''
-
-        """
-            add '_id' field
-            get the self._id_fields contents and join its words
-        """
-
-        # - check for extra fields
-        # for _key in record['keys']():
-        #     if not _key in self._fields:
-
-        # record['_id'] = self.get_id(record)
-
         return record
 
-    ####################################################
-    # -
-    ####################################################
-    # def get_id_prev(self, rec):
-    #     _id = []
-    #     for fld in self._id_fields:
-    #         _id.extend(rec[fld].split())
-    #     return '_'.join(_id)
-
-
-    ####################################################
-    # -
-    ####################################################
-    # def get_id(self, rec):
-    #     _id = []
-    #     for fld in self._id_fields:
-    #         words = rec[fld].split()
-    #         for word in words:
-    #             word=[ c for c in word if c.isalnum()]
-    #             _id.append(''.join(word))
-
-    #     return '_'.join(_id)
 
     ####################################################
     # - Calcola ID ed imposta i seguenti campi nel record:
@@ -203,41 +162,16 @@ class MongoCollection:
         if not 'filter' in rec:
             rec['filter'] = {'_id': IDvalue}
 
-        # return rec
-
-
-    ####################################################
-    # -
-    ####################################################
-    # def get_id_filter(self, rec):
-    #     return {'_id': self.get_id(rec)}
 
     ####################################################
     # -
     ####################################################
     def get_record(self, filter):
         book = self._collection.find_one(filter) # get current record
-        return DotMap(book)
+        # return DotMap(book)
+        return book
 
 
-
-
-
-
-    ####################################################
-    # -
-    ####################################################
-    # def insert(self, post_data, replace=False):
-    #     assert isinstance(post_data, (list, dict))
-    #     records = [post_data] if isinstance(post_data, dict) else post_data
-
-    #     ret_value = {}
-    #     for index, record in enumerate(records):
-    #         status = self._insert_one(record, replace=replace)
-    #         _key='record_{index}'.format(**locals())
-    #         ret_value[_key] = status
-
-    #     return ret_value
 
 
 
@@ -251,9 +185,8 @@ class MongoCollection:
                 ['exists', _filter ]
                 ['inserted', _filter]
         """
-        assert isinstance(record, (dict))
+        # assert isinstance(record, (dict))
 
-        ret_value = []
         self.checkFields(record)
 
         curr_rec = self.exists(rec=record)
@@ -269,9 +202,8 @@ class MongoCollection:
             result = self._collection.insert_one(record) # non riconosce bene DotMap
             status  = ['inserted', record['filter']]
 
-        ret_value = status
 
-        return ret_value
+        return status
 
     # ################################################
     # - https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.update_one
@@ -294,16 +226,16 @@ class MongoCollection:
         logger.info('Updating field {fld_name} in record {0}.'.format(rec['_id'], **locals()))
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
-        new_value = rec[fld_name]
+        fld_new_value = rec[fld_name]
         cur_rec=self._collection.find_one(rec['filter']) # get current record
         if cur_rec:
             cur_value = cur_rec[fld_name]
             if isinstance(cur_value, (list, tuple)): # if it's a list
                 _val = cur_value[:]
-                _val.extend(new_value)
+                _val.extend(fld_new_value)
                 _val = list( dict.fromkeys(_val) ) # remove duplicates ... anche list(set(_val))
             else:
-                _val = new_value
+                _val = fld_new_value
 
             if _val == cur_value:
                 result = 0

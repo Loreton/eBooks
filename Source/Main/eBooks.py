@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 13.01.30
+# Version ......: 25-04-2020 14.00.09
 #
 
 import sys
@@ -64,16 +64,6 @@ class LnEBooks:
         self._Dictionary = MongoCollection(collection_name='Dictionary', **_args)
         self._Dictionary.setFields(['_id', 'filter', 'ebook'])
         # self._Dictionary.setIdFields(['word'])
-
-        # - contiene la lista dei libri indicizzati
-        # self._Indexed = MongoCollection(collection_name='Indexed', **_args)
-        # self._Indexed.setFields(['author', 'title'])
-        # self._Indexed.setIdFields(['author', 'title'])
-
-        # solo per merge
-        # self._wk_Dictionary = MongoCollection(collection_name='wk_Dictionary', **_args)
-        # self._wk_Dictionary.setFields(['word', 'ebook'])
-        # self._wk_Dictionary.setIdFields(['word'])
 
 
 
@@ -152,7 +142,7 @@ class LnEBooks:
             book_data['date']        = _date[0][0].split('T', 1)[0] if _date else ""
             book_data['indexed']     = False
             book_data['chapters']    = []
-            book_data['tags']    = []
+            book_data['tags']        = []
 
         except Exception as why:
             C.error(text=str(why), tab=12)
@@ -217,7 +207,7 @@ class LnEBooks:
     ####################################################
     def add_to_dictionary(self, book):
         _data = []
-        # if 'tags'        in inp_args.fields and book['tags']:    _data.extend(book['tags'])
+        if 'tags'        in inp_args.fields and book['tags']:    _data.extend(book['tags'])
         if 'chapters'    in inp_args.fields and book['chapters']:    _data.extend(book['chapters'])
         if 'title'       in inp_args.fields and book['title']:       _data.append(book['title'])
         if 'author'      in inp_args.fields and book['author']:      _data.append(book['author'])
@@ -232,9 +222,9 @@ class LnEBooks:
 
             # - preparazione record del dictionary
             rec={
-                '_id': word.lower(),
-                'ebook': [book['_id']],
-                'filter': {'_id':word.lower()},
+                '_id':    word.lower(),
+                'ebook':  [book['_id']],
+                'filter': {'_id': word.lower()},
                 # 'word': word.lower(), # non serve perché==_id
             }
 
