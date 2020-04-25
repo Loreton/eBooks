@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 22-04-2020 17.13.16
+# Version ......: 25-04-2020 12.38.57
 #
 import sys; sys.dont_write_bytecode = True
 import os

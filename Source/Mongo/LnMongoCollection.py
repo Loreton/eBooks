@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 24-04-2020 18.10.03
+# Version ......: 25-04-2020 13.00.40
 import sys
 import pymongo
 # from pymongo import MongoClient
@@ -17,7 +17,8 @@ from dotmap import DotMap
 
 
 class MongoCollection:
-    DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
+    # DBs=DotMap(_dynamic=False) # Global var per gestire più DBases
+    DBs={} # Global var per gestire più DBases
         # ***********************************************
         # ***********************************************
     def __init__(self, db_name, collection_name, myLogger, server_name='127.0.0.1', server_port='27017'):
@@ -76,11 +77,11 @@ class MongoCollection:
 
             logger.info ('CLIENT:', client)
 
-            _DBs[db_name] = DotMap(_dynamic=False)
-            _DBs[db_name].client = client
-            _DBs[db_name].db     = client[db_name]
+            _DBs[db_name] = {}
+            _DBs[db_name]['client'] = client
+            _DBs[db_name]['db']     = client[db_name]
 
-        return _DBs[db_name].client
+        return _DBs[db_name]['client']
 
 
 
@@ -106,15 +107,15 @@ class MongoCollection:
     def exists(self, rec):
         assert isinstance(rec, (dict))
 
-        _exists = self._collection.count_documents(rec.filter, limit = 1)
+        _exists = self._collection.count_documents(rec['filter'], limit = 1)
         if _exists:
-            logger.info('record exists', rec.filter)
-            _rec = self.get_record(rec.filter)
+            logger.info('record exists', rec['filter'])
+            _rec = self.get_record(rec['filter'])
         else:
-            logger.error('record NOT found', rec.filter)
+            logger.error('record NOT found', rec['filter'])
             _rec={}
 
-        # ret_val.filter = rec.filter
+        # ret_val.filter = rec['filter']
         # ret_val.data = _rec
         # ret_val.exists = True if _exists else False
 
@@ -122,8 +123,8 @@ class MongoCollection:
 
         ############################################################
         # https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference
-        # diff_a = set(record.keys()).difference(set(self._fields))
-        # diff_b = set(self._fields).difference(set(record.keys()))
+        # diff_a = set(record['keys']()).difference(set(self._fields))
+        # diff_b = set(self._fields).difference(set(record['keys']()))
         ############################################################
     def checkFields(self, record):
         assert isinstance(record, (dict))
@@ -140,7 +141,7 @@ class MongoCollection:
             sys.exit(1)
 
 
-        # _keys = record.keys()
+        # _keys = record['keys']()
         # for _key in self._fields:
         #     if _key not in _keys:
         #         logger.info("{_key} is missing. Assigning ''".format(**locals()))
@@ -152,7 +153,7 @@ class MongoCollection:
         """
 
         # - check for extra fields
-        # for _key in record.keys():
+        # for _key in record['keys']():
         #     if not _key in self._fields:
 
         # record['_id'] = self.get_id(record)
@@ -258,15 +259,15 @@ class MongoCollection:
         curr_rec = self.exists(rec=record)
         if curr_rec:
             if replace:
-                result = self._collection.replace_one(record.filter, record.toDict()) # non riconosce bene DotMap
+                result = self._collection.replace_one(record['filter'], record) # non riconosce bene DotMap
                 if result.modified_count == 1:
-                    status = ['replaced', record.filter ]
+                    status = ['replaced', record['filter'] ]
             else:
-                status = ['exists', record.filter ]
+                status = ['exists', record['filter'] ]
 
         else:
-            result = self._collection.insert_one(record.toDict()) # non riconosce bene DotMap
-            status  = ['inserted', record.filter]
+            result = self._collection.insert_one(record) # non riconosce bene DotMap
+            status  = ['inserted', record['filter']]
 
         ret_value = status
 
@@ -290,11 +291,11 @@ class MongoCollection:
     #   mycol.update_one(myquery, newvalues)
     # ################################################
     def updateField(self, rec, fld_name, create=False):
-        logger.info('Updating field {fld_name} in record {rec._id}.'.format(**locals()))
+        logger.info('Updating field {fld_name} in record {0}.'.format(rec['_id'], **locals()))
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
         new_value = rec[fld_name]
-        cur_rec=self._collection.find_one(rec.filter) # get current record
+        cur_rec=self._collection.find_one(rec['filter']) # get current record
         if cur_rec:
             cur_value = cur_rec[fld_name]
             if isinstance(cur_value, (list, tuple)): # if it's a list
@@ -311,7 +312,7 @@ class MongoCollection:
             else:
                 logger.info('   record found. Updating field.')
                 upd_cmd = { "$set": {fld_name: _val } }
-                result=self._collection.update_one(rec.filter, upd_cmd)
+                result=self._collection.update_one(rec['filter'], upd_cmd)
                 logger.debug1('   matched', result.matched_count)
                 logger.debug1('   updated', result.modified_count)
 
