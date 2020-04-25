@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 14.49.10
+# Version ......: 25-04-2020 18.00.50
 #
 
 import sys
@@ -176,36 +176,39 @@ class LnEBooks:
 
 
 
+
     ####################################################
     # - input:
-    #      book: single book record
-    #      {}:   works on all records
     ####################################################
+    def build_dictionary(self, filter=None, force_indexing=False):
 
-    # def build_dictionary(self, book={}):
-    def build_dictionary(self, filter=None):
+        def add(index, nrec):
+            # force flag
+            if force_indexing: book['indexed'] = False
+            if not book['indexed']:
+                C.yellowH(text='indexing...', tab=8)
+                self.add_to_dictionary(book)
+                book['indexed'] = True
+                result = self._ePubs.updateField(rec=book, fld_name='indexed')
+
         if filter:
             book = self._ePubs.get_record(filter)
-
-            # force flag
-            if inp_args.all_records: book['indexed'] = False
-            if not book['indexed']:
-                C.yellowH(text='[1/1] - working on book: {} [{}]'.format(book['title'],book['author']), tab=4)
-                self.add_to_dictionary(book)
-
-                result = self._ePubs.updateField(rec=book, fld_name='indexed')
+            add(index=1, nrec=1)
 
         else:
             result = self._ePubs._collection.find()
             nrec=result.count()
             for index, book in enumerate(result, start=1):
-                # book = DotMap(book)
-                # force flag
-                if inp_args.all_records: book['indexed'] = False
-                # C.yellowH(text='[{index:5}/{nrec:5}] - indexed: {book['indexed']} - book: {book['title']} [{book['author']}]'.format(**locals()), tab=4)
-                if not book['indexed']:
-                    self.add_to_dictionary(book)
-                    result = self._ePubs.updateField(rec=book, fld_name='indexed')
+                C.yellowH(text='''
+                    [{index:5}/{nrec:5}] - {id}
+                        book:      {title} - [{author}]
+                        indexed:   {indexed}\
+                    '''.format( title=book['title'],
+                                author=book['author'],
+                                id=book['_id'],
+                                indexed=book['indexed'],
+                                **locals()), tab=4)
+                add(index, nrec)
 
 
 
@@ -280,15 +283,18 @@ class LnEBooks:
             if not book: continue # book not valid
 
             print()
-            C.yellowH(text='[{index:06}/{nFiles:06}] - {0} - [{1}]'.format(book['title'], book['author'], **locals()), tab=4)
-
             self._ePubs.set_id(book)
+
+            # C.yellowH(text='[{index:06}/{nFiles:06}] - {0} - [{1}]'.format(book['title'], book['author'], **locals()), tab=4)
             curr_book = self._ePubs.exists(rec=book)
+
             if curr_book:
-                C.yellowH(text='already catalogued - indexed: {0}'.format(curr_book['indexed']), tab=16)
+                _msg='already catalogued'
+                book = curr_book
 
             else:   # - insert book into eBooks_collection
                 book['chapters'] = self._readContent(filename=epub_file)
+                _msg='insert as new book'
                 try:
                     _status, _filter = self._ePubs.insert_one(book, replace=False)
                 except Exception as why:
@@ -297,10 +303,24 @@ class LnEBooks:
                     epub_file.rename(epub_file / '.err.zip')
                     continue
 
+
+            C.yellowH(text='''
+                [{index:05}/{nFiles:05}]
+                    _id:       {id}
+                    book:      {title} - [{author}]
+                    {_msg}
+                    indexed:   {indexed}\
+                '''.format( title=book['title'],
+                            author=book['author'],
+                            id=book['_id'],
+                            indexed=book['indexed'],
+                            **locals()), tab=4)
+
+
                 # - forcing dictionary update
             if inp_args.dictionary and not book['indexed']:
                 inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
-                inp_args.all_records = True
+                # inp_args.all_records = True
                 self.build_dictionary(book['filter'])
 
 

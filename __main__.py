@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 12.38.57
+# Version ......: 25-04-2020 17.47.10
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -153,8 +153,8 @@ if __name__ == '__main__':
 
         myDB.load_eBooks(input_dir, file_pattern=inpArgs.ftype, target_dir=target_dir)
 
-    elif 'dictionary' in inpArgs:
-        myDB.build_dictionary()
+    elif 'build' in inpArgs:
+        myDB.build_dictionary(force_indexing=inpArgs.force_indexing)
 
     elif 'change_id' in inpArgs:
         myDB.change_ID()
