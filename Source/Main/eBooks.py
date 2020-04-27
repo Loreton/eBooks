@@ -2,13 +2,13 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 27-04-2020 15.49.35
+# Version ......: 27-04-2020 16.07.03
 #
 
 import sys
 import os
 from pathlib import Path
-# from dotmap import DotMap
+from dotmap import DotMap
 import string
 import pdb
 import re
@@ -523,10 +523,10 @@ class LnEBooks:
     # -    words:   stringa/stringhe da ricercare (in AND)
     # -    book_id: se presente si cerca solo al suo interno
     ####################################################
-    def multiple_field_search(self, fields=[], words=[], book_id=None, ignore_case=True):
+    def multiple_field_search_00(self, fields=[], words=[], book_id=None, ignore_case=True):
         if 'all' in fields:
             fields=self._ePubs.fields
-        words=['gatto', 'tempo']
+        # words=['gatto', 'tempo']
         if book_id:
             books = [book_id]
         else:
@@ -607,6 +607,98 @@ class LnEBooks:
                                 _from-=_step
 
                             if _from>_max: _from=_max-_step
+                            if _from<0: _from=0
+
+
+    ####################################################
+    # - Input:
+    # -    fields:  campo/i dove effettuare la ricerca
+    # -    words:   stringa/stringhe da ricercare (in AND)
+    # -    book_id: se presente si cerca solo al suo interno
+    ####################################################
+    def multiple_field_search(self, fields=[], words=[], book_id=None, ignore_case=True):
+        if 'all' in fields:
+            fields=self._ePubs.fields
+        words=['gatto', 'tempo']
+        if book_id:
+            books = [book_id]
+        else:
+            # - torna la lista dei libri che contengono le words (in AND)
+            books = self.dictionary_search(words=words, ignore_case=ignore_case)
+
+
+        # ###  D I S P L A Y    data
+        choice_keys = []
+        for i in range(1, len(books)+1):
+            choice_keys.append(i)
+        choice_keys = '|'.join([str(x) for x in choice_keys])
+        prev_book_id = 0
+
+        while True:
+            for index, book in enumerate(sorted(books), start=1):
+                print('     [{index:4}] - {book}'.format(**locals()))
+            print()
+
+            choice = Ln.prompt('pleas select book number', validKeys=choice_keys)
+            book_id = books[int(choice)-1]
+
+                # - prendiamo il libro per avere i metadati
+            if not book_id == prev_book_id:
+                _filter = { "_id": book_id }
+                rec = self._ePubs.get_record(_filter)
+                rec=DotMap(rec, _dynamic=False)
+                prev_book_id = book_id
+
+
+
+            for fld_name in fields:
+                result = self._find_words_in_text_02(data=rec[fld_name], words=words, fPRINT=False)
+                """
+                    res dict{
+                       word1 {counter: x index: [] }
+                       word2 {counter: x index: [] }
+                       wordn...
+                       }
+                """
+                if result:
+                    result=DotMap(result, _dynamic=False)
+                    for word in words:
+                        ptr=result[word]
+                        C.yellowH(text='''
+                            result for field [{fld_name}]
+                                - id: {rec._id}
+                                - book: {rec.title} - [{rec.author}]
+                                - word: {word} - instances: {ptr.counter}\
+                            '''.format(**locals()),
+                                    tab=4)
+
+                        ''' Display data.
+                            ruotare all'interno della lista visualizzando
+                            [step] results per volta'''
+                        _max = ptr.counter
+                        _min = 0
+                        _from=_min
+                        _step=6
+                        while True:
+                            C.yellowH(text='word: [{word}: {_max}] - {rec.title} - [{rec.author}]'.format(**locals()), tab=4)
+                            _to=_from+_step
+                            if _to>_max: _to=_max
+                            # print('{_from}-{_to}'.format(**locals()))
+                            for index in range(_from, _to):
+                                item = ptr.data[index+1]
+                                print('{0:5} - {1}'.format(index+1, item[0]))
+                                for line in item[1:]:
+                                    print(' '*7, line)
+                                print()
+
+                            choice=Ln.prompt('[n]ext [p]rev [b]reak', validKeys='n|p|b')
+                            if choice in ['b']: break
+                            if choice in ['n']:
+                                _from+=_step
+                            if choice in ['p']:
+                                _from-=_step
+
+                            if _from>=_max: _from=_max-_step
                             if _from<0: _from=0
 
 
