@@ -13,8 +13,8 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "search",
-                "--field=word",
-                "--words=ciao tempo",
+                "--field=chapters",
+                "--words=tempo",
                 // "--verbose",
             ],
             "cwd": "${workspaceRoot}",
