@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 28-04-2020 09.38.00
+# Version ......: 28-04-2020 10.17.33
 #
 
 import sys
@@ -272,15 +272,22 @@ class LnEBooks:
             quindi utilizzarlo direttamente oppure con list salvare i dati
         '''
         all_files = list(Path(dir_path).rglob(file_pattern))
-        nFiles = len(all_files)
+        if not all_files:
+            logger.abend('no files found on {dir_path}/{file_pattern}'.format(**locals()))
 
+        nFiles = len(all_files)
+        loaded_books=0  # counter
+        indexed_books=0 # counter
         # - insert each file
         for index, epub_file in enumerate(sorted(all_files), start=1):
             _dir = epub_file.parent
-            if index > inp_args.max_books:
-                continue
             book = self._readEbook(file=epub_file)
             if not book: continue # book not valid
+            if inp_args.indexing and indexed_books >= inp_args.max_books:
+                return
+            elif loaded_books >= inp_args.max_books:
+                return
+
 
             print()
             self._ePubs.set_id(book)
@@ -294,42 +301,39 @@ class LnEBooks:
 
             else:   # - insert book into eBooks_collection
                 book['chapters'] = self._readContent(filename=epub_file)
-                _msg='insert as new book'
                 try:
                     _status, _filter = self._ePubs.insert_one(book, replace=False)
+                    loaded_books += 1
+                    _msg='inserted as new book'
                 except Exception as why:
                     C.error(text=str(why))
                     C.yellowH(text=epub_file, tab=8)
                     epub_file.rename(epub_file / '.err.zip')
                     continue
 
-
+            dmBook = DotMap(book, _dynamic=False)
             C.yellowH(text='''
                 [{index:05}/{nFiles:05}]
-                    _id:       {id}
-                    book:      {title} - [{author}]
+                    _id:       {dmBook._id}
+                    book:      {dmBook.title} - [{dmBook.author}]
                     {_msg}
-                    indexed:   {indexed}\
-                '''.format( title=book['title'],
-                            author=book['author'],
-                            id=book['_id'],
-                            indexed=book['indexed'],
-                            **locals()), tab=4)
+                    indexed:   {dmBook.indexed}\
+                '''.format(**locals()), tab=4)
 
 
                 # - forcing dictionary update
-            if inp_args.dictionary and not book['indexed']:
+            if inp_args.indexing and not dmBook.indexed:
                 inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
-                # inp_args.all_records = True
                 self.build_dictionary(book['filter'])
+                indexed_books += 1
 
 
             # move file if required
             if target_dir:
-                target_file='{target_dir}/{0}.epub'.format(book['title'], **locals())
+                target_file='{target_dir}/{dmBook.title}.epub'.format(**locals())
                 C.yellowH(text='... moving to:', tab=16)
                 C.yellowH(text='dir:   {target_dir}'.format(**locals()), tab=18)
-                C.yellowH(text='fname: {}'.format(book['title']), tab=18)
+                C.yellowH(text='fname: {dmBook.title}'.format(**locals()), tab=18)
 
                 if not epub_file.moveTo(target_file, replace=False):
                     epub_file.rename(str(epub_file) + '.not_moved')
@@ -476,16 +480,14 @@ class LnEBooks:
             print()
 
             choice = Ln.prompt('please select book number', validKeys=range(1, len(books)+1))
-            # print(int(choice))
             book_id = books[int(choice)-1]
-            print(book_id)
-            continue
+            # print(book_id);continue
 
                 # - prendiamo il libro per avere i metadati
             if not book_id == prev_book_id:
                 _filter = { "_id": book_id }
                 book = self._ePubs.get_record(_filter)
-                dot_book=DotMap(book, _dynamic=False) # di comodo
+                dmBook=DotMap(book, _dynamic=False) # di comodo
                 prev_book_id = book_id
 
 
@@ -508,8 +510,8 @@ class LnEBooks:
 
                         C.yellowH(text='''
                             result for field [{fld_name}]
-                                - id: {dot_book._id}
-                                - book: {dot_book.title} - [{dot_book.author}]
+                                - id: {dmBook._id}
+                                - book: {dmBook.title} - [{dmBook.author}]
                                 - word: {word} - instances: {ptr.counter}\
                             '''.format(**locals()),
                                     tab=4)
@@ -522,7 +524,7 @@ class LnEBooks:
                         _from=_min
                         _step=6
                         while True:
-                            C.yellowH(text='word: [{word}: {_max}] - {dot_book.title} - [{dot_book.author}]'.format(**locals()), tab=4)
+                            C.yellowH(text='word: [{word}: {_max}] - {dmBook.title} - [{dmBook.author}]'.format(**locals()), tab=4)
                             if _from>=_max: _from=_max-_step
                             if _from<0: _from=0
                             _to=_from+_step
@@ -545,7 +547,7 @@ class LnEBooks:
                                 result = self._ePubs.updateField(rec=book, fld_name='tags')
                                 if result.matched_count:
                                     print()
-                                    C.cyanH(text='tags {dot_book.tags} have been added'.format(**locals()), tab=4)
+                                    C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
                                     print()
 
 

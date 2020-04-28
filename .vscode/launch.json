@@ -57,15 +57,15 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "load",
-                "--dictionary",
+                // "--dictionary",
                 // "--log",
-                // "--max=2",
+                "--max=5",
             ],
             "cwd": "${workspaceRoot}",
         },
 
         {
-            "name": "dictionary",
+            "name": "build",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
@@ -74,7 +74,7 @@
             // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [
-                "dictionary",
+                "build",
                 "--author",
                 "--title",
                 "--description",

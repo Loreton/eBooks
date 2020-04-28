@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 17.47.10
+# Version ......: 28-04-2020 10.22.05
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -14,54 +14,6 @@ import Source as Ln
 
 # from eBooks import main as eBooks_main
 from eBooks import LnEBooks
-import textwrap
-
-TAB1 = '    '
-def test():
-    # end first line with \ to avoid the empty line!
-    s = '''\
-        hello
-            world
-    '''
-    print(textwrap.dedent(s))  # prints 'hello\n  world\n'
-
-def testi():
-    # end first line with \ to avoid the empty line!
-    s = '''\
-            hello
-                world1
-                world2
-    '''
-    _s = textwrap.dedent(s)  # prints 'hello\n  world\n'
-    print(textwrap.indent(_s, '     ', lambda line: False))  # prints 'hello\n  world\n'
-
-def test3():
-    fld_name='author'
-    _id='ID'
-    title='titolo'
-    author='autore'
-    # C.yellowH(text=(
-    #         'result for field [{fld_name}]'.format(**locals()),
-    #         '- id: {_id}'.format(**locals()),
-    #         '- book: {title} - [{author}]'.format(**locals())
-    #     ),
-    #     tab=4)
-    C.yellowH(text='''
-        result for field [{fld_name}],
-            - id: {_id},
-            - book: {title} - [{author}]'''.format(**locals()), tab=8)
-    C.yellowH(text='''\
-        result for field [{fld_name}],
-            - id: {_id},
-            - book: {title} - [{author}]\
-        '''.format(**locals()), tab=8)
-
-
-def search_string(substring, data):
-    import re
-    # All occurrences of substring in string
-    res = [i.start() for i in re.finditer(substring, data)]
-    return res
 
 
 
@@ -71,14 +23,6 @@ def search_string(substring, data):
 #  // by Loreto VSCode --> https://code.visualstudio.com/docs/python/debugging
 ######################################
 if __name__ == '__main__':
-    # C           = Ln.Color()
-    # test()
-    # testi()
-    # test3()
-    # sys.exit()
-
-
-
     inpArgs          = Ln.parseInput()
     fCONSOLE         = inpArgs.log_console
     _data            = Ln.readConfigFile()
@@ -102,7 +46,7 @@ if __name__ == '__main__':
     #
     # --- setting logger
 
-    C           = Ln.Color()
+
     lnLogger.info('input arguments', vars(inpArgs))
     lnLogger.info('configuration data', _data)
     Path.setLnMonkey(lnLogger)
@@ -124,13 +68,11 @@ if __name__ == '__main__':
     gv          = DotMap(_dynamic=False)
     gv.Ln       = Ln
     gv.lnLogger = lnLogger
-    gv.Color    = C
-    gv.args    = inpArgs
+    gv.Color    = Ln.Color()
+    gv.args     = inpArgs
 
 
-
-
-    myDB=LnEBooks(gv, db_name='eBooks_2')
+    myDB=LnEBooks(gv, db_name='Ln_eBooks')
     if 'update_fieldx' in inpArgs:
         result = myDB.update_field_many( )
 
