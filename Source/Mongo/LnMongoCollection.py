@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 25-04-2020 14.45.24
+# Version ......: 28-04-2020 09.39.28
 #
 import sys
 import pymongo
@@ -10,6 +10,9 @@ import time
 import json, yaml
 from dotmap import DotMap
 # from Source.LnLib.LnDotMapp import DotMap
+from Source import LnClass
+# class LnClass():
+#     pass
 
 # https://www.w3schools.com/python/python_mongodb_create_collection.asp
 # https://realpython.com/introduction-to-mongodb-and-python/
@@ -241,7 +244,9 @@ class MongoCollection:
                 _val = fld_new_value
 
             if _val == cur_value:
-                result = 0
+                result = LnClass()
+                result.matched_count = 1
+                result.modified_count = 0
                 logger.debug1(_base_msg, ' matching, nothig to do.')
 
             else:

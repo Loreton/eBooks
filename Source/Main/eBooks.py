@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 27-04-2020 16.56.56
+# Version ......: 28-04-2020 09.38.00
 #
 
 import sys
@@ -463,39 +463,39 @@ class LnEBooks:
             books = [book_id]
         else:
             # - torna la lista dei libri che contengono le words (in AND)
-            books = self.dictionary_search(words=words, ignore_case=ignore_case)
+            books = sorted(self.dictionary_search(words=words, ignore_case=ignore_case))
 
 
         # ###  D I S P L A Y    data
-        choice_keys = []
-        for i in range(1, len(books)+1):
-            choice_keys.append(i)
-        choice_keys = '|'.join([str(x) for x in choice_keys])
         prev_book_id = 0
 
         while True:
-            for index, book in enumerate(sorted(books), start=1):
+            # for index, book in enumerate(sorted(books), start=1):
+            for index, book in enumerate(books, start=1):
                 print('     [{index:4}] - {book}'.format(**locals()))
             print()
 
-            choice = Ln.prompt('pleas select book number', validKeys=choice_keys)
+            choice = Ln.prompt('please select book number', validKeys=range(1, len(books)+1))
+            # print(int(choice))
             book_id = books[int(choice)-1]
+            print(book_id)
+            continue
 
                 # - prendiamo il libro per avere i metadati
             if not book_id == prev_book_id:
                 _filter = { "_id": book_id }
-                rec = self._ePubs.get_record(_filter)
-                rec=DotMap(rec, _dynamic=False)
+                book = self._ePubs.get_record(_filter)
+                dot_book=DotMap(book, _dynamic=False) # di comodo
                 prev_book_id = book_id
 
 
 
             for fld_name in fields:
-                result = self._find_words_in_text(data=rec[fld_name], words=words, fPRINT=False)
+                result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False)
                 """
                     res dict{
-                       word1 {counter: x index: [] }
-                       word2 {counter: x index: [] }
+                       word1 {counter: x data: {(1: [], 2: []} }
+                       word2 {counter: x data: {(1: [], 2: []} } }
                        wordn...
                        }
                 """
@@ -508,24 +508,26 @@ class LnEBooks:
 
                         C.yellowH(text='''
                             result for field [{fld_name}]
-                                - id: {rec._id}
-                                - book: {rec.title} - [{rec.author}]
+                                - id: {dot_book._id}
+                                - book: {dot_book.title} - [{dot_book.author}]
                                 - word: {word} - instances: {ptr.counter}\
                             '''.format(**locals()),
                                     tab=4)
 
                         ''' Display data.
-                            ruotare all'interno della lista visualizzando
+                            ruoto all'interno della lista visualizzando
                             [step] results per volta'''
                         _max = ptr.counter
                         _min = 0
                         _from=_min
                         _step=6
                         while True:
-                            C.yellowH(text='word: [{word}: {_max}] - {rec.title} - [{rec.author}]'.format(**locals()), tab=4)
+                            C.yellowH(text='word: [{word}: {_max}] - {dot_book.title} - [{dot_book.author}]'.format(**locals()), tab=4)
+                            if _from>=_max: _from=_max-_step
+                            if _from<0: _from=0
                             _to=_from+_step
                             if _to>_max: _to=_max
-                            # print('{_from}-{_to}'.format(**locals()))
+
                             for index in range(_from, _to):
                                 item = ptr.data[index+1]
                                 print('{0:5} - {1}'.format(index+1, item[0]))
@@ -533,15 +535,20 @@ class LnEBooks:
                                     print(' '*7, line)
                                 print()
 
-                            choice=Ln.prompt('[n]ext_word [b]ooks_list [+] [-]', validKeys='n|+|-|b')
-                            if choice in ['n', 'b']: break
-                            if choice in ['+']:
-                                _from+=_step
-                            if choice in ['-']:
-                                _from-=_step
+                            choice=Ln.prompt('[n]ext_word [b]ooks_list [+] [-] [t]ag', validKeys='t|n|+|-|b')
+                            if   choice in ['n', 'b']: break
+                            elif choice in ['+']: _from+=_step
+                            elif choice in ['-']: _from-=_step
+                            elif choice in ['t']:
+                                tags=Ln.prompt('Please enter TAGs (BLANK separator)')
+                                book['tags'] = tags.split()
+                                result = self._ePubs.updateField(rec=book, fld_name='tags')
+                                if result.matched_count:
+                                    print()
+                                    C.cyanH(text='tags {dot_book.tags} have been added'.format(**locals()), tab=4)
+                                    print()
 
-                            if _from>=_max: _from=_max-_step
-                            if _from<0: _from=0
+
 
 
 
@@ -578,8 +585,8 @@ class LnEBooks:
             word2 = ''.join(word_alfa)
             if not word == word2:
                 # print(word, word2)
-                pass
                 # logger.debug3('alpha word', [word, word2])
+                pass
             words.append(word2)
 
         # logger.info("   Words", words)

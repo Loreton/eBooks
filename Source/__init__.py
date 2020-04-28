@@ -1,5 +1,5 @@
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-04-2020 13.46.42
+# Version ......: 28-04-2020 09.38.31
 
 from . Main.ReadConfigurationFile import readConfigFile
 from . Main.ParseInput import parseInput
@@ -22,6 +22,14 @@ from . LnLib import LnMonkeyFunctions # per Path.LnCopy, Path.LnBackup
 import sys
 from pathlib import Path
 
+class LnClass():
+    pass
+    def __str__(self):
+        _str_ = []
+        for key,val in self.__dict__.items():
+            _str_.append('{:<15}: {}'.format(key, val))
+
+        return '\n'.join(_str_)
 # -------------------------
 # - Load path with custom modules in modo
 # - da poter richiamare facilmente i moduli
