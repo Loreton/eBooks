@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 08.55.13
+# Version ......: 29-04-2020 09.04.42
 #
 
 import sys
@@ -185,19 +185,7 @@ class LnEBooks:
     # - input:
     ####################################################
     def build_dictionary(self, book={}, force_indexing=False):
-
-        # def book_indexing(book, counter, nrec):
-        # def book_indexing(book):
-        #     # force flag
-        #     if force_indexing: book['indexed'] = False
-        #     if not book['indexed']:
-        #         C.yellowH(text='indexing...', tab=8)
-        #         self.add_to_dictionary(book)
-        #         book['indexed'] = True
-        #         result = self._ePubs.updateField(rec=book, fld_name='indexed')
-
         if book:
-            # book = self._ePubs.get_record(filter)
             self.book_indexing(book, force_indexing)
 
         else:
