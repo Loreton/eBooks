@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 09.04.42
+# Version ......: 29-04-2020 10.36.08
 #
 
 import sys
@@ -53,7 +53,7 @@ class LnEBooks:
                                 'author_CN', # Cognome+None mi server per l'id
                                 'chapters',
                                 'filter', # comodo per fare la ricerca
-                                'indexed', # True/False id words into dictionary collection
+                                'indexed_fields', # True/False id words into dictionary collection
                                 'title',
                                 'tags',
                                 ])
@@ -62,7 +62,7 @@ class LnEBooks:
         # eBooks_coll=eBooks.collection
 
         self._Dictionary = MongoCollection(collection_name='Dictionary', **_args)
-        self._Dictionary.setFields(['_id', 'filter', 'ebook'])
+        self._Dictionary.setFields(['_id', 'filter', 'ebook_list'])
         self._execute = execute
         # self._Dictionary.setIdFields(['word'])
 
@@ -144,9 +144,9 @@ class LnEBooks:
             book_data['title']       = _title[0][0]                 if _title else ''
             book_data['author']      = _creator[0][0]               if _creator else ""
             book_data['date']        = _date[0][0].split('T', 1)[0] if _date else ""
-            book_data['indexed']     = False
             book_data['chapters']    = []
             book_data['tags']        = []
+            book_data['indexed_fields'] = []
 
         except Exception as why:
             C.error(text=str(why), tab=12)
@@ -199,16 +199,66 @@ class LnEBooks:
                     '''.format( title=book['title'],
                                 author=book['author'],
                                 id=book['_id'],
-                                indexed=book['indexed'],
+                                indexed=book['indexed_fields'],
                                 **locals()), tab=4)
                 self.book_indexing(book, force_indexing)
 
 
 
     ####################################################
-    # - indexing book content, title author and description
+    # - indexing book content
+    # -   field indexed: conterrà la lista dei campi indicizzati
     ####################################################
     def book_indexing(self, book, force_indexing):
+        # inp_args.fields=['title', 'author', 'chapters']
+        for fld_name in inp_args.fields:
+            if (fld_name in book['indexed_fields']) and not force_indexing:
+                C.white(text='field {fld_name} already indexed'.format(**locals()), tab=8)
+                continue
+
+            # - se ci sono dati nel campo
+            # pdb.set_trace()
+            fld_data = []
+            if book[fld_name]:
+                C.white(text='indexing field {fld_name}'.format(**locals()), tab=8)
+                if isinstance(book[fld_name], list):
+                    fld_data.extend(book[fld_name])
+                else:
+                    fld_data.append(book[fld_name])
+
+                words = self.content2words(' '.join(fld_data))
+                lun=len(words)
+                logger.info('inserting {lun} words into dictionary'.format(**locals()))
+                for index, word in enumerate(words, start=1):
+                    if not index%500:
+                        C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
+
+                    # - preparazione record del dictionary
+                    rec={
+                        '_id':    word.lower(),
+                        'ebook_list':  [book['_id']],
+                        'filter': {'_id': word.lower()},
+                    }
+
+                    # - updating record o create it if not exists
+                    if self._execute:
+                        result = self._Dictionary.updateField(rec, fld_name='ebook_list', create=True)
+                    else:
+                        logger.console('[DRY-RUN] - record updated.', rec)
+
+                if not fld_name in book['indexed_fields']:
+                    book['indexed_fields'].append(fld_name)
+                    if self._execute: self._ePubs.updateField(rec=book, fld_name='indexed_fields')
+                C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
+            else:
+                C.white(text='no word in field {fld_name}'.format(**locals()), tab=8)
+        print()
+
+    ####################################################
+    # - indexing book content
+    # -   field indexed: conterrà la lista dei campi indicizzati
+    ####################################################
+    def book_indexing_prev(self, book, force_indexing):
         if force_indexing: book['indexed'] = False # force flag
 
         if not book['indexed']:
@@ -232,7 +282,7 @@ class LnEBooks:
                 # - preparazione record del dictionary
                 rec={
                     '_id':    word.lower(),
-                    'ebook':  [book['_id']],
+                    'ebook_list':  [book['_id']],
                     'filter': {'_id': word.lower()},
                     # 'word': word.lower(), # non serve perché==_id
                 }
@@ -240,7 +290,7 @@ class LnEBooks:
 
                 # - updating record o create it if not exists
                 if self._execute:
-                    result = self._Dictionary.updateField(rec, fld_name='ebook', create=True)
+                    result = self._Dictionary.updateField(rec, fld_name='ebook_list', create=True)
                 else:
                     logger.console('[DRY-RUN] - record updated.', rec)
 
@@ -256,7 +306,7 @@ class LnEBooks:
     def update_field_many(self):
         result = self._ePubs.updateField_many(
                 {'indexed': False},
-                {'$set': {'indexed': False}}
+                {'$set': {'indexed': []}}
             )
         print(result.matched_count)
         print(result.modified_count)
@@ -326,12 +376,12 @@ class LnEBooks:
                     _id:       {dmBook._id}
                     book:      {dmBook.title} - [{dmBook.author}]
                     {_msg}
-                    indexed:   {dmBook.indexed}\
+                    indexed:   {dmBook.indexed_fields}\
                 '''.format(**locals()), tab=4)
 
 
                 # - forcing dictionary update
-            if inp_args.indexing and not dmBook.indexed:
+            if inp_args.indexing and not dmBook.indexed_fields:
                 inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
                 if self._execute: self.build_dictionary(book)
                 indexed_books += 1
@@ -378,7 +428,7 @@ class LnEBooks:
             result = self._Dictionary.search(field_name='_id', regex=word, ignore_case=ignore_case)
             _list = []
             for x in result:
-                _list.extend(x['ebook'])
+                _list.extend(x['ebook_list'])
 
             # - ANDing tra le varie liste
             C.yellowH(text='Word {0:} found in {1:5} books'.format(word, len(_list)), tab=4)
@@ -651,53 +701,6 @@ class LnEBooks:
         return output
 
 
-
-    ####################################################
-    # -
-    ####################################################
-    def change_ID(self):
-        result = self._ePubs._collection.find()
-        nrec=result.count()
-        for index, book in enumerate(result, start=1):
-            # book = DotMap(book)
-            book['author_CN']= self.author_reverse(book['author'])
-            new_id = self._ePubs.get_id(book)
-            C.yellowH(text='''
-                record [{index:5}/{nrec:5}]]
-                    - book: {book['title']} - [{book['author']}]
-                    - author_CN: {book['author_CN']}
-                    - id_old: {book['_id']}
-                    - id_new: {new_id}\
-                '''.format(**locals()), tab=4)
-
-
-        # db.account_data.find({"_id" : "1232014"}).forEach(function(doc) {
-        #     var oldId = doc._id;
-        #     var doc._id = doc._id + doc.country;
-        #     db.collection.remove({ _id: oldId });
-        #     db.collection.save(doc);
-        # });
-
-
-    ####################################################
-    # -
-    ####################################################
-    def _listFiles(self, baseDir, filetype):
-        """
-        Recursively returns files matching a filetype from
-        a path (e.g. return a list of paths from a folder
-        of epub files).
-        """
-        files = []
-        for item in os.scandir(baseDir):
-            if item.is_file():
-                if item.path.endswith(filetype):
-                # full_path = os.path.join(baseDir, item.name)
-                # if spec.match_file(full_path):
-                    files.append(os.path.join(baseDir, item.name))
-            else:
-                files.extend(self._listFiles(item.path, filetype))
-        return files
 
 
 
