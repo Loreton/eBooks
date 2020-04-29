@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 28-04-2020 10.17.33
+# Version ......: 29-04-2020 08.55.13
 #
 
 import sys
@@ -28,7 +28,7 @@ from LnMongoCollection import MongoCollection
 class LnEBooks:
         # ***********************************************
         # ***********************************************
-    def __init__(self, gVars, db_name):
+    def __init__(self, gVars, db_name, execute=False):
         global gv, logger, C, Ln, inp_args
         gv     = gVars
         C      = gVars.Color
@@ -63,6 +63,7 @@ class LnEBooks:
 
         self._Dictionary = MongoCollection(collection_name='Dictionary', **_args)
         self._Dictionary.setFields(['_id', 'filter', 'ebook'])
+        self._execute = execute
         # self._Dictionary.setIdFields(['word'])
 
 
@@ -99,7 +100,7 @@ class LnEBooks:
             C.yellowH(text="Error reading file: {file}".format(**locals()), tab=8)
             C.error(text=str(why), tab=12)
             target_file=file + '.err.zip'
-            logger.error('renaming file: {file} to {target_file}'.format(**locals()))
+            logger.error('renaming file', file, 'to:', target_file, console=True)
             Path(file).rename(target_file)
 
         return hBook
@@ -124,10 +125,11 @@ class LnEBooks:
         ''' SKIP_UNKNOWN:
                 ignora Libri che non hanno il  titolo dentro
         '''
-        hBook = self._open_book(file)
-
-        # book_data = DotMap(_dynamic=False)
         book_data = {}
+        hBook = self._open_book(str(file))
+        if not hBook:
+            return book_data
+
         try:
             _title       = hBook.get_metadata('DC', 'title')
             _creator     = hBook.get_metadata('DC', 'creator')
@@ -149,14 +151,16 @@ class LnEBooks:
         except Exception as why:
             C.error(text=str(why), tab=12)
             target_file=file + '.err.zip'
-            logger.error('renaming file: {file} to {target_file}'.format(**locals()))
+            logger.error('renaming file: {file} to {target_file}'.format(**locals()), console=True)
             Path(file).rename(target_file)
             return {}
 
 
         if not book_data['title']:
             if SKIP_UNKNOWN:
-                book_data={}
+                C.warning(text="{file} does't contain valid  metadata".format(**locals()), tab=4)
+                file.rename(file.parent / '{file.stem}{file.suffix}.no_metadata'.format(**locals()) )
+                return {}
             else:
                 book_data['title'] = Path(file).stem
         else:
@@ -180,27 +184,28 @@ class LnEBooks:
     ####################################################
     # - input:
     ####################################################
-    def build_dictionary(self, filter=None, force_indexing=False):
+    def build_dictionary(self, book={}, force_indexing=False):
 
-        def add(index, nrec):
-            # force flag
-            if force_indexing: book['indexed'] = False
-            if not book['indexed']:
-                C.yellowH(text='indexing...', tab=8)
-                self.add_to_dictionary(book)
-                book['indexed'] = True
-                result = self._ePubs.updateField(rec=book, fld_name='indexed')
+        # def book_indexing(book, counter, nrec):
+        # def book_indexing(book):
+        #     # force flag
+        #     if force_indexing: book['indexed'] = False
+        #     if not book['indexed']:
+        #         C.yellowH(text='indexing...', tab=8)
+        #         self.add_to_dictionary(book)
+        #         book['indexed'] = True
+        #         result = self._ePubs.updateField(rec=book, fld_name='indexed')
 
-        if filter:
-            book = self._ePubs.get_record(filter)
-            add(index=1, nrec=1)
+        if book:
+            # book = self._ePubs.get_record(filter)
+            self.book_indexing(book, force_indexing)
 
         else:
             result = self._ePubs._collection.find()
             nrec=result.count()
-            for index, book in enumerate(result, start=1):
+            for counter, book in enumerate(result, start=1):
                 C.yellowH(text='''
-                    [{index:5}/{nrec:5}] - {id}
+                    [{counter:5}/{nrec:5}] - {id}
                         book:      {title} - [{author}]
                         indexed:   {indexed}\
                     '''.format( title=book['title'],
@@ -208,41 +213,53 @@ class LnEBooks:
                                 id=book['_id'],
                                 indexed=book['indexed'],
                                 **locals()), tab=4)
-                add(index, nrec)
+                self.book_indexing(book, force_indexing)
 
 
 
     ####################################################
     # - indexing book content, title author and description
     ####################################################
-    def add_to_dictionary(self, book):
-        _data = []
-        if 'tags'        in inp_args.fields and book['tags']:    _data.extend(book['tags'])
-        if 'chapters'    in inp_args.fields and book['chapters']:    _data.extend(book['chapters'])
-        if 'title'       in inp_args.fields and book['title']:       _data.append(book['title'])
-        if 'author'      in inp_args.fields and book['author']:      _data.append(book['author'])
-        if 'description' in inp_args.fields and book['description']: _data.append(book['description'])
+    def book_indexing(self, book, force_indexing):
+        if force_indexing: book['indexed'] = False # force flag
 
-        words = self.content2words(' '.join(_data))
-        logger.info('inserting {0} words into dictionary'.format(len(words)))
-        lun=len(words)
-        for index, word in enumerate(words, start=1):
-            if not index%500:
-                C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
+        if not book['indexed']:
+            C.yellowH(text='indexing...', tab=8)
 
-            # - preparazione record del dictionary
-            rec={
-                '_id':    word.lower(),
-                'ebook':  [book['_id']],
-                'filter': {'_id': word.lower()},
-                # 'word': word.lower(), # non serve perché==_id
-            }
+            _data = []
+            if 'tags'        in inp_args.fields and book['tags']:        _data.extend(book['tags'])
+            if 'chapters'    in inp_args.fields and book['chapters']:    _data.extend(book['chapters'])
+            if 'title'       in inp_args.fields and book['title']:       _data.append(book['title'])
+            if 'author'      in inp_args.fields and book['author']:      _data.append(book['author'])
+            if 'description' in inp_args.fields and book['description']: _data.append(book['description'])
+
+            words = self.content2words(' '.join(_data))
+            logger.info('inserting {0} words into dictionary'.format(len(words)))
+            lun=len(words)
+            index=0
+            for index, word in enumerate(words, start=1):
+                if not index%500:
+                    C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
+
+                # - preparazione record del dictionary
+                rec={
+                    '_id':    word.lower(),
+                    'ebook':  [book['_id']],
+                    'filter': {'_id': word.lower()},
+                    # 'word': word.lower(), # non serve perché==_id
+                }
 
 
-            # - updating record o create it if not exists
-            result = self._Dictionary.updateField(rec, fld_name='ebook', create=True)
+                # - updating record o create it if not exists
+                if self._execute:
+                    result = self._Dictionary.updateField(rec, fld_name='ebook', create=True)
+                else:
+                    logger.console('[DRY-RUN] - record updated.', rec)
 
-        C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
+            book['indexed'] = True
+            if self._execute: self._ePubs.updateField(rec=book, fld_name='indexed')
+
+            C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
         print()
 
     ####################################################
@@ -273,7 +290,7 @@ class LnEBooks:
         '''
         all_files = list(Path(dir_path).rglob(file_pattern))
         if not all_files:
-            logger.abend('no files found on {dir_path}/{file_pattern}'.format(**locals()))
+            logger.critical('no files found on {dir_path}/{file_pattern}'.format(**locals()))
 
         nFiles = len(all_files)
         loaded_books=0  # counter
@@ -302,9 +319,13 @@ class LnEBooks:
             else:   # - insert book into eBooks_collection
                 book['chapters'] = self._readContent(filename=epub_file)
                 try:
-                    _status, _filter = self._ePubs.insert_one(book, replace=False)
+                    if self._execute:
+                        self._ePubs.insert_one(book, replace=False)
+                        _msg='inserted as new book'
+                    else:
+                        _msg='[DRY-RUN] - inserted as new book'
+
                     loaded_books += 1
-                    _msg='inserted as new book'
                 except Exception as why:
                     C.error(text=str(why))
                     C.yellowH(text=epub_file, tab=8)
@@ -324,19 +345,23 @@ class LnEBooks:
                 # - forcing dictionary update
             if inp_args.indexing and not dmBook.indexed:
                 inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
-                self.build_dictionary(book['filter'])
+                if self._execute: self.build_dictionary(book)
                 indexed_books += 1
 
 
             # move file if required
             if target_dir:
                 target_file='{target_dir}/{dmBook.title}.epub'.format(**locals())
+                target_file='{target_dir}/{dmBook.title}.epub'.format(**locals())
                 C.yellowH(text='... moving to:', tab=16)
                 C.yellowH(text='dir:   {target_dir}'.format(**locals()), tab=18)
                 C.yellowH(text='fname: {dmBook.title}'.format(**locals()), tab=18)
 
-                if not epub_file.moveTo(target_file, replace=False):
-                    epub_file.rename(str(epub_file) + '.not_moved')
+                if self._execute:
+                    moved, reason = epub_file.moveTo(target_file, replace=False)
+                    if not moved:
+                        # - rename source
+                        epub_file.rename(epub_file.parent / '{dmBook.title}{epub_file.suffix}_{reason}'.format(**locals()) )
 
 
 
@@ -544,11 +569,14 @@ class LnEBooks:
                             elif choice in ['t']:
                                 tags=Ln.prompt('Please enter TAGs (BLANK separator)')
                                 book['tags'] = tags.split()
-                                result = self._ePubs.updateField(rec=book, fld_name='tags')
-                                if result.matched_count:
-                                    print()
-                                    C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
-                                    print()
+                                if self._execute:
+                                    result = self._ePubs.updateField(rec=book, fld_name='tags')
+                                    if result.matched_count:
+                                        print()
+                                        C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
+                                        print()
+                                else:
+                                    C.cyanH(text='[DRY-RUN] - tags {dmBook.tags} have been added'.format(**locals()), tab=4)
 
 
 

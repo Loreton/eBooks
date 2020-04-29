@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 28-04-2020 10.22.05
+# Version ......: 29-04-2020 08.48.46
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -46,6 +46,11 @@ if __name__ == '__main__':
     #
     # --- setting logger
 
+    # data1 = ['uno', 'due']
+    # data2 = [1,2,3,4]
+    # lnLogger.error('renaming file', 'pippo', 'pluto', data1, console=True)
+    # lnLogger.error('renaming file', data1, data2, console=True)
+    # sys.exit()
 
     lnLogger.info('input arguments', vars(inpArgs))
     lnLogger.info('configuration data', _data)
@@ -72,7 +77,7 @@ if __name__ == '__main__':
     gv.args     = inpArgs
 
 
-    myDB=LnEBooks(gv, db_name='Ln_eBooks')
+    myDB=LnEBooks(gv, db_name=config.main.dbase_name, execute=inpArgs.go)
     if 'update_fieldx' in inpArgs:
         result = myDB.update_field_many( )
 
@@ -90,8 +95,8 @@ if __name__ == '__main__':
     #     result = myDB.eBook_search(words=inpArgs.words, book_id=inpArgs.id, ignore_case=True)
 
     elif 'load' in inpArgs:
-        input_dir=inpArgs.dir if inpArgs.dir else config.directories.epub_input_dir
-        target_dir=config.directories.epub_target_dir if inpArgs.move_file else None
+        input_dir=inpArgs.dir if inpArgs.dir else config.main.epub_input_dir
+        target_dir=config.main.epub_target_dir if inpArgs.move_file else None
 
         myDB.load_eBooks(input_dir, file_pattern=inpArgs.ftype, target_dir=target_dir)
 
