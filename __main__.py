@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 08.48.46
+# Version ......: 29-04-2020 14.19.18
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -69,11 +69,12 @@ if __name__ == '__main__':
         print()
         sys.exit(1)
 
+    C    = Ln.Color()
     # --- set global variables
     gv          = DotMap(_dynamic=False)
     gv.Ln       = Ln
     gv.lnLogger = lnLogger
-    gv.Color    = Ln.Color()
+    gv.Color    = C
     gv.args     = inpArgs
 
 
@@ -101,7 +102,7 @@ if __name__ == '__main__':
         myDB.load_eBooks(input_dir, file_pattern=inpArgs.ftype, target_dir=target_dir)
 
     elif 'build' in inpArgs:
-        myDB.build_dictionary(force_indexing=inpArgs.force_indexing)
+        myDB.build_dictionary(fields=inpArgs.fields, force_indexing=inpArgs.force_indexing)
 
     elif 'change_id' in inpArgs:
         myDB.change_ID()

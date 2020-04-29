@@ -80,7 +80,7 @@
                 // "--author",
                 // "--title",
                 // "--description",
-                "--go",
+                // "--go",
             ],
             "cwd": "${workspaceRoot}",
         },

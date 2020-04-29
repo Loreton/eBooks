@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 28-04-2020 09.39.28
+# Version ......: 29-04-2020 16.19.06
 #
 import sys
 import pymongo
@@ -35,7 +35,8 @@ class MongoCollection:
         self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
         self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
 
-
+        self._from = 0
+        self._range = 1
 
     ################################################
     #
@@ -123,6 +124,9 @@ class MongoCollection:
 
         return _rec
 
+
+
+
         ############################################################
         # https://docs.python.org/3/library/stdtypes.html#frozenset.symmetric_difference
         # diff_a = set(record['keys']()).difference(set(self._fields))
@@ -172,9 +176,38 @@ class MongoCollection:
     ####################################################
     def get_record(self, filter):
         book = self._collection.find_one(filter) # get current record
-
         return book
 
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    ############################################################
+    def get_range(self, skip, limit):
+        # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
+        logger.info('reading records from', skip, 'to:', limit)
+        return self._collection.find({}).skip(skip).limit(limit)
+
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
+    ############################################################
+    def get_next(self):
+        logger.info('reading records from', self._from, 'for:', self._range)
+        cursor = self._collection.find({}).skip(self._from).limit(self._range)
+        self._from += self._range # prepare for next
+        return cursor
+
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    ############################################################
+    def set_range(self, start=1, range=1):
+        self._from = start
+        self._range = range
 
 
 

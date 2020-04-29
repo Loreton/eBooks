@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 10.36.08
+# Version ......: 29-04-2020 16.06.23
 #
 
 import sys
@@ -180,38 +180,42 @@ class LnEBooks:
 
 
 
-
     ####################################################
     # - input:
     ####################################################
-    def build_dictionary(self, book={}, force_indexing=False):
+    def build_dictionary(self, book={}, fields=[], force_indexing=False):
         if book:
-            self.book_indexing(book, force_indexing)
+            self.book_indexing(book=book, fields=fields, force_indexing=force_indexing)
 
         else:
-            result = self._ePubs._collection.find()
-            nrec=result.count()
-            for counter, book in enumerate(result, start=1):
-                C.yellowH(text='''
-                    [{counter:5}/{nrec:5}] - {id}
-                        book:      {title} - [{author}]
-                        indexed:   {indexed}\
-                    '''.format( title=book['title'],
-                                author=book['author'],
-                                id=book['_id'],
-                                indexed=book['indexed_fields'],
-                                **locals()), tab=4)
-                self.book_indexing(book, force_indexing)
-
+            nrec = self._ePubs._collection.find().count()
+            self._ePubs.set_range(start=0, range=10)
+            index=0
+            cursor = self._ePubs.get_next()
+            while cursor:
+                for book in cursor:
+                    index+=1
+                    C.yellowH(text='''
+                        [{index:5}/{nrec:5}] - {id}
+                            book:      {title} - [{author}]
+                            indexed:   {indexed}\
+                        '''.format( title=book['title'],
+                                    author=book['author'],
+                                    id=book['_id'],
+                                    indexed=book['indexed_fields'],
+                                    **locals()), tab=4)
+                    # print()
+                    self.book_indexing(book=book, fields=fields, force_indexing=force_indexing)
+                # Ln.prompt()
+                cursor = self._ePubs.get_next()
 
 
     ####################################################
     # - indexing book content
     # -   field indexed: conterrà la lista dei campi indicizzati
     ####################################################
-    def book_indexing(self, book, force_indexing):
-        # inp_args.fields=['title', 'author', 'chapters']
-        for fld_name in inp_args.fields:
+    def book_indexing(self, book={}, fields=[], force_indexing=False):
+        for fld_name in fields:
             if (fld_name in book['indexed_fields']) and not force_indexing:
                 C.white(text='field {fld_name} already indexed'.format(**locals()), tab=8)
                 continue
@@ -229,6 +233,7 @@ class LnEBooks:
                 words = self.content2words(' '.join(fld_data))
                 lun=len(words)
                 logger.info('inserting {lun} words into dictionary'.format(**locals()))
+                index=0
                 for index, word in enumerate(words, start=1):
                     if not index%500:
                         C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
@@ -246,58 +251,12 @@ class LnEBooks:
                     else:
                         logger.console('[DRY-RUN] - record updated.', rec)
 
+                C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
                 if not fld_name in book['indexed_fields']:
                     book['indexed_fields'].append(fld_name)
                     if self._execute: self._ePubs.updateField(rec=book, fld_name='indexed_fields')
-                C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
             else:
                 C.white(text='no word in field {fld_name}'.format(**locals()), tab=8)
-        print()
-
-    ####################################################
-    # - indexing book content
-    # -   field indexed: conterrà la lista dei campi indicizzati
-    ####################################################
-    def book_indexing_prev(self, book, force_indexing):
-        if force_indexing: book['indexed'] = False # force flag
-
-        if not book['indexed']:
-            C.yellowH(text='indexing...', tab=8)
-
-            _data = []
-            if 'tags'        in inp_args.fields and book['tags']:        _data.extend(book['tags'])
-            if 'chapters'    in inp_args.fields and book['chapters']:    _data.extend(book['chapters'])
-            if 'title'       in inp_args.fields and book['title']:       _data.append(book['title'])
-            if 'author'      in inp_args.fields and book['author']:      _data.append(book['author'])
-            if 'description' in inp_args.fields and book['description']: _data.append(book['description'])
-
-            words = self.content2words(' '.join(_data))
-            logger.info('inserting {0} words into dictionary'.format(len(words)))
-            lun=len(words)
-            index=0
-            for index, word in enumerate(words, start=1):
-                if not index%500:
-                    C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
-
-                # - preparazione record del dictionary
-                rec={
-                    '_id':    word.lower(),
-                    'ebook_list':  [book['_id']],
-                    'filter': {'_id': word.lower()},
-                    # 'word': word.lower(), # non serve perché==_id
-                }
-
-
-                # - updating record o create it if not exists
-                if self._execute:
-                    result = self._Dictionary.updateField(rec, fld_name='ebook_list', create=True)
-                else:
-                    logger.console('[DRY-RUN] - record updated.', rec)
-
-            book['indexed'] = True
-            if self._execute: self._ePubs.updateField(rec=book, fld_name='indexed')
-
-            C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
         print()
 
     ####################################################
@@ -382,9 +341,10 @@ class LnEBooks:
 
                 # - forcing dictionary update
             if inp_args.indexing and not dmBook.indexed_fields:
-                inp_args.fields = ['chapters', 'title', 'tags', 'author', 'description']
-                if self._execute: self.build_dictionary(book)
+                _fields = ['chapters', 'title', 'tags', 'author', 'description']
+                if self._execute: self.book_indexing(book, fields=_fields )
                 indexed_books += 1
+
 
 
             # move file if required
@@ -606,12 +566,12 @@ class LnEBooks:
                             elif choice in ['-']: _from-=_step
                             elif choice in ['t']:
                                 tags=Ln.prompt('Please enter TAGs (BLANK separator)')
-                                book['tags'] = tags.split()
                                 if self._execute:
+                                    book['tags'] = tags.split()
                                     result = self._ePubs.updateField(rec=book, fld_name='tags')
                                     if result.matched_count:
-                                        print()
                                         C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
+                                        self.book_indexing(book, fields=['tags'])
                                         print()
                                 else:
                                     C.cyanH(text='[DRY-RUN] - tags {dmBook.tags} have been added'.format(**locals()), tab=4)

@@ -15,4 +15,7 @@ Robo3T - db.getCollection('ePubs').updateMany( {}, { $rename: { "indexed": "inde
 
 // Update many
 db.test.updateMany({foo: "bar"}, {$set: {test: "success!"}})
-Robo3T - db.getCollection('ePubs').updateMany( {}, { $set: { indexed_fields: "[]" } } )
+Robo3T - db.getCollection('ePubs').updateMany( {}, { $set: { indexed_fields: [] } } )
+
+// read chunk
+db.getCollection('ePubs').find({}).skip(2).limit(3)
