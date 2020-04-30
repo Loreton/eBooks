@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 12.09.31
+# Version ......: 30-04-2020 17.37.29
 #
 # #############################################
 
@@ -34,7 +34,7 @@ def parseInput():
     parser_search.add_argument('--fields',
                                 metavar='',
                                 required=False,
-                                default=['author', 'title'],
+                                default=['author', 'title', 'tags', 'chapters' ],
                                 choices=['author', 'title', 'chapters', 'tags', 'date', 'description', 'indexed' ],
                                 nargs='*',
                                 help="""fields to be searched. BLANK searator [DEFAULT: author title] """)
