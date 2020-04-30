@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 12.00.26
+# Version ......: 30-04-2020 12.19.30
 #
 
 import sys
@@ -28,13 +28,14 @@ from LnMongoCollection import MongoCollection
 class LnEBooks:
         # ***********************************************
         # ***********************************************
-    def __init__(self, gVars, db_name, execute=False):
+    def __init__(self, gVars, db_name):
         global gv, logger, C, Ln, inp_args
         gv     = gVars
         C      = gVars.Color
         logger = gVars.lnLogger
         Ln     = gVars.Ln
         inp_args   = gVars.args
+        self._execute = inp_args.go
 
         # - creazione DB oer contenere libri
         _args={
@@ -63,7 +64,6 @@ class LnEBooks:
 
         self._Dictionary = MongoCollection(collection_name='Dictionary', **_args)
         self._Dictionary.setFields(['_id', 'filter', 'ebook_list'])
-        self._execute = execute
         # self._Dictionary.setIdFields(['word'])
 
 
@@ -564,8 +564,8 @@ class LnEBooks:
                             elif choice in ['+']: _from+=_step
                             elif choice in ['-']: _from-=_step
                             elif choice in ['t']:
-                                tags=Ln.prompt('Please enter TAGs (BLANK separator)')
                                 if self._execute:
+                                    tags=Ln.prompt('Please enter TAGs (BLANK separator)')
                                     book['tags'] = tags.split()
                                     result = self._ePubs.updateField(rec=book, fld_name='tags')
                                     if result.matched_count:
@@ -573,8 +573,8 @@ class LnEBooks:
                                         self.book_indexing(book, fields=['tags'])
                                         print()
                                 else:
-                                    C.cyanH(text='[DRY-RUN] - tags {dmBook.tags} have been added'.format(**locals()), tab=4)
-
+                                    C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
+                                    Ln.prompt()
 
 
 

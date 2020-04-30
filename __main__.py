@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 11.31.08
+# Version ......: 30-04-2020 12.03.59
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
 
     dbname=inpArgs.db_name if inpArgs.db_name else config.main.dbase_name
-    myDB=LnEBooks(gv, db_name=dbname, execute=inpArgs.go)
+    myDB=LnEBooks(gv, db_name=dbname)
     if 'update_fieldx' in inpArgs:
         result = myDB.update_field_many( )
 

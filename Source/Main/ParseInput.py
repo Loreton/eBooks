@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 11.30.24
+# Version ......: 30-04-2020 12.09.31
 #
 # #############################################
 
@@ -42,14 +42,12 @@ def parseInput():
     parser_load = subparsers.add_parser ("load", help = "Load book in DB")
     parser_load.add_argument('--dir', help='input dir [DEFAULT=as defined in config_file]', default=None)
     parser_load.add_argument('--ftype', help='file type to be included [DEFAULT=.epub]', default='*.epub')
-    parser_load.add_argument('--go', help='load data. default is --dry-run', action='store_true')
     parser_load.add_argument('--indexing', help='update dictionary with words', action='store_true')
     parser_load.add_argument('--move-file', help='move file to destination defined in config file', action='store_true')
     parser_load.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
 
     parser_build = subparsers.add_parser ("build", help = "rebuild dictionary")
     parser_build.add_argument('--force-indexing', help='update all records regardless indexed=true', action='store_true')
-    parser_build.add_argument('--go', help='load data. default is --dry-run', action='store_true')
     parser_build.add_argument('--fields',
                                 metavar='',
                                 required=False,
@@ -72,6 +70,8 @@ def parseInput():
         # --- common
         # subp.add_argument('--go', help='specify if command must be executed. (dry-run is default)', action='store_true')
         subp.add_argument('--db-name', help='dbane name. [DEFAULT=as defined in config_file]', default=None)
+        subp.add_argument('--go', help='load data. default is --dry-run', action='store_true')
+
         subp.add_argument('--display-args', help='Display input paramenters', action='store_true')
         subp.add_argument('--debug', help='display paths and input args', action='store_true')
         subp.add_argument('--verbose', help='Display all messages', action='store_true')
