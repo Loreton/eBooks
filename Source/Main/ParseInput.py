@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 08.52.39
+# Version ......: 30-04-2020 11.30.24
 #
 # #############################################
 
@@ -71,6 +71,7 @@ def parseInput():
 
         # --- common
         # subp.add_argument('--go', help='specify if command must be executed. (dry-run is default)', action='store_true')
+        subp.add_argument('--db-name', help='dbane name. [DEFAULT=as defined in config_file]', default=None)
         subp.add_argument('--display-args', help='Display input paramenters', action='store_true')
         subp.add_argument('--debug', help='display paths and input args', action='store_true')
         subp.add_argument('--verbose', help='Display all messages', action='store_true')

@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 16.06.23
+# Version ......: 30-04-2020 12.00.26
 #
 
 import sys
@@ -189,11 +189,10 @@ class LnEBooks:
 
         else:
             nrec = self._ePubs._collection.find().count()
-            self._ePubs.set_range(start=0, range=10)
-            index=0
-            cursor = self._ePubs.get_next()
-            while cursor:
-                for book in cursor:
+            index = self._ePubs.set_range(start=0, range=1)
+            records = self._ePubs.get_next()
+            while records:
+                for book in records:
                     index+=1
                     C.yellowH(text='''
                         [{index:5}/{nrec:5}] - {id}
@@ -207,7 +206,7 @@ class LnEBooks:
                     # print()
                     self.book_indexing(book=book, fields=fields, force_indexing=force_indexing)
                 # Ln.prompt()
-                cursor = self._ePubs.get_next()
+                records = self._ePubs.get_next()
 
 
     ####################################################

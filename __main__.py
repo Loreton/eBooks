@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 14.19.18
+# Version ......: 30-04-2020 11.31.08
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -24,8 +24,8 @@ from eBooks import LnEBooks
 ######################################
 if __name__ == '__main__':
     inpArgs          = Ln.parseInput()
-    fCONSOLE         = inpArgs.log_console
     _data            = Ln.readConfigFile()
+    fCONSOLE         = inpArgs.log_console
     config           = DotMap(_data['content'])
     prj_name         = _data['prjname']
     script_path      = _data['script_path']
@@ -78,7 +78,8 @@ if __name__ == '__main__':
     gv.args     = inpArgs
 
 
-    myDB=LnEBooks(gv, db_name=config.main.dbase_name, execute=inpArgs.go)
+    dbname=inpArgs.db_name if inpArgs.db_name else config.main.dbase_name
+    myDB=LnEBooks(gv, db_name=dbname, execute=inpArgs.go)
     if 'update_fieldx' in inpArgs:
         result = myDB.update_field_many( )
 

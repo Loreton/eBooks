@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 29-04-2020 16.19.06
+# Version ......: 30-04-2020 11.59.20
 #
 import sys
 import pymongo
@@ -194,11 +194,13 @@ class MongoCollection:
     # return cursor
     # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
     ############################################################
-    def get_next(self):
-        logger.info('reading records from', self._from, 'for:', self._range)
-        cursor = self._collection.find({}).skip(self._from).limit(self._range)
-        self._from += self._range # prepare for next
-        return cursor
+    def get_next(self, nrecs=None):
+        if not nrecs: nrecs=self._range
+        logger.info('reading records from', self._from, 'for:', nrecs)
+        cursor = self._collection.find({}).skip(self._from).limit(nrecs)
+        recs=list(cursor) # cursor si azzera al primo utilizzo
+        self._from += nrecs # prepare for next
+        return recs
 
 
     ############################################################
@@ -206,8 +208,10 @@ class MongoCollection:
     # return cursor
     ############################################################
     def set_range(self, start=1, range=1):
+        if start>0: start -= 1 # parte da 0
         self._from = start
         self._range = range
+        return self._from
 
 
 
