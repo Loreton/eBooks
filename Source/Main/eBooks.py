@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 17.30.12
+# Version ......: 01-05-2020 17.17.51
 #
 
 import sys
@@ -52,8 +52,8 @@ class LnEBooks:
                                 "description",
                                 'author',
                                 'author_CN', # Cognome+None mi server per l'id
-                                'chapters',
-                                'filter', # comodo per fare la ricerca
+                                '_filter', # comodo per fare la ricerca
+                                'content',
                                 'indexed_fields', # True/False id words into dictionary collection
                                 'title',
                                 'tags',
@@ -63,8 +63,14 @@ class LnEBooks:
         # eBooks_coll=eBooks.collection
 
         self._Dictionary = MongoCollection(collection_name='Dictionary', **_args)
-        self._Dictionary.setFields(['_id', 'filter', 'ebook_list'])
-        # self._Dictionary.setIdFields(['word'])
+        self._Dictionary.setFields(['_id',
+                                    '_filter',
+                                    'ebook_list',
+                                    'author_word',
+                                    'title_word',
+                                    'content_word'
+                                    ])
+        self._Dictionary.setIdFields(['_id'])
 
 
 
@@ -140,13 +146,13 @@ class LnEBooks:
 
 
             # book_data['identifier']  = _identifier[0][0]            if _identifier else 'null'
-            book_data['description'] = _description[0][0]           if _description else ''
-            book_data['title']       = _title[0][0]                 if _title else ''
-            book_data['author']      = _creator[0][0]               if _creator else ""
-            book_data['date']        = _date[0][0].split('T', 1)[0] if _date else ""
-            book_data['chapters']    = []
-            book_data['tags']        = []
+            book_data['title']          = _title[0][0]                 if _title else ''
+            book_data['author']         = _creator[0][0]               if _creator else ""
+            book_data['content']        = []
+            book_data['tags']           = []
             book_data['indexed_fields'] = []
+            book_data['date']           = _date[0][0].split('T', 1)[0] if _date else ""
+            book_data['description']    = _description[0][0]           if _description else ''
 
         except Exception as why:
             C.error(text=str(why), tab=12)
@@ -219,9 +225,10 @@ class LnEBooks:
                 C.white(text='field {fld_name} already indexed'.format(**locals()), tab=8)
                 continue
 
-            # - se ci sono dati nel campo
             # pdb.set_trace()
             fld_data = []
+
+            # - se ci sono dati nel campo
             if book[fld_name]:
                 C.white(text='indexing field {fld_name}'.format(**locals()), tab=8)
                 if isinstance(book[fld_name], list):
@@ -229,7 +236,10 @@ class LnEBooks:
                 else:
                     fld_data.append(book[fld_name])
 
-                words = self.content2words(' '.join(fld_data))
+                min_len=3
+                if fld_name in ['author', 'title']: min_len=2
+                words = self.content2words(' '.join(fld_data), min_len=min_len)
+
                 lun=len(words)
                 logger.info('inserting {lun} words into dictionary'.format(**locals()))
                 index=0
@@ -237,16 +247,22 @@ class LnEBooks:
                     if not index%500:
                         C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
 
-                    # - preparazione record del dictionary
+                    # - preparazione default record del dictionary
                     rec={
                         '_id':    word.lower(),
-                        'ebook_list':  [book['_id']],
-                        'filter': {'_id': word.lower()},
+                        '_filter': {'_id': word.lower()},
+                        'title_word':  [],
+                        'author_word':  [],
+                        'content_word':  [],
+                        'ebook_list':  [],
                     }
+                    # modifichiamo il campo che ci interessa
+                    dictionary_field_name=fld_name+'_word'
+                    rec[dictionary_field_name].append(book['_id']),
 
                     # - updating record o create it if not exists
                     if self._execute:
-                        result = self._Dictionary.updateField(rec, fld_name='ebook_list', create=True)
+                        result = self._Dictionary.updateField(rec, fld_name=dictionary_field_name, create=True)
                     else:
                         logger.console('[DRY-RUN] - record updated.', rec)
 
@@ -313,7 +329,7 @@ class LnEBooks:
                 book = curr_book
 
             else:   # - insert book into eBooks_collection
-                book['chapters'] = self._readContent(filename=epub_file)
+                book['content'] = self._readContent(filename=epub_file)
                 try:
                     if self._execute:
                         self._ePubs.insert_one(book, replace=False)
@@ -340,7 +356,7 @@ class LnEBooks:
 
                 # - forcing dictionary update
             if inp_args.indexing and not dmBook.indexed_fields:
-                _fields = ['chapters', 'title', 'tags', 'author', 'description']
+                _fields = ['content', 'title', 'tags', 'author', 'description']
                 if self._execute: self.book_indexing(book, fields=_fields )
                 indexed_books += 1
 
@@ -396,9 +412,8 @@ class LnEBooks:
             else:
                 id_list = _list[:]
 
-        new_list=[]
-        ret_list={}
-        ret_list2=[]
+
+        ret_list=[]
         for book_id in id_list:
             _filter = { "_id": book_id }
             book = self._ePubs.get_record(_filter)
@@ -420,21 +435,14 @@ class LnEBooks:
                         valid+=1
 
                 if valid==len(words):
-                    new_list.append(book_id)
+                    ret_list.append([book_id, result])
 
-                if valid==len(words):
-                    ret_list[book_id] = result
-
-                if valid==len(words):
-                    ret_list2.append([book_id, result])
-
-        C.cyanH(text='After ANDing remain {0} book(s) containing all your words.'.format(len(new_list)), tab=4)
+        C.cyanH(text='After ANDing remain {0} book(s) containing all your words.'.format(len(ret_list)), tab=4)
         print()
 
 
-        return ret_list2
         return ret_list
-        return new_list
+
 
 
     ####################################################
@@ -458,8 +466,9 @@ class LnEBooks:
         if isinstance(data, (str)):
             data=[data]
 
-        _before=100
-        _after=150
+
+        _before=inp_args.text_size
+        _after=inp_args.text_size
         result2 = {}
 
         # - preparazione word colorate
@@ -507,111 +516,6 @@ class LnEBooks:
 
 
 
-
-    ####################################################
-    # - Input:
-    # -    fields:  campo/i dove effettuare la ricerca
-    # -    words:   stringa/stringhe da ricercare (in AND)
-    # -    book_id: se presente si cerca solo al suo interno
-    ####################################################
-    def multiple_field_search_prev(self, fields=[], words=[], book_id=None, ignore_case=True):
-        if 'all' in fields:
-            fields=self._ePubs.fields
-        # words=['gatto', 'tempo', 'iggulden', 'porte', 'roma']
-        if book_id:
-            books = [book_id]
-        else:
-            # - torna la lista dei libri che contengono le words (in AND)
-            books = sorted(self.dictionary_search(words=words, fields=fields, ignore_case=ignore_case))
-
-
-        # ###  D I S P L A Y    data
-        prev_book_id = 0
-
-        while True:
-            # for index, book in enumerate(sorted(books), start=1):
-            for index, book in enumerate(books, start=1):
-                print('     [{index:4}] - {book}'.format(**locals()))
-            print()
-
-            choice = Ln.prompt('please select book number', validKeys=range(1, len(books)+1))
-            book_id = books[int(choice)-1]
-            # print(book_id);continue
-
-                # - prendiamo il libro per avere i metadati
-            if not book_id == prev_book_id:
-                _filter = { "_id": book_id }
-                book = self._ePubs.get_record(_filter)
-                dmBook=DotMap(book, _dynamic=False) # di comodo
-                prev_book_id = book_id
-
-
-
-            for fld_name in fields:
-                result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False)
-                """
-                    res dict{
-                       word1 {counter: x data: {(1: [], 2: []} }
-                       word2 {counter: x data: {(1: [], 2: []} } }
-                       wordn...
-                       }
-                """
-                if result:
-                    result=DotMap(result, _dynamic=False)
-                    for word in words:
-                        ptr=result[word]
-                        if ptr.counter < 1: continue
-                        if choice=='b': break # return to book_list
-
-                        C.yellowH(text='''
-                            result for field [{fld_name}]
-                                - id: {dmBook._id}
-                                - book: {dmBook.title} - [{dmBook.author}]
-                                - word: {word} - instances: {ptr.counter}\
-                            '''.format(**locals()),
-                                    tab=4)
-
-                        ''' Display data.
-                            ruoto all'interno della lista visualizzando
-                            [step] results per volta'''
-                        _max = ptr.counter
-                        _min = 0
-                        _from=_min
-                        _step=6
-                        while True:
-                            C.yellowH(text='word: [{word}: {_max}] - {dmBook.title} - [{dmBook.author}]'.format(**locals()), tab=4)
-                            if _from>=_max: _from=_max-_step
-                            if _from<0: _from=0
-                            _to=_from+_step
-                            if _to>_max: _to=_max
-
-                            for index in range(_from, _to):
-                                item = ptr.data[index+1]
-                                print('{0:5} - {1}'.format(index+1, item[0]))
-                                for line in item[1:]:
-                                    print(' '*7, line)
-                                print()
-
-                            choice=Ln.prompt('[n]ext_word [b]ooks_list [+] [-] [t]ag', validKeys='t|n|+|-|b')
-                            if   choice in ['n', 'b']: break
-                            elif choice in ['+']: _from+=_step
-                            elif choice in ['-']: _from-=_step
-                            elif choice in ['t']:
-                                if self._execute:
-                                    tags=Ln.prompt('Please enter TAGs (BLANK separator)')
-                                    book['tags'] = tags.split()
-                                    result = self._ePubs.updateField(rec=book, fld_name='tags')
-                                    if result.matched_count:
-                                        C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
-                                        self.book_indexing(book, fields=['tags'])
-                                        print()
-                                else:
-                                    C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
-                                    Ln.prompt()
-
-
-
-
     ####################################################
     # - Input:
     # -    fields:  campo/i dove effettuare la ricerca
@@ -628,13 +532,6 @@ class LnEBooks:
             # - torna la lista dei libri che contengono le words (in AND)
             result_list = sorted(self.dictionary_search(words=words, fields=fields, ignore_case=ignore_case))
             """
-                return  dict{
-                            book_id: {
-                                word1 {counter: x, data: {(1: [], 2: []} }
-                                word2 {counter: x, data: {(1: [], 2: []} } }
-                                wordn...
-                            }
-                        }
                 return  [book_id, {word1 {counter: x, data: {(1: [], 2: []} }
                                    word2 {counter: x, data: {(1: [], 2: []} } }
                                    wordn...
@@ -672,6 +569,8 @@ class LnEBooks:
                     result:
                         - id: {dmBook._id}
                         - book: {dmBook.title} - [{dmBook.author}]
+                        - tags: {dmBook.tags}\
+
                         - word: {word} - instances: {ptr.counter}\
                     '''.format(**locals()),
                             tab=4)
@@ -706,6 +605,7 @@ class LnEBooks:
                             tags=Ln.prompt('Please enter TAGs (BLANK separator)')
                             book['tags'] = tags.split()
                             result = self._ePubs.updateField(rec=book, fld_name='tags')
+                            pdb.set_trace()
                             if result.matched_count:
                                 C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
                                 self.book_indexing(book, fields=['tags'])
@@ -720,7 +620,7 @@ class LnEBooks:
     ####################################################
     # -
     ####################################################
-    def content2words(self, content):
+    def content2words(self, content, min_len=3):
         chars_to_replace = string.printable.replace(string.ascii_letters, '')
         chars_to_replace += '’'
         words_to_discard=[
@@ -728,8 +628,7 @@ class LnEBooks:
                         'della', 'dello', 'dell',
                         'nella', 'nello', 'nelle', 'nell',
                         'alla',  'alle', 'allo', 'all',
-                        'cosa',
-                        'loro',
+                        'il',  'lo', 'la', 'i','gli','le',
                         ]
 
         # - rimpiazza i primi con i secondi
@@ -738,9 +637,9 @@ class LnEBooks:
         table = ' '.maketrans(chars_to_replace, ' '*(len(chars_to_replace)))
         content = content.translate(table)
 
-        content = [w for w in content.split() if len(w)>3 and not w.lower() in words_to_discard]
+        content = [w for w in content.split() if len(w)>=min_len and not w.lower() in words_to_discard]
         logger.info("total words", len(content))
-        # - remove duplicate
+        # - remove duplicates
         content = list( dict.fromkeys(content) )
         logger.info("   after removing duplicated", len(content))
 

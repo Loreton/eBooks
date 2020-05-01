@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 17.37.29
+# Version ......: 01-05-2020 16.19.18
 #
 # #############################################
 
@@ -25,6 +25,7 @@ def parseInput():
 
     parser_search = subparsers.add_parser ("search", help = "search on several fields")
     parser_search.add_argument('--book-id', help='Book_ID to search only on it', required=False, default=None)
+    parser_search.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
     parser_search.add_argument('--words',
                                 metavar='',
                                 required=True,
@@ -34,8 +35,8 @@ def parseInput():
     parser_search.add_argument('--fields',
                                 metavar='',
                                 required=False,
-                                default=['author', 'title', 'tags', 'chapters' ],
-                                choices=['author', 'title', 'chapters', 'tags', 'date', 'description', 'indexed' ],
+                                default=['content' ],
+                                choices=['author', 'title', 'content', 'tags'],
                                 nargs='*',
                                 help="""fields to be searched. BLANK searator [DEFAULT: author title] """)
 
@@ -51,8 +52,8 @@ def parseInput():
     parser_build.add_argument('--fields',
                                 metavar='',
                                 required=False,
-                                default=['tags'],
-                                choices=['author', 'title', 'tags', 'chapters', 'description' ],
+                                default=['content'],
+                                choices=['author', 'title', 'content'],
                                 nargs='+',
                                 help="""fields to be indexed. BLANK searator""")
 

@@ -77,10 +77,9 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "build",
-                // "--author",
-                // "--title",
-                // "--description",
-                // "--go",
+                "--fields=content",
+                "--db=Ln_eBooks_TEST",
+                "--go",
             ],
             "cwd": "${workspaceRoot}",
         },

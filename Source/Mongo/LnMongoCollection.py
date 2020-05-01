@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 30-04-2020 11.59.20
+# Version ......: 01-05-2020 17.22.45
 #
 import sys
 import pymongo
@@ -113,12 +113,12 @@ class MongoCollection:
     # es.: self._collection.count_documents({ '_id': record['_id'] }, limit = 1)
     ############################################################
     def exists(self, rec):
-        _exists = self._collection.count_documents(rec['filter'], limit = 1)
+        _exists = self._collection.count_documents(rec['_filter'], limit = 1)
         if _exists:
-            logger.info('record exists', rec['filter'])
-            _rec = self.get_record(rec['filter'])
+            logger.info('record exists', rec['_filter'])
+            _rec = self.get_record(rec['_filter'])
         else:
-            logger.error('record NOT found', rec['filter'])
+            logger.error('record NOT found', rec['_filter'])
             _rec={}
 
 
@@ -144,7 +144,7 @@ class MongoCollection:
             print('     record  fields:')
             for index, field in enumerate(sorted(record.keys()), start=1):
                 print('     {index} - {field}'.format(**locals()))
-            sys.exit(1)
+            logger.critical('Please provide a right fields')
 
         return record
 
@@ -155,19 +155,22 @@ class MongoCollection:
     # -  filter: {'_id': IDvalue}
     ####################################################
     def set_id(self, rec):
+        # import pdb;pdb.set_trace()
+
         _id = []
         for fld in self._id_fields:
             words = rec[fld].split()
             for word in words:
-                word=[ c for c in word if c.isalnum()]
+                word=[ c.strip() for c in word if c.isalnum()]
                 _id.append(''.join(word))
 
+        _id = ' '.join(_id).split() #  remove empty elements
         IDvalue ='_'.join(_id)
         if not '_id' in rec:
             rec['_id'] = IDvalue
 
-        if not 'filter' in rec:
-            rec['filter'] = {'_id': IDvalue}
+        if not '_filter' in rec:
+            rec['_filter'] = {'_id': IDvalue}
 
 
 
@@ -234,15 +237,15 @@ class MongoCollection:
         curr_rec = self.exists(rec=record)
         if curr_rec:
             if replace:
-                result = self._collection.replace_one(record['filter'], record) # non riconosce bene DotMap
+                result = self._collection.replace_one(record['_filter'], record) # non riconosce bene DotMap
                 if result.modified_count == 1:
-                    status = ['replaced', record['filter'] ]
+                    status = ['replaced', record['_filter'] ]
             else:
-                status = ['exists', record['filter'] ]
+                status = ['exists', record['_filter'] ]
 
         else:
             result = self._collection.insert_one(record) # non riconosce bene DotMap
-            status  = ['inserted', record['filter']]
+            status  = ['inserted', record['_filter']]
 
 
         return status
@@ -267,16 +270,17 @@ class MongoCollection:
     def updateField(self, rec, fld_name, create=False):
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
-        _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['filter'], **locals())
+        _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['_filter'], **locals())
 
         fld_new_value = rec[fld_name]
-        cur_rec=self._collection.find_one(rec['filter']) # get current record
+        cur_rec=self._collection.find_one(rec['_filter']) # get current record
         if cur_rec:
             cur_value = cur_rec[fld_name]
             if isinstance(cur_value, (list, tuple)): # if it's a list
                 _val = cur_value[:]
                 _val.extend(fld_new_value)
-                _val = list( dict.fromkeys(_val) ) # remove duplicates ... anche list(set(_val))
+                _val = list(set(_val)) # remove duplicates ... anche list( dict.fromkeys(_val)
+                # _val = list( dict.fromkeys(_val) ) # remove duplicates ... anche list(set(_val))
             else:
                 _val = fld_new_value
 
@@ -289,7 +293,7 @@ class MongoCollection:
             else:
                 logger.info(_base_msg, ' ... updating')
                 upd_cmd = { "$set": {fld_name: _val } }
-                result=self._collection.update_one(rec['filter'], upd_cmd)
+                result=self._collection.update_one(rec['_filter'], upd_cmd)
                 logger.debug1('   matched', result.matched_count)
                 logger.debug1('   updated', result.modified_count)
 
