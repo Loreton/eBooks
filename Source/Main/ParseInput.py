@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 01-05-2020 16.19.18
+# Version ......: 03-05-2020 08.45.44
 #
 # #############################################
 
@@ -32,13 +32,13 @@ def parseInput():
                                 default=[],
                                 nargs='*',
                                 help="""strings to be searched. BLANK searator""")
-    parser_search.add_argument('--fields',
+    parser_search.add_argument('--field',
                                 metavar='',
                                 required=False,
-                                default=['content' ],
+                                default='content',
                                 choices=['author', 'title', 'content', 'tags'],
-                                nargs='*',
-                                help="""fields to be searched. BLANK searator [DEFAULT: author title] """)
+                                # nargs='*',
+                                help="""field to be searched. BLANK searator [DEFAULT: content] """)
 
     parser_load = subparsers.add_parser ("load", help = "Load book in DB")
     parser_load.add_argument('--dir', help='input dir [DEFAULT=as defined in config_file]', default=None)

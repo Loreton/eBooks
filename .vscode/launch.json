@@ -13,8 +13,8 @@
             "program": "${workspaceFolder}/__main__.py",
             "args": [
                 "search",
-                "--field=author",
-                "--words=child",
+                // "--field=content",
+                "--words=corpotre",
                 // "--verbose",
             ],
             "cwd": "${workspaceRoot}",

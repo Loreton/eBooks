@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 01-05-2020 17.22.45
+# Version ......: 03-05-2020 08.04.20
 #
 import sys
 import pymongo
@@ -81,7 +81,7 @@ class MongoCollection:
                 logger.console("Connection error. mongoDB server may be down!")
                 sys.exit(1)
 
-            logger.info ('CLIENT:', client)
+            # logger.info ('CLIENT:', client)
 
             _DBs[db_name] = {}
             _DBs[db_name]['client'] = client
@@ -132,7 +132,7 @@ class MongoCollection:
         # diff_a = set(record['keys']()).difference(set(self._fields))
         # diff_b = set(self._fields).difference(set(record['keys']()))
         ############################################################
-    def checkFields(self, record):
+    def _checkFields(self, record):
         assert isinstance(record, (dict))
         diff = set(record.keys()).symmetric_difference(set(self._fields))
         if diff:
@@ -232,7 +232,7 @@ class MongoCollection:
         """
         # assert isinstance(record, (dict))
 
-        self.checkFields(record)
+        self._checkFields(record)
 
         curr_rec = self.exists(rec=record)
         if curr_rec:

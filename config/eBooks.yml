@@ -2,15 +2,15 @@
 
 #########################################################
 main:
-    dbase_name: Ln_eBooks_TEST
-    # dbase_name: Ln_eBooks
+    # dbase_name: Ln_eBooks_TEST
+    dbase_name: Ln_eBooks
 
 #########################################################
 # -             eBook directories
 #########################################################
     epub_input_dir:
-        # /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/To_Be_Evalueated
-        /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/LoretoBooks
+        /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/To_Be_Evalueated
+        # /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/LoretoBooks
         # /mnt/k/Download/Telegram/ePubs
 
         # - /mnt/k/Download/ePub/err
