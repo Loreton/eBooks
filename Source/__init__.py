@@ -1,5 +1,5 @@
 # updated by ...: Loreto Notarantonio
-# Version ......: 28-04-2020 09.38.31
+# Version ......: 03-05-2020 09.18.18
 
 from . Main.ReadConfigurationFile import readConfigFile
 from . Main.ParseInput import parseInput
@@ -12,6 +12,7 @@ from . LnLib.LnColor  import LnColor as Color
 
 from . LnLib.LnYamlLoader import LoadYamlFile
 from . LnLib.LnYamlLoader import processYamlData
+from . LnLib.LnPrompt import set_prompt                 ; set_prompt(Color)
 from . LnLib.LnPrompt import prompt
 from . LnLib import LnMonkeyFunctions # per Path.LnCopy, Path.LnBackup
 

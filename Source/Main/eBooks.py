@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 03-05-2020 08.49.34
+# Version ......: 03-05-2020 09.30.35
 #
 
 import sys
@@ -386,61 +386,6 @@ class LnEBooks:
         res = [i.start() for i in re.finditer(substring, data)]
         return res
 
-    ####################################################
-    # -
-    # metodi per mandare in AND più liste
-    #   result = list(set(a) & set(b) & set(c))
-    #   result = list(set(a).intersection(b))
-    # return: list of book_id
-    ####################################################
-    def _dictionary_search(self, words, fields, ignore_case=True):
-        id_list = []
-        # words=['cole', 'carian']
-        # - una search per ogni word
-        for word in words:
-            # - search in all fields of all books
-            result = self._Dictionary.search(field_name='_id', regex=word, ignore_case=ignore_case)
-            _list = []
-            for x in result:
-                _list.extend(x['ebook_list'])
-
-            # - ANDing tra le varie liste
-            C.yellowH(text='Word {0:} found in {1:5} books'.format(word, len(_list)), tab=4)
-            if id_list:
-                id_list = list(set(id_list) & set(_list))
-            else:
-                id_list = _list[:]
-
-
-        ret_list=[]
-        for book_id in id_list:
-            _filter = { "_id": book_id }
-            book = self._ePubs.get_record(_filter)
-            dmBook=DotMap(book, _dynamic=False) # di comodo
-
-            # ora verifichiamo le word in un determinato field
-            for fld_name in fields:
-                result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False)
-                """
-                    res dict{
-                       word1 {counter: x data: {(1: [], 2: []} }
-                       word2 {counter: x data: {(1: [], 2: []} } }
-                       wordn...
-                       }
-                """
-                valid=0
-                for word in words:
-                    if result[word]['counter'] > 0:
-                        valid+=1
-
-                if valid==len(words):
-                    ret_list.append([book_id, result])
-
-        C.cyanH(text='After ANDing remain {0} book(s) containing all your words.'.format(len(ret_list)), tab=4)
-        print()
-
-
-        return ret_list
 
 
 
@@ -573,106 +518,6 @@ class LnEBooks:
 
 
 
-    ####################################################
-    # - Input:
-    # -    fields:  campo/i dove effettuare la ricerca
-    # -    words:   stringa/stringhe da ricercare (in AND)
-    # -    book_id: se presente si cerca solo al suo interno
-    ####################################################
-    def multiple_field_search(self, fields=[], words=[], book_id=None, ignore_case=True):
-        if 'all' in fields:
-            fields=self._ePubs.fields
-        # words=['gatto', 'tempo', 'iggulden', 'porte', 'roma']
-        if book_id:
-            books = [book_id]
-        else:
-            # - torna la lista dei libri che contengono le words (in AND)
-            result_list = sorted(self._dictionary_search(words=words, fields=fields, ignore_case=ignore_case))
-            """
-                return  [book_id, {word1 {counter: x, data: {(1: [], 2: []} }
-                                   word2 {counter: x, data: {(1: [], 2: []} } }
-                                   wordn...
-                                  }
-                        ]
-            """
-
-        # ###  D I S P L A Y    data
-        prev_book_id = 0
-
-        while True:
-            for index, item in enumerate(result_list, start=1):
-                _book_id, result = item
-                print('     [{index:4}] - {_book_id}'.format(**locals()))
-            print()
-
-            choice = Ln.prompt('please select book number', validKeys=range(1, len(result_list)+1))
-            book_id, result = result_list[int(choice)-1]
-            # print(book_id);continue
-
-                # - prendiamo il libro per avere i metadati
-            if not book_id == prev_book_id:
-                _filter = { "_id": book_id }
-                book = self._ePubs.get_record(_filter)
-                dmBook=DotMap(book, _dynamic=False) # di comodo
-                prev_book_id = book_id
-
-            result=DotMap(result, _dynamic=False)
-            for word in words:
-                ptr=result[word]
-                if ptr.counter < 1: continue
-                if choice=='b': break # return to book_list
-
-                C.yellowH(text='''
-                    result:
-                        - id: {dmBook._id}
-                        - book: {dmBook.title} - [{dmBook.author}]
-                        - tags: {dmBook.tags}\
-
-                        - word: {word} - instances: {ptr.counter}\
-                    '''.format(**locals()),
-                            tab=4)
-
-                ''' Display data.
-                    ruoto all'interno della lista visualizzando
-                    [step] results per volta'''
-                _max = ptr.counter
-                _min = 0
-                _from=_min
-                _step=6
-                while True:
-                    C.yellowH(text='word: [{word}: {_max}] - {dmBook.title} - [{dmBook.author}]'.format(**locals()), tab=4)
-                    if _from>=_max: _from=_max-_step
-                    if _from<0: _from=0
-                    _to=_from+_step
-                    if _to>_max: _to=_max
-
-                    for index in range(_from, _to):
-                        item = ptr.data[index+1]
-                        print('{0:5} - {1}'.format(index+1, item[0]))
-                        for line in item[1:]:
-                            print(' '*7, line)
-                        print()
-
-                    choice=Ln.prompt('[n]ext_word [b]ooks_list [+] [-] [t]ag', validKeys='t|n|+|-|b')
-                    if   choice in ['n', 'b']: break
-                    elif choice in ['+']: _from+=_step
-                    elif choice in ['-']: _from-=_step
-                    elif choice in ['t']:
-                        if self._execute:
-                            tags=Ln.prompt('Please enter TAGs (BLANK separator)')
-                            book['tags'] = tags.split()
-                            result = self._ePubs.updateField(rec=book, fld_name='tags')
-                            pdb.set_trace()
-                            if result.matched_count:
-                                C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
-                                self._book_indexing(book, fields=['tags'])
-                                print()
-                        else:
-                            C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
-                            Ln.prompt()
-
-
-
 
     ####################################################
     # -
@@ -769,91 +614,7 @@ class LnEBooks:
     # -           ebooks: [] (book_id list cvontainig all the words)
     # -         }
     ####################################################
-    def _displayResults_WORD_ORDER(self, dmBook, data):
-        ''' Sample
-            {
-                "child": {
-                    "counter": 1,
-                    "data": {"1": ["Lee Child"]}
-                },
-                "lee": {
-                    "counter": 1,
-                    "data": {"1": ["Lee Child"] }
-                }
-            }
-        '''
-
-        choice = ''
-        words = data.keys()
-        while True:
-            data=DotMap(data, _dynamic=False) # di comodo per display
-            if choice=='b': break # return to book_list
-            for word in words:
-                ptr=data[word]
-                if ptr.counter < 1: continue
-                if choice=='b': break # return to book_list
-
-                C.yellowH(text='''
-                    book: {dmBook.title} - [{dmBook.author}]
-                        - id: {dmBook._id}
-                        - tags: {dmBook.tags}
-                        - word: {word} - instances: {ptr.counter}\
-                    '''.format(**locals()), tab=4)
-
-                ''' Display data.
-                    ruoto all'interno della lista visualizzando
-                    [step] results per volta'''
-                _max = ptr.counter
-                _min = 0
-                _from=_min
-                _step=6
-                while True:
-                    # - set range to display menu
-                    if _from>=_max: _from=_max-_step
-                    if _from<0: _from=0
-                    _to=_from+_step
-                    if _to>_max: _to=_max
-
-                    # - display data
-                    for index in range(_from, _to):
-                        item = ptr.data[index+1]
-                        print('{0:5} - {1}'.format(index+1, item[0]))
-                        for line in item[1:]:
-                            print(' '*7, line)
-                        print()
-
-                    # - Get keybord input
-                    choice=Ln.prompt('[n]ext_word [b]ooks_list [+] [-] [t]ag', validKeys='t|n|+|-|b')
-                    if   choice in ['n', 'b']: break
-                    elif choice in ['+']: _from+=_step
-                    elif choice in ['-']: _from-=_step
-                    elif choice in ['t']:
-                        if self._execute:
-                            tags=Ln.prompt('Please enter TAGs (BLANK separator)')
-                            book['tags'] = tags.split()
-                            result = self._ePubs.updateField(rec=book, fld_name='tags')
-                            pdb.set_trace()
-                            if result.matched_count:
-                                C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
-                                self._book_indexing(book, fields=['tags'])
-                                print()
-                        else:
-                            C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
-                            Ln.prompt()
-
-
-
-    ####################################################
-    # - Search the words for a specific field
-    # -
-    # - data = {
-    # -           word_name1: counter
-    # -           word_name2: counter
-    # -           word_name..n: counter
-    # -           ebooks: [] (book_id list cvontainig all the words)
-    # -         }
-    ####################################################
-    def _displayResults_TEXT_ORDER(self, dmBook, data):
+    def _displayResults(self, book, data):
         ''' Sample
             {
                 "word1": {"counter": 1 },
@@ -873,6 +634,7 @@ class LnEBooks:
         _from=_min
 
         # - prepard book info dipslay data
+        dmBook=DotMap(book, _dynamic=False) # di comodo
         dis_line=[]
         dis_line.append('')
         dis_line.append('book: {dmBook.title} - [{dmBook.author}]'.format(**locals()))
@@ -908,7 +670,7 @@ class LnEBooks:
                 print()
 
             # - Get keybord input
-            choice=Ln.prompt('[b]ooks_list [n]ext [p]rev [t]ag', validKeys='t|n|+|-|b')
+            choice=Ln.prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
             if   choice in ['b']: break
             elif choice in ['n']: _from+=_step
             elif choice in ['p']: _from-=_step
@@ -917,10 +679,10 @@ class LnEBooks:
                     tags=Ln.prompt('Please enter TAGs (BLANK separator)')
                     book['tags'] = tags.split()
                     result = self._ePubs.updateField(rec=book, fld_name='tags')
-                    pdb.set_trace()
+                    # pdb.set_trace()
                     if result.matched_count:
-                        C.cyanH(text='tags {dmBook.tags} have been added'.format(**locals()), tab=4)
-                        self._book_indexing(book, fields=['tags'])
+                        C.cyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
+                        self._ePubs.updateField(book, fld_name='tags', create=False)
                         print()
                 else:
                     C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
@@ -1015,6 +777,7 @@ class LnEBooks:
     ####################################################
     def multiple_field_search_New(self, fld_name, words=[], book_id=None, ignore_case=True):
         # if 'all' in fields:
+
             # fields=self._ePubs.fields
         # words=['gatto', 'tempo', 'iggulden', 'porte', 'roma']
         # words=['child', 'lee']
@@ -1030,7 +793,7 @@ class LnEBooks:
                     }
         '''
         prev_book_id = None
-        bookid_list = result['books']
+        bookid_list = sorted(result['books'])
         nRecs=len(bookid_list)+1
         while True:
             for index, _book_id in enumerate(bookid_list, start=1):
@@ -1049,19 +812,7 @@ class LnEBooks:
                 prev_book_id = book_id
 
             result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False, TEXT_ORDER=True)
-            # logger.info('result', result, console=True)
-            # Ln.prompt()
-            # logger.info('result', self.dict_to_json(result))
-            # continue
-
-            # self._displayResults_WORD_ORDER(dmBook, result)
-            self._displayResults_TEXT_ORDER(dmBook, result)
-            # print(book_id);
-
-
-
-
-
+            self._displayResults(book, result)
 
         return ret_list
 
