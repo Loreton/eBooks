@@ -1,6 +1,7 @@
 db.getCollection('ePubs').find({}).count()
 db.getCollection('ePubs').find({'chapters': {"$regex": "tempo"}}).count()
 db.getCollection('ePubs').find({'author': {"$regex": "scono"}}).count()
+db.getCollection('ePubs').find({'content': {"$regex": "sono \w*.o"}})
 
 db.getCollection('Dictionary').find({'_id': {'$options': 'i', '$regex': 'vorrei'}})
 db.getCollection('ePubs').find({'_id': {'$options': 'i', '$regex': 'child'}})

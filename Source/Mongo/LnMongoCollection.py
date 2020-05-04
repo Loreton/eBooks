@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 03-05-2020 08.04.20
+# Version ......: 04-05-2020 07.48.05
 #
 import sys
 import pymongo
@@ -271,6 +271,7 @@ class MongoCollection:
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
         _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['_filter'], **locals())
+        logger.console(self._collection_name, 'Updating field', fld_name, 'in record', rec['_filter'])
 
         fld_new_value = rec[fld_name]
         cur_rec=self._collection.find_one(rec['_filter']) # get current record

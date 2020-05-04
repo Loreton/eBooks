@@ -15,7 +15,7 @@
                 "search",
                 // "--field=content",
                 "--words=corpotre",
-                // "--verbose",
+                "--go",
             ],
             "cwd": "${workspaceRoot}",
         },

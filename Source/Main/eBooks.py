@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 03-05-2020 09.30.35
+# Version ......: 03-05-2020 19.24.43
 #
 
 import sys
@@ -254,6 +254,7 @@ class LnEBooks:
                         'title_word':  [],
                         'author_word':  [],
                         'content_word':  [],
+                        'tags_word':  [],
                     }
                     # modifichiamo il campo che ci interessa
                     dictionary_field_name=fld_name+'_word'
@@ -406,7 +407,7 @@ class LnEBooks:
     #                      }
     #               wordn...
     ####################################################
-    def _find_words_in_text(self, data=[], words=[], fPRINT=False, TEXT_ORDER=False, WORD_ORDER=False):
+    def _find_words_in_text(self, data=[], words=[], fPRINT=False):
         if isinstance(data, (str)):
             data=[data]
 
@@ -421,97 +422,55 @@ class LnEBooks:
         # WORD_ORDER=True
         # TEXT_ORDER=True
 
-        if TEXT_ORDER: # torna la lista in ordine di testo
+        for word in words:
+            result[word] = {}
+            result[word]['counter'] = 0
+            result['data'] = {}
+
+        counter=0
+        for item in data: # sono capitoli, descrizione, titoli o altro
             for word in words:
-                result[word] = {}
-                result[word]['counter'] = 0
-                result['data'] = {}
+                occurrencies = [i.start() for i in re.finditer(word, item, flags=re.IGNORECASE)]
+                word_len=len(word)
 
-            counter=0
-            for item in data: # sono capitoli, descrizione, titoli o altro
-                for word in words:
-                    occurrencies = [i.start() for i in re.finditer(word, item, flags=re.IGNORECASE)]
-                    word_len=len(word)
-                    for pos in occurrencies:
+                for pos in occurrencies:
+                    # incr counter for specific word
+                    result[word]['counter'] += 1
+                    counter += 1 # counter totale
 
-                        # incr counter for specific word
-                        result[word]['counter'] += 1
-                        counter += 1 # counter totale
+                    # - get text around the found word
+                    _from=0 if pos-_before<0 else pos-_before
+                    _to=pos+word_len+_after
+                    text=item[_from:_to].replace('\n', ' ')
+                    new_text = ' '.join(text.split()) # remove multiple blanks
 
-                        # - get text around the found word
-                        _from=0 if pos-_before<0 else pos-_before
-                        _to=pos+word_len+_after
-                        text=item[_from:_to].replace('\n', ' ')
-                        new_text = ' '.join(text.split()) # remove multiple blanks
+                    '''
+                    new_text=text.replace(cur_word, colored_word) # no good perché case-sensitive
 
-                        '''
-                        new_text=text.replace(cur_word, colored_word) # no good perché case-sensitive
+                    redata = re.compile(re.escape(cur_word), re.IGNORECASE)
+                    new_text = redata.sub(colored_word, text)
 
-                        redata = re.compile(re.escape(cur_word), re.IGNORECASE)
-                        new_text = redata.sub(colored_word, text)
+                    '''
 
-                        '''
+                    # replace word(s) with colored_word
+                    # ruotiamo sulle word in modo da colorarle
+                    # se fossero presenti nello stesso testo
+                    for i, w in enumerate(words):
+                        colored_word = colors[i](text=w, get=True)
+                        new_text = re.sub(w, colored_word, new_text, flags=re.IGNORECASE)
 
-                        # replace word(s) with colored_word
-                        # ruotiamo sulle word in modo da colorarle
-                        # se fossero presenti nello stesso testo
-                        for i, w in enumerate(words):
-                            colored_word = colors[i](text=w, get=True)
-                            new_text = re.sub(w, colored_word, new_text, flags=re.IGNORECASE)
+                    # - wrap text to easy displaying
+                    tb=textwrap.wrap(new_text, 80, break_long_words=True)
 
-                        # - wrap text to easy displaying
-                        tb=textwrap.wrap(new_text, 80, break_long_words=True)
+                    # - save it into result list
+                    result['data'][counter] = []
+                    result['data'][counter].extend(tb)
 
-                        # - save it into result list
-                        result['data'][counter] = []
-                        result['data'][counter].extend(tb)
+                    if fPRINT:
+                        for l in tb:
+                            print('    ', l)
+                        print()
 
-                        if fPRINT:
-                            for l in tb:
-                                print('    ', l)
-                            print()
-
-        # ritorna la lista per word
-        if WORD_ORDER:
-            index=0
-            for word in words:
-                result[word] = {}
-                result[word]['counter'] = 0
-                result[word]['data'] = {}
-
-            for item in data: # sono capitoli, descrizione, titoli o altro
-                for i, word in enumerate(words):
-                    occurrencies = [i.start() for i in re.finditer(word, item, flags=re.IGNORECASE)]
-                    word_len=len(word)
-                    for pos in occurrencies:
-                        # incr counter for specific word
-                        result[word]['counter'] += 1
-                        index = result[word]['counter']
-
-                        # get word with excact case because str.replace() is case sensitive
-                        cur_word=item[pos:pos+word_len]
-                        colored_word = colors[i](text=cur_word, get=True)
-
-                        # prepare list data for word
-                        result[word]['data'][index] = []
-
-                        # - search word and replace it with colored_word
-                        _from=0 if pos-_before<0 else pos-_before
-                        _to=pos+word_len+_after
-                        text=item[_from:_to]
-                        text = ' '.join(text.split()) # remove multiple blanks
-                        new_text=text.replace(cur_word, colored_word) # no good perché case-sensitive
-
-                        # - wrap text to easy displaying
-                        tb=textwrap.wrap(new_text, 80, break_long_words=True)
-
-                        # - save it into result list
-                        result[word]['data'][index].extend(tb)
-
-                        if fPRINT:
-                            for l in tb:
-                                print('    ', l)
-                            print()
 
         return result
 
@@ -630,10 +589,10 @@ class LnEBooks:
         choice = ''
         _max = len(dis_data)
         _min = 0
-        _step=6
+        _step=4
         _from=_min
 
-        # - prepard book info dipslay data
+        # - prepard book info display data
         dmBook=DotMap(book, _dynamic=False) # di comodo
         dis_line=[]
         dis_line.append('')
@@ -650,6 +609,7 @@ class LnEBooks:
             # - display book metadata
             for line in dis_line:
                 C.yellowH(text=line, tab=8)
+
 
             ''' Display data.
                 ruoto all'interno della lista visualizzando
@@ -682,7 +642,7 @@ class LnEBooks:
                     # pdb.set_trace()
                     if result.matched_count:
                         C.cyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
-                        self._ePubs.updateField(book, fld_name='tags', create=False)
+                        self._book_indexing(book, fields=['tags'])
                         print()
                 else:
                     C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
@@ -811,7 +771,7 @@ class LnEBooks:
                 dmBook=DotMap(book, _dynamic=False) # di comodo
                 prev_book_id = book_id
 
-            result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False, TEXT_ORDER=True)
+            result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False)
             self._displayResults(book, result)
 
         return ret_list
