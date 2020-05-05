@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 04-05-2020 07.48.05
+# Version ......: 05-05-2020 10.29.45
 #
 import sys
 import pymongo
@@ -37,6 +37,7 @@ class MongoCollection:
 
         self._from = 0
         self._range = 1
+        self._query = {}
 
     ################################################
     #
@@ -197,14 +198,31 @@ class MongoCollection:
     # return cursor
     # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
     ############################################################
-    def get_next(self, nrecs=None):
-        if not nrecs: nrecs=self._range
-        logger.info('reading records from', self._from, 'for:', nrecs)
-        cursor = self._collection.find({}).skip(self._from).limit(nrecs)
-        recs=list(cursor) # cursor si azzera al primo utilizzo
-        self._from += nrecs # prepare for next
-        return recs
+    def get_next(self, nrecs=None, query=None):
+        _my_query = self._query if not query else query
+        # logger.info('query', str(_my_query), console=False)
 
+        if not nrecs: nrecs=self._range
+        logger.info('searching records', 'query', str(_my_query), self._from, 'for:', nrecs, console=False)
+        print('searching records from:{self._from} for:{nrecs}'.format(**locals()))
+        cursor = self._collection.find(_my_query, { "_id": 1 }).skip(self._from).limit(nrecs)
+        # cursor = self._collection.find(_my_query).skip(self._from).limit(nrecs)
+        records=list(cursor) # cursor si azzera al primo utilizzo
+        self._from += nrecs # prepare for next
+        return records
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    ############################################################
+    def set_query(self, query={} ):
+        self._query = query
+
+    def count(self, query={} ):
+        _my_query = self._query if not query else query
+        # logger.info('query', str(_my_query), console=True)
+        nrecs = self._collection.find(_my_query).count()
+        return nrecs
 
     ############################################################
     # per DB molto grandi ed evitare problemi di CursorNotFound
@@ -215,6 +233,8 @@ class MongoCollection:
         self._from = start
         self._range = range
         return self._from
+
+
 
 
 
@@ -342,7 +362,7 @@ class MongoCollection:
         logger.info('my_query', query)
         # result = self._collection.find(query).limit(10)
         result = self._collection.find(query)
-        logger.info('    record found', result.count())
+        # logger.info('    record found', result.count())
         return result
 
 

@@ -21,15 +21,15 @@
         },
 
         {
-            "name": "msearch",
+            "name": "regex",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
             "program": "${workspaceFolder}/__main__.py",
             "args": [
-                "multi_search",
-                "--fields=title",
-                "--words=ciao tempo",
+                "regex",
+                "--field=content",
+                "--near=sono {0,4} contenta",
                 // "--verbose",
             ],
             "cwd": "${workspaceRoot}",

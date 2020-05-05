@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 03-05-2020 08.45.44
+# Version ......: 05-05-2020 08.15.17
 #
 # #############################################
 
@@ -23,42 +23,75 @@ def parseInput():
 
     subparsers = parser.add_subparsers(title="actions")
 
-    parser_search = subparsers.add_parser ("search", help = "search on several fields")
-    parser_search.add_argument('--book-id', help='Book_ID to search only on it', required=False, default=None)
-    parser_search.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
-    parser_search.add_argument('--words',
+    search_parser = subparsers.add_parser ("search", help = "search on several fields")
+    search_parser.add_argument('--book-id', help='Book_ID to search only on it', required=False, default=None)
+    search_parser.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
+    search_parser.add_argument('--words',
                                 metavar='',
                                 required=True,
                                 default=[],
                                 nargs='*',
-                                help="""strings to be searched. BLANK searator""")
-    parser_search.add_argument('--field',
+                                help="""strings to be searched. BLANK separator""")
+    search_parser.add_argument('--field',
                                 metavar='',
                                 required=False,
                                 default='content',
                                 choices=['author', 'title', 'content', 'tags'],
                                 # nargs='*',
-                                help="""field to be searched. BLANK searator [DEFAULT: content] """)
+                                help="""field to be searched. BLANK separator [DEFAULT: content] """)
 
-    parser_load = subparsers.add_parser ("load", help = "Load book in DB")
-    parser_load.add_argument('--dir', help='input dir [DEFAULT=as defined in config_file]', default=None)
-    parser_load.add_argument('--ftype', help='file type to be included [DEFAULT=.epub]', default='*.epub')
-    parser_load.add_argument('--indexing', help='update dictionary with words', action='store_true')
-    parser_load.add_argument('--move-file', help='move file to destination defined in config file', action='store_true')
-    parser_load.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
 
-    parser_build = subparsers.add_parser ("build", help = "rebuild dictionary")
-    parser_build.add_argument('--force-indexing', help='update all records regardless indexed=true', action='store_true')
-    parser_build.add_argument('--fields',
+
+    regex_parser = subparsers.add_parser ("regex", help = "search using regex. Dictionary coll will not be used.")
+    regex_parser.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
+    regex_parser.add_argument('--near',
+                                metavar='',
+                                required=False,
+                                default=[],
+                                nargs='*',
+                                help='''"word1 {min,max} word2"
+                                word1: is first word to be searched
+                                word2: is second word to be searched
+                                min: min number of words between word1 and word2
+                                max: max number of words between word1 and word2
+                                Ex.: sono {1,4} contenta
+                                ''')
+                                # Ex.: "sono {1,4} contenta"
+    regex_parser.add_argument('--expression',
+                                metavar='',
+                                required=False,
+                                default=[],
+                                nargs='*',
+                                help="""strings to be searched. BLANK separator""")
+    regex_parser.add_argument('--field',
+                                metavar='',
+                                required=False,
+                                default='content',
+                                choices=['author', 'title', 'content', 'tags'],
+                                # nargs='*',
+                                help="""field to be searched. [DEFAULT: content] """)
+
+
+
+    load_parser = subparsers.add_parser ("load", help = "Load book in DB")
+    load_parser.add_argument('--dir', help='input dir [DEFAULT=as defined in config_file]', default=None)
+    load_parser.add_argument('--ftype', help='file type to be included [DEFAULT=.epub]', default='*.epub')
+    load_parser.add_argument('--indexing', help='update dictionary with words', action='store_true')
+    load_parser.add_argument('--move-file', help='move file to destination defined in config file', action='store_true')
+    load_parser.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
+
+    build_parser = subparsers.add_parser ("build", help = "rebuild dictionary")
+    build_parser.add_argument('--force-indexing', help='update all records regardless indexed=true', action='store_true')
+    build_parser.add_argument('--fields',
                                 metavar='',
                                 required=False,
                                 default=['content'],
                                 choices=['author', 'title', 'content'],
                                 nargs='+',
-                                help="""fields to be indexed. BLANK searator""")
+                                help="""fields to be indexed. BLANK separator""")
 
-    parser_update_field = subparsers.add_parser ("update_field", help = "update specific field")
-    parser_test_field = subparsers.add_parser ("change_id", help = "change id")
+    update_field_parser = subparsers.add_parser ("update_field", help = "update specific field")
+    test_field_parser = subparsers.add_parser ("change_id", help = "change id")
 
     # -- add common options to all subparsers
     for name, subp in subparsers.choices.items():

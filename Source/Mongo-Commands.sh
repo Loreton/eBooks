@@ -2,6 +2,7 @@ db.getCollection('ePubs').find({}).count()
 db.getCollection('ePubs').find({'chapters': {"$regex": "tempo"}}).count()
 db.getCollection('ePubs').find({'author': {"$regex": "scono"}}).count()
 db.getCollection('ePubs').find({'content': {"$regex": "sono \w*.o"}})
+db.getCollection('ePubs').find({'content': {"$regex": "\bsono\W+(?:\w+\W+){0,4}?contenta\b"}}, re.IGNORECASE)
 
 db.getCollection('Dictionary').find({'_id': {'$options': 'i', '$regex': 'vorrei'}})
 db.getCollection('ePubs').find({'_id': {'$options': 'i', '$regex': 'child'}})
@@ -12,6 +13,7 @@ db.getCollection('ePubs').find({'_id': 'Sconosciuto_Anna_dai_capelli_rossi_3_Ann
 db.students.updateMany( {}, { $rename: { "_old_name": "new_name" } } )
 Robo3T - db.getCollection('ePubs').updateMany( {}, { $rename: { "indexed": "indexed_fields" } } )
 Robo3T - db.getCollection('ePubs').updateMany( {}, { $rename: { "filter": "_filter" } } )
+Robo3T - db.getCollection('Dictionary').updateMany( {}, { $rename: { "tags_words": "tags_word" } } )
 
 
 # Create new field
