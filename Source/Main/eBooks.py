@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 05-05-2020 17.36.52
+# Version ......: 06-05-2020 17.21.31
 #
 
 import sys
@@ -21,10 +21,12 @@ from ebooklib import epub
 from ebooklib.utils import parse_html_string
 import ebooklib.utils as epubUtil
 from bs4 import BeautifulSoup
+from Menu import main as Menu
+
 # import nltk
 # nltk.download('punkt')
 
-from LnMongoCollection import MongoCollection
+from LnMongoCollection_V02 import MongoCollection
 
 class LnEBooks:
         # ***********************************************
@@ -775,39 +777,31 @@ class LnEBooks:
     ####################################################
     # - Input:
     # -    fld_name: campo dove effettuare la ricerca
-    # -    words:   stringa/stringhe da ricercare (in AND)
+    # -    near:   [word1 {0,5} word2]
     # - NO Dictionary will be used
     # - cerca due parole
     # - \bsono\W+(?:\w+\W+){1,4}?passati\b
     # -
     # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
     ####################################################
-    def regex_search(self, fld_name, regex=[], near=[], ignore_case=True):
-        # - torna la lista dei libri che contengono le words (in AND)
-        # regex=r'\b{0}\W+(?:\w+\W+){1,4}?{0}\b'.format(words[0], words[1])
-        if near:
-            _word1, _minmax, _word2 = near[0].split()
-            # minmax='{'+'{_min},{_max}'.format(**locals())+'}'
-            # minmax='{'+'{_minmax}'.format(**locals())+'}'
-            pattern=re.compile(r'\b{_word1}\W+(?:\w+\W+){_minmax}?{_word2}\b'.format(**locals()), re.IGNORECASE)
-            # pattern.findall()
-            words = [_word1, _word2]
+    def regex_near_search_prev(self, fld_name, near, ignore_case=True):
+        _word1, _minmax, _word2 = near[0].split()
+        pattern=re.compile(r'\b{_word1}\W+(?:\w+\W+){_minmax}?{_word2}\b'.format(**locals()), re.IGNORECASE)
+        words = [_word1, _word2]
 
 
         my_query = {fld_name: {"$regex": pattern, "$options" : "i" } }
         self._ePubs.set_query(my_query)
         index = self._ePubs.set_range(start=1, range=10)
-        # result = self._ePubs.get_next(query=my_query)
-        # nRecs=self._ePubs.count()
         bookid_list=[]
         records = self._ePubs.get_next()
         while records:
             for book in records:
                 bookid_list.append(book['_id'])
-            records = None
-            # records = self._ePubs.get_next()
+            # records = None
+            records = self._ePubs.get_next()
 
-        # - loop trought the books
+        # - menu looping trought the book list
         prev_book_id = None
         bookid_list = sorted(bookid_list)
         nRecs=len(bookid_list)+1
@@ -829,12 +823,75 @@ class LnEBooks:
 
 
             result = self.text_near_occurrencies(regex=pattern, data=book['content'])
-            # for item in data: # sono capitoli, descrizione, titoli o altro
-            #     occurrencies = [i.start() for i in pattern.finditer(item)]
-            #     item_len=len(item)
-            #     result = {}
-            # result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False)
-            # occurrencies = [i.start() for i in re.finditer(word, item, flags=re.IGNORECASE)]
+            self._displayResults(book, result)
+
+        return ret_list
+
+    ####################################################
+    # - Input:
+    # -    fld_name: campo dove effettuare la ricerca
+    # -    near:   [word1 {0,5} word2]
+    # - NO Dictionary will be used
+    # - cerca due parole
+    # - \bsono\W+(?:\w+\W+){1,4}?passati\b
+    # -
+    # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
+    ####################################################
+    def regex_near_search(self, fld_name, near, ignore_case=True):
+        _word1, _minmax, _word2 = near[0].split()
+        pattern=re.compile(r'\b{_word1}\W+(?:\w+\W+){_minmax}?{_word2}\b'.format(**locals()), re.IGNORECASE)
+        words = [_word1, _word2]
+
+        # - preparazione
+        self._ePubs.set_search_regex(regex=pattern, field=fld_name, start=1, range=10)
+
+        prev_book_id = None
+
+        STEP=10
+        book_list={}
+        choice = 'f' #default
+
+        '''
+            loop tra i record trovati.
+            Verranno letti un pò alla volta (STEP) in modo da avere risposte
+            più immediate.
+            Viene fatto il display dei primi <STEP> records e se si chiede di
+            andare oltre vengono letti i successivi STEP record che si sommano ai primi
+        '''
+        while True:
+            records = sorted(self._ePubs.get_next2(nrecs=STEP))
+            if records:
+                for index, book in enumerate(records, start=len(book_list)+1):
+                    book_list[index]=book
+                ret_on_FW = True # return on Forward key on menu
+            else:
+                ret_on_FW = False
+
+            # - menu looping trought the book list
+            if not book_list: break
+            choice = Menu(book_list, return_on_fw=ret_on_FW)
+            if choice == 'f': continue
+            print(choice)
+
+            for index, _book_id in enumerate(bookid_list, start=1):
+                print('     [{index:4}] - {_book_id}'.format(**locals()))
+                if index>=10:
+                    break
+            print()
+
+            # - select book to see results
+            choice = Ln.prompt('please select book number', validKeys=range(1, nRecs))
+            book_id = bookid_list[int(choice)-1]
+
+                # - prendiamo il libro per avere i metadati
+            if not book_id == prev_book_id:
+                _filter = { "_id": book_id }
+                book = self._ePubs.get_record(_filter)
+                dmBook=DotMap(book, _dynamic=False) # di comodo
+                prev_book_id = book_id
+
+
+            result = self.text_near_occurrencies(regex=pattern, data=book['content'])
             self._displayResults(book, result)
 
         return ret_list
