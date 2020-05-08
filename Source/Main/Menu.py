@@ -2,7 +2,7 @@
 # Progamma per testare regex
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 06-05-2020 17.20.15
+# Version ......: 08-05-2020 15.06.44
 #
 
 import sys; sys.dont_write_bytecode = True
@@ -98,7 +98,10 @@ def main(data, step=10, return_on_fw=False):
         if   choice=='f': _from+=step
         elif choice =='b': _from-=step
         else:
+            if return_on_fw:
+                main.start=_from # remember for next call
             break
+
         if _from>=bottom and return_on_fw:
             main.start=_from # remember for next call
             break

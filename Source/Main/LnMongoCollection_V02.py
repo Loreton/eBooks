@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 06-05-2020 16.05.38
+# Version ......: 08-05-2020 09.40.35
 #
 import sys
 import pymongo
@@ -199,10 +199,11 @@ class MongoCollection:
         # logger.info('query', str(_my_query), console=False)
 
         if not nrecs: nrecs=self._range
-        logger.info('searching records', 'query', str(_my_query), self._from, 'for:', nrecs, console=False)
-        print('searching records from:{self._from} for:{nrecs}'.format(**locals()))
-        cursor = self._collection.find(_my_query, { "_id": 1 }).skip(self._from).limit(nrecs)
-        # cursor = self._collection.find(_my_query).skip(self._from).limit(nrecs)
+        # logger.info('searching records', 'query', str(_my_query), self._from, 'for:', nrecs, console=False)
+        print('searching 1 records from:{self._from} for:{nrecs}'.format(**locals()))
+        print(_my_query)
+        # cursor = self._collection.find(_my_query, { "_id": 1 }).skip(self._from).limit(nrecs)
+        cursor = self._collection.find(_my_query).skip(self._from).limit(nrecs)
         records=list(cursor) # cursor si azzera al primo utilizzo
         self._from += nrecs # prepare for next
         return records
@@ -250,14 +251,17 @@ class MongoCollection:
     def get_next2(self, nrecs=1):
         if not nrecs: nrecs=self._range
         ret_list=[]
-        # ret_dict={}
+
+        maxRec = self._collection.find().count()
+        print('searching on DB - from:{self._from} for:{maxRec}'.format(**locals()))
+
 
         while True:
             cursor = self._collection.find({}).skip(self._from).limit(1)
             books = list(cursor)
-            if not books:
-                break
+            if not books: break
             book = books[0]
+
             # occurrencies = [(i.start(), i.end(), i.group()) for i in regex.finditer(item)]
             data = book[self._search_field]
             if isinstance(data, (list, tuple)):
@@ -268,27 +272,73 @@ class MongoCollection:
                 res = self._re_pattern.search(data)
 
             self._from+=1
+            # print('{self._from}/{maxRec}'.format(**locals()))
+            if self._from>maxRec: break
 
             if res:
-                ret_list.append(book['_id'])
+                # ret_list.append(book['_id'])
+                ret_list.append(book)
                 if len(ret_list)>=nrecs:
                     break
 
-            # nrecs-=1
+        return ret_list
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
+    ############################################################
+    def get_next_from_list(self, book_list=[], nrecs=1):
+        if not nrecs: nrecs=self._range
+        ret_list=[]
+        maxRec=len(book_list)-1 # parte da 0
+        if self._from>0: self._from-=1
+        print('searching on list - from:{self._from} for:{maxRec}'.format(**locals()))
+
+        while True:
+            _filter = {'_id': book_list[self._from]}
+            book = self._collection.find_one(_filter) # get current record
+
+            # occurrencies = [(i.start(), i.end(), i.group()) for i in regex.finditer(item)]
+            data = book[self._search_field]
+            if isinstance(data, (list, tuple)):
+                for item in data:
+                    res = self._re_pattern.search(item)
+                    if res: break
+            else:
+                res = self._re_pattern.search(data)
+
+            self._from+=1
+            # print('{self._from}/{maxRec}'.format(**locals()))
+            if self._from>maxRec: break
+
+            if res:
+                # ret_list.append(book['_id'])
+                ret_list.append(book)
+                if len(ret_list)>=nrecs:
+                    break
 
         return ret_list
 
 
-        logger.info('searching records', 'query', str(_my_query), self._from, 'for:', nrecs, console=False)
-        print('searching records from:{self._from} for:{nrecs}'.format(**locals()))
-        # cursor = self._collection.find(_my_query).skip(self._from).limit(nrecs)
+
+
+
+
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
+    ############################################################
+    def get_next_prova01(self, nrecs=None, query=None):
+        _my_query = self._query if not query else query
+        if not nrecs: nrecs=self._range
+        # cursor = self._collection.find(_my_query, { "_id": 1 }).skip(self._from).limit(nrecs)
+        cursor = self._collection.find(_my_query).skip(self._from).limit(nrecs)
         records=list(cursor) # cursor si azzera al primo utilizzo
         self._from += nrecs # prepare for next
         return records
-
-
-
-
 
 
 
@@ -344,7 +394,7 @@ class MongoCollection:
 
         # https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find_one
         _base_msg = 'Updating field {fld_name} in record {0}'.format(rec['_filter'], **locals())
-        logger.console(self._collection_name, 'Updating field', fld_name, 'in record', rec['_filter'])
+        logger.info(self._collection_name, 'Updating field', fld_name, 'in record', rec['_filter'])
 
         fld_new_value = rec[fld_name]
         cur_rec=self._collection.find_one(rec['_filter']) # get current record

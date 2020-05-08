@@ -29,8 +29,8 @@
             "args": [
                 "regex",
                 "--field=content",
-                "--near=sono {0,4} contenta",
-                // "--verbose",
+                "--near=miei {0,4} tacchi",
+                "--go",
             ],
             "cwd": "${workspaceRoot}",
         },

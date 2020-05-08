@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 06-05-2020 15.55.40
+# Version ......: 08-05-2020 08.57.49
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -94,7 +94,9 @@ if __name__ == '__main__':
                         ignore_case=True)
 
     elif 'regex' in inpArgs:
+        # result = myDB.search_perf(
         result = myDB.regex_near_search(
+        # result = myDB.regex_near_search_step2(
                         fld_name=inpArgs.field,
                         near=inpArgs.near,
                         ignore_case=True)
