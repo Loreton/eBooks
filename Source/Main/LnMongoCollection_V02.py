@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-05-2020 09.40.35
+# Version ......: 10-05-2020 17.19.58
 #
 import sys
 import pymongo
@@ -194,66 +194,35 @@ class MongoCollection:
     # return cursor
     # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
     ############################################################
-    def get_next(self, nrecs=None, query=None):
-        _my_query = self._query if not query else query
-        # logger.info('query', str(_my_query), console=False)
-
+    def get_next(self, nrecs=None):
         if not nrecs: nrecs=self._range
         # logger.info('searching records', 'query', str(_my_query), self._from, 'for:', nrecs, console=False)
-        print('searching 1 records from:{self._from} for:{nrecs}'.format(**locals()))
-        print(_my_query)
+        logger.info(self._collection_name, '\n',
+                       'query........: {}'.format(str(self._query)),
+                       'starting from: {self._from}'.format(**locals()),
+                       'for..........: {nrecs}'.format(**locals())
+                       )
         # cursor = self._collection.find(_my_query, { "_id": 1 }).skip(self._from).limit(nrecs)
-        cursor = self._collection.find(_my_query).skip(self._from).limit(nrecs)
+        cursor = self._collection.find(self._query).skip(self._from).limit(nrecs)
         records=list(cursor) # cursor si azzera al primo utilizzo
-        self._from += nrecs # prepare for next
+        logger.info('found records......:', len(records))
+
+        self._from += nrecs # prepare for next call
         return records
 
     ############################################################
-    # per DB molto grandi ed evitare problemi di CursorNotFound
-    # return cursor
-    ############################################################
-    def set_query(self, query={} ):
-        self._query = query
-
-    def count(self, query={} ):
-        _my_query = self._query if not query else query
-        # logger.info('query', str(_my_query), console=True)
-        nrecs = self._collection.find(_my_query).count()
-        return nrecs
-
-    ############################################################
-    # per DB molto grandi ed evitare problemi di CursorNotFound
-    # return cursor
-    ############################################################
-    def set_range(self, start=1, range=1):
-        if start>0: start -= 1 # parte da 0
-        self._from = start
-        self._range = range
-        return self._from
-
-    ############################################################
-    # per DB molto grandi ed evitare problemi di CursorNotFound
-    # return cursor
-    ############################################################
-    def set_search_regex(self, regex, field, start=1, range=10):
-        if start>0: start-=1 # parte da 0
-        self._from = start
-        self._range = range
-        self._re_pattern = regex
-        self._search_field = field
-        return self._from
-
-    ############################################################
-    # per DB molto grandi ed evitare problemi di CursorNotFound
-    # return cursor
-    # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
+    # molto più lento di get_next
     ############################################################
     def get_next2(self, nrecs=1):
         if not nrecs: nrecs=self._range
         ret_list=[]
 
         maxRec = self._collection.find().count()
-        print('searching on DB - from:{self._from} for:{maxRec}'.format(**locals()))
+        logger.info(self._collection_name, '\n',
+                       'query........: {}'.format(str(self._query)),
+                       'starting from: {self._from}'.format(**locals()),
+                       'for..........: {maxRec}'.format(**locals())
+                       )
 
 
         while True:
@@ -262,6 +231,42 @@ class MongoCollection:
             if not books: break
             book = books[0]
 
+            # occurrencies = [(i.start(), i.end(), i.group()) for i in regex.finditer(item)]
+            data = book[self._search_field]
+            if isinstance(data, (list, tuple)):
+                res = self._re_pattern.search(data)
+                if res: break
+            else:
+                res = self._re_pattern.search(data)
+
+            self._from+=1
+            if self._from>maxRec: break
+
+            if res:
+                ret_list.append(book)
+                if len(ret_list)>=nrecs:
+                    break
+
+        return ret_list
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
+    ############################################################
+    def get_next3(self, nrecs=1):
+        if not nrecs: nrecs=self._range
+        ret_list=[]
+
+        maxRec = self._collection.find().count()
+        logger.info(self._collection_name, '\n',
+                       'query........: {}'.format(str(self._query)),
+                       'starting from: {self._from}'.format(**locals()),
+                       'for..........: {maxRec}'.format(**locals())
+                       )
+
+
+        for book in self._collection.find({}):
             # occurrencies = [(i.start(), i.end(), i.group()) for i in regex.finditer(item)]
             data = book[self._search_field]
             if isinstance(data, (list, tuple)):
@@ -281,7 +286,42 @@ class MongoCollection:
                 if len(ret_list)>=nrecs:
                     break
 
+        logger.info('found records......:', len(ret_list))
         return ret_list
+
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    ############################################################
+    def set_query(self, query={}, start=1, range=1 ):
+        self._from = start
+        if self._from>0: self._from-=1 # parte da 0
+        self._range=range
+        self._query = query
+
+        return self._from
+
+
+    def count(self, query={} ):
+        _my_query = self._query if not query else query
+        # logger.info('query', str(_my_query), console=True)
+        nrecs = self._collection.find(_my_query).count()
+        return nrecs
+
+    ############################################################
+    # per DB molto grandi ed evitare problemi di CursorNotFound
+    # return cursor
+    ############################################################
+    def set_regex_query(self, regex, field, start=1, range=10):
+        self._from = start
+        if self._from>0: self._from-=1 # parte da 0
+        self._range = range
+
+        self._re_pattern = regex
+        self._search_field = field
+        return self._from
+
 
     ############################################################
     # per DB molto grandi ed evitare problemi di CursorNotFound

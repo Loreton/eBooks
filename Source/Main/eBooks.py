@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-05-2020 15.15.02
+# Version ......: 11-05-2020 10.37.20
 #
 
 import sys
@@ -14,6 +14,7 @@ import pdb
 import re
 import textwrap
 import yaml, json
+import time
 
 
 import ebooklib
@@ -277,17 +278,6 @@ class LnEBooks:
                 C.white(text='no word in field {fld_name}'.format(**locals()), tab=8)
         print()
 
-    ####################################################
-    # -
-    ####################################################
-    def update_field_many(self):
-        result = self._ePubs.updateField_many(
-                {'indexed': False},
-                {'$set': {'indexed': []}}
-            )
-        print(result.matched_count)
-        print(result.modified_count)
-        sys.exit()
 
     ####################################################
     # -
@@ -383,100 +373,6 @@ class LnEBooks:
 
 
 
-
-        # All occurrencies of substring in string
-    def search_string(self, substring, data):
-        import re
-        res = [i.start() for i in re.finditer(substring, data)]
-        return res
-
-
-
-
-    ####################################################
-    # - return dict{
-    #               1: [res1, res2]
-    #               2: [res1, res2, res3]
-    #               ...
-    #              }
-    # - return dict{
-    #               word1 {
-    #                       counter: x
-    #                       index: []
-    #                      }
-    #               word2 {
-    #                       counter: x
-    #                       index: []
-    #                      }
-    #               wordn...
-    ####################################################
-    def _find_words_in_text(self, data=[], words=[], near=False, fPRINT=False):
-        if isinstance(data, (str)):
-            data=[data]
-
-        _before=inp_args.text_size
-        _after=inp_args.text_size
-        result = {}
-
-        # - preparazione word colorate
-        colors = [C.magentaH, C.yellowH, C.cyanH, C.redH, C.greenH, C.blueH, C.whiteH]
-
-        for word in words:
-            result[word] = {}
-            result[word]['counter'] = 0
-            result['data'] = {}
-
-        counter=0
-        for item in data: # sono capitoli, descrizione, titoli o altro
-            for word in words:
-                occurrencies = [i.start() for i in re.finditer(word, item, flags=re.IGNORECASE)]
-                word_len=len(word)
-
-                for pos in occurrencies:
-                    # incr counter for specific word
-                    result[word]['counter'] += 1
-                    counter += 1 # counter totale
-
-                    # - get text around the found word
-                    _from=0 if pos-_before<0 else pos-_before
-                    _to=pos+word_len+_after
-                    text=item[_from:_to].replace('\n', ' ')
-                    new_text = ' '.join(text.split()) # remove multiple blanks
-
-                    '''
-                    new_text=text.replace(cur_word, colored_word) # no good perché case-sensitive
-
-                    redata = re.compile(re.escape(cur_word), re.IGNORECASE)
-                    new_text = redata.sub(colored_word, text)
-
-                    '''
-
-                    # replace word(s) with colored_word
-                    # ruotiamo sulle word in modo da colorarle
-                    # se fossero presenti nello stesso testo
-                    for i, w in enumerate(words):
-                        colored_word = colors[i](text=w, get=True)
-                        new_text = re.sub(w, colored_word, new_text, flags=re.IGNORECASE)
-
-                    # - wrap text to easy displaying
-                    tb=textwrap.wrap(new_text, 80, break_long_words=True)
-
-                    # - save it into result list
-                    result['data'][counter] = []
-                    result['data'][counter].extend(tb)
-
-                    if fPRINT:
-                        for l in tb:
-                            print('    ', l)
-                        print()
-
-
-        return result
-
-
-
-
-
     ####################################################
     # -
     ####################################################
@@ -557,225 +453,89 @@ class LnEBooks:
         return output
 
 
-    # def Export_words(self, file_out):
-    #     f = Path(file_out)
-
-
-
     ####################################################
-    # - Search the words for a specific field
-    # -
-    # - data = {
-    # -           word_name1: counter
-    # -           word_name2: counter
-    # -           word_name..n: counter
-    # -           ebooks: [] (book_id list cvontainig all the words)
-    # -         }
-    ####################################################
-    def _displayResults(self, book, data):
-        ''' Sample
-            {
-                "word1": {"counter": 1 },
-                "word2": {"counter": 1 },
-                "data": {
-                            "1": ["Lee Child"],
-                            "2": ["Child pippo"],
-                        }
-            }
-        '''
-        dis_data = data.pop('data', [])
-        words = data.keys()
-        choice = ''
-        _max = len(dis_data)
-        _min = 0
-        _step=4
-        _from=_min
-
-        # - prepard book info display data
-        dmBook=DotMap(book, _dynamic=False) # di comodo
-        dis_line=[]
-        dis_line.append('')
-        dis_line.append('book: {dmBook.title} - [{dmBook.author}]'.format(**locals()))
-        dis_line.append('    - id: {dmBook._id}'.format(**locals()))
-        dis_line.append('    - tags: {dmBook.tags}'.format(**locals()))
-        for word in words:
-            counter = data[word]['counter']
-            dis_line.append('        - word: {word} - instances: {counter}'.format(**locals()))
-
-        while True:
-            if choice=='b': break # return to book_list
-
-            # - display book metadata
-            for line in dis_line:
-                C.yellowH(text=line, tab=8)
-
-
-            ''' Display data.
-                ruoto all'interno della lista visualizzando
-                [step] results per volta'''
-
-            # - set range to display menu
-            if _from>=_max: _from=_max-_step
-            if _from<0:     _from=0
-            _to = _from+_step
-            if _to>_max:    _to=_max
-
-            # - display data
-            for index in range(_from, _to):
-                item = dis_data[index+1]
-                print('{0:5} - {1}'.format(index+1, item[0]))
-                for line in item[1:]:
-                    print(' '*7, line)
-                print()
-
-            # - Get keybord input
-            choice=Ln.prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
-            if   choice in ['b']: break
-            elif choice in ['n']: _from+=_step
-            elif choice in ['p']: _from-=_step
-            elif choice in ['t']:
-                if self._execute:
-                    tags=Ln.prompt('Please enter TAGs (BLANK separator)')
-                    book['tags'] = tags.split()
-                    result = self._ePubs.updateField(rec=book, fld_name='tags')
-                    # pdb.set_trace()
-                    if result.matched_count:
-                        C.cyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
-                        self._book_indexing(book, fields=['tags'])
-                        print()
-                else:
-                    C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
-                    Ln.prompt()
-
-
-
-
-    ####################################################
-    # - Search the words for a specific field
-    # - using dictionary collection
-    # return: list of book_id
-    ####################################################
-    def _dictionary_search(self, words, field, ignore_case=True):
-        bookid_list = []
-        ret_dict = {}
-        ret_dict['books'] = []
-        ret_dict['rec_found'] = 0
-
-        # - Search the words for a specific field
-        fld = field+'_word'
-        for word in words:
-            # - search in all Dictionary words
-            result = self._Dictionary.search(field_name='_id', regex=word, ignore_case=ignore_case)
-            word_list = []
-            for x in result:
-                word_list.extend(x[fld])
-
-            ret_dict[word] = len(word_list) # save result
-
-            # - ANDing tra le varie word_list
-            C.yellowH(text='Word {0:<10} found in {1:5} books'.format(word, len(word_list)), tab=4)
-            if bookid_list:
-                bookid_list = list(set(bookid_list) & set(word_list))
-            else: # just the first time
-                bookid_list = word_list[:]
-
-
-        ret_dict['books'] = bookid_list
-        ret_dict['rec_found'] = len(bookid_list)
-        C.cyanH(text='After ANDing remain {0} book(s) containing all your words.'.format(len(bookid_list)), tab=4)
-        print()
-        return ret_dict
-
-    ####################################################
-    # - Search the words for a specific field
-    # - using dictionary collection
-    # return: list of book_id
-    ####################################################
-    def _ePub_direct_search(self, fld_name, words, ignore_case=True):
-        bookid_list = []
-        ret_dict = {}
-
-        # - Search the words for a specific field
-        for word in words:
-            # - search in all Dictionary words
-            result = self._ePubs.search(field_name=fld_name, regex=word, ignore_case=ignore_case)
-            print(result.count())
-            word_list = []
-            for x in result:
-                print(x['_id'])
-                word_list.append(x['_id'])
-
-            ret_dict[word] = len(word_list) # save result
-
-            # - ANDing tra le varie word_list
-            C.yellowH(text='Word {0:<10} found in {1:5} books'.format(word, len(word_list)), tab=4)
-            if bookid_list:
-                bookid_list = list(set(bookid_list) & set(word_list))
-            else: # just the first time
-                bookid_list = word_list[:]
-
-
-        ret_dict['books'] = bookid_list
-        ret_dict['rec_found'] = len(bookid_list)
-        C.cyanH(text='After ANDing remain {0} book(s) containing all your words.'.format(len(bookid_list)), tab=4)
-        print()
-        return ret_dict
-
-
-    def dict_to_json(self, my_dict, indent=4, sort_keys=True):
-        my_json = json.dumps(my_dict, indent=indent, sort_keys=sort_keys)
-        return my_json
-
-    ####################################################
-    # - Search books using dictionary collection
     # - Input:
-    # -    fields:  campo/i dove effettuare la ricerca
-    # -    words:   stringa/stringhe da ricercare (in AND)
-    # -    book_id: se presente si cerca solo al suo interno
+    # -    fld_name: campo dove effettuare la ricerca
+    # -    near:   [word1 {0,5} word2]
+    # - NO Dictionary will be used
+    # - cerca due parole
+    # - \bsono\W+(?:\w+\W+){1,4}?passati\b
+    # -
+    # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
     ####################################################
-    def field_search(self, fld_name, words=[], book_id=None, ignore_case=True):
-        # if 'all' in fields:
+    def search_more_words(self, fld_name, words, ret_full=False, ignore_case=True):
+        # pattern = re.compile(word, re.IGNORECASE)
+        bookid_list=[]
+        fld=fld_name+'_word'
+        for word in words:
+            _filter = {'_id': word}
+            rec = self._Dictionary.get_record(_filter)
+            _list = rec[fld]
+            print('books for word:', word, ':',len(_list))
+            if bookid_list:
+                bookid_list = list(set(bookid_list) & set(_list))
+            else: # just the first time
+                bookid_list.extend(_list)
 
-            # fields=self._ePubs.fields
-        # words=['gatto', 'tempo', 'iggulden', 'porte', 'roma']
-        # words=['child', 'lee']
+        if ret_full:
+            book_list=[]
+            for _id in bookid_list:
+                book_list.append(self._ePubs.get_record({'_id': _id}))
+            return book_list
 
-        # - torna la lista dei libri che contengono le words (in AND)
-        result = self._dictionary_search(words=words, field=fld_name, ignore_case=ignore_case)
-        '''
-            result = {
-                      word_name1: counter
-                      word_name2: counter
-                      word_name..n: counter
-                      ebooks: [] (book_id list cvontainig all the words)
-                    }
-        '''
-        prev_book_id = None
-        bookid_list = sorted(result['books'])
-        nRecs=len(bookid_list)+1
-        while True:
-            for index, _book_id in enumerate(bookid_list, start=1):
-                print('     [{index:4}] - {_book_id}'.format(**locals()))
-            print()
+        return bookid_list
 
-            # - select book to see results
-            choice = Ln.prompt('please select book number', validKeys=range(1, nRecs))
-            book_id = bookid_list[int(choice)-1]
+    ####################################################
+    # - Input:
+    # -    fld_name: campo dove effettuare la ricerca
+    # -    near:   [word1 {0,5} word2]
+    # - single word:
+    # -     \b(miei|ragazzi)\b
+    # -     ^(.*?)(\bpass\b)(.*)$  first occurrency
+    # -     ^(.*)(\bpass\b)(.*?)$  last  occurrency
+    # - two words:
+    # -     \bpass\b.*\btacchi\b
+    # - any string:
+    # -     (miei|pass2|sono)gi
+    # - any words:
+    # -     (\bmiei\b|\bpass\b|\bsono\b)gi
+    # -     \b(?:miei|pass|sono)\b
+    # - AND string:
+    # -     \b(miei|pass)\b gi
+    # -     (?i)(?s)miei.*?pass.*?sono gi
+    # - AND words:
+    # -     (?i)(?s)\bmiei\b.*?\bpass\b.*?\bsono\b gi
+    # - cerca le parole in ordine
+    # - ^(.*?(\bsono\b)(.*?(\btacchi\b)(.*?(\bsono\b)))[^$]*)$
+    # - cerca due parole
+    # - \bsono\W+(?:\w+\W+){1,4}?passati\b
+    # -
+    # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
+    ####################################################
+    def search_more_words_regex(self, fld_name, words, ret_full=False, ignore_case=True):
+        # pattern = re.compile(word, re.IGNORECASE)
+        # pdb.set_trace()
+        bookid_list=[]
+        fld=fld_name+'_word'
 
-                # - prendiamo il libro per avere i metadati
-            if not book_id == prev_book_id:
-                _filter = { "_id": book_id }
-                book = self._ePubs.get_record(_filter)
-                # dmBook=DotMap(book, _dynamic=False) # di comodo
-                prev_book_id = book_id
-
-            result = self._find_words_in_text(data=book[fld_name], words=words, fPRINT=False)
-            self._displayResults(book, result)
-
-        # return ret_list
+        _p=r'\b({0})\b'.format('|'.join(words))
+        pattern=re.compile(_p, re.IGNORECASE)
 
 
+        start = time.time()
+        my_query = {fld_name: {"$regex": pattern, "$options" : "i" } }
+        self._ePubs.set_query(my_query, start=1, range=10)
+        records = self._ePubs.get_next(nrecs=9999)
+        print(f'Time: {time.time() - start}')
 
+
+        # if ret_full:
+        #     book_list=[]
+        #     for _id in bookid_list:
+        #         book_list.append(self._ePubs.get_record({'_id': _id}))
+        #     return book_list
+
+        return records
 
     ####################################################
     # - Input:
@@ -787,100 +547,34 @@ class LnEBooks:
     # -
     # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
     ####################################################
-    def search_perf(self, fld_name, near, ignore_case=True):
-        import time
-
-        _word1, _minmax, _word2 = near[0].split()
+    def search_two_near_words(self, fld_name, words, near, ignore_case=True):
+        _min, _max, = near
+        _word1, _word2, = words
+        if _max <0: _max=_min
+        _minmax = '{0}{1},{2}{3}'.format('{', _min, _max, '}') # {m,M}
         pattern=re.compile(r'\b{_word1}\W+(?:\w+\W+){_minmax}?{_word2}\b'.format(**locals()), re.IGNORECASE)
-        # words = [_word1, _word2]
-        STEP=3000
 
-        # - tempi pressochè identici. Anzi qualcosa in meno nel caso
-        # - il search lo faccio io record per recored
-        for j in range(1, 4):
-            print('run', j)
-            start = time.time()
-            my_query = {fld_name: {"$regex": pattern, "$options" : "i" } }
-            self._ePubs.set_query(my_query)
-            self._ePubs.set_range(start=1, range=10)
-            # bookid_list=[]
-            records = self._ePubs.get_next(nrecs=STEP)
-            print (len(records))
-            print(f'Time: {time.time() - start}')
+        # - prepare search
+        start = time.time()
+        my_query = {fld_name: {"$regex": pattern, "$options" : "i" } }
+        self._ePubs.set_query(my_query, start=1, range=10)
+        records = self._ePubs.get_next(nrecs=9999)
+        print(f'Time: {time.time() - start}')
 
-            print()
-            start = time.time()
-            self._ePubs.set_search_regex(regex=pattern, field=fld_name, start=1, range=10)
-            records = self._ePubs.get_next2(nrecs=STEP)
-            print (len(records))
-            print(f'Time: {time.time() - start}')
-
-
-            # print()
-            # start = time.time()
-            # # cerca le word usando il dictionary
-            # fld=fld_name+'_word'
-            # bookid_list=[]
-            # for word in (_word1, _word2):
-            #     _filter = {'_id': word}
-            #     rec = self._Dictionary.get_record(_filter)
-            #     print(len(rec[fld]))
-            #     if bookid_list:
-            #         bookid_list = list(set(bookid_list) & set(rec[fld]))
-            #     else: # just the first time
-            #         bookid_list = rec[fld][:]
+        # start = time.time()
+        # self._ePubs.set_regex_query(pattern, field=fld_name, start=1, range=10)
+        # records = self._ePubs.get_next3(nrecs=9999)
+        # print(f'Time: {time.time() - start}')
+        return records
 
 
 
-            # bookid_list = list(set(bookid_list)) # remove duplicates ... anche list( dict.fromkeys(_val)
-            # print(len(bookid_list))
-            # self._ePubs.set_search_regex(regex=pattern, field=fld_name, start=1, range=10)
-            # records = self._ePubs.get_next2(book_list=bookid_list, nrecs=STEP)
-            # print (len(records))
-            # print(f'Time: {time.time() - start}')
-            print()
-            print()
-            print()
-
-
-
-
-
-    ####################################################
-    # - Input:
-    # -    fld_name: campo dove effettuare la ricerca
-    # -    near:   [word1 {0,5} word2]
-    # - NO Dictionary will be used
-    # - cerca due parole
-    # - \bsono\W+(?:\w+\W+){1,4}?passati\b
-    # -
-    # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
-    ####################################################
-    def regex_near_search(self, fld_name, near, ignore_case=True):
-        if ' ' in near[0]:
-            xx = near[0].split()
-            if len(xx) == 3:
-                _word1, _minmax, _word2 = xx
-                pattern=re.compile(r'\b{_word1}\W+(?:\w+\W+){_minmax}?{_word2}\b'.format(**locals()), re.IGNORECASE)
-            elif len(xx) == 2:
-                _word1, _word2 = xx
-                pattern=re.compile(r'\b{_word1} {_word2}\W+(?:\w+\W+)'.format(**locals()), re.IGNORECASE)
-
-        else:
-            _word1 = near[0]
-            pattern=re.compile(r'\b{_word1}\W'.format(**locals()), re.IGNORECASE)
-
-        # words = [_word1, _word2]
-
-        # - preparazione
-        self._ePubs.set_search_regex(regex=pattern, field=fld_name, start=1, range=10)
-
-        prev_book_id = None
+    def manage_display(self, menu_list):
 
         STEP=10
         choice = 'f' #default
         _sep_str = ' #-# '
-        menu_list={}
+        # menu_list={}
         # book_list={}
 
         '''
@@ -897,7 +591,7 @@ class LnEBooks:
                 lo scorrere del menu
             """
             _list=[]
-            for item in menu_list.values():
+            for item in menu_list:
                 book_id, _ = item.split(_sep_str)
                 book = self._ePubs.get_record({'_id': book_id})
                 entry ='{}{_sep_str}{}'.format(book['_id'], book['tags'], **locals())
@@ -935,144 +629,6 @@ class LnEBooks:
             result = self.text_near_occurrencies(regex=pattern, data=book['content'])
             self._displayResults(book, result)
 
-
-
-    ####################################################
-    # - Input:
-    # -    fld_name: campo dove effettuare la ricerca
-    # -    near:   [word1 {0,5} word2]
-    # - NO Dictionary will be used
-    # - cerca due parole
-    # - \bsono\W+(?:\w+\W+){1,4}?passati\b
-    # -
-    # -  p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('degli', 'ospiti', '{0,5}'), re.IGNORECASE);p.findall(text)
-    ####################################################
-    def regex_near_search_step2(self, fld_name, near, ignore_case=True):
-        ''' Faccio prima il sarche in and delle word dal Dictionary_collection
-            e nel risultato faccio la near.
-            Dovrebbe essere più veloce
-        '''
-        _word1, _minmax, _word2 = near[0].split()
-
-        # cerca le word usando il dictionary
-        fld=fld_name+'_word'
-        book_list=[]
-        for word in (_word1, _word2):
-            _filter = {'_id': word}
-            rec = self._Dictionary.get_record(_filter)
-            print('books for word:', word, ':',len(rec[fld]))
-            book_list.extend(rec[fld])
-
-
-        book_list = list(set(book_list)) # remove duplicates ... anche list( dict.fromkeys(_val)
-        # print(len(book_list))
-        # sys.exit()
-
-        pattern=re.compile(r'\b{_word1}\W+(?:\w+\W+){_minmax}?{_word2}\b'.format(**locals()), re.IGNORECASE)
-
-        # - preparazione
-        self._ePubs.set_search_regex(regex=pattern, field=fld_name, start=1, range=10)
-
-        prev_book_id = None
-
-        STEP=10
-        book_list={}
-        choice = 'f' #default
-
-        '''
-            loop tra i record trovati.
-            Verranno letti un pò <STEP> alla volta in modo da avere risposte
-            più immediate.
-            Viene fatto il display dei primi <STEP> records e se si chiede di
-            andare oltre vengono letti i successivi STEP record che si sommano ai primi
-        '''
-        while True:
-            if choice == 'f':
-                records = sorted(self._ePubs.get_next2(nrecs=STEP))
-                if records:
-                    for index, book in enumerate(records, start=len(book_list)+1):
-                        book_list[index]=book
-                    ret_on_FW = True # return on Forward key on menu
-                else:
-                    ret_on_FW = False
-
-            # - menu looping trought the book list
-            if not book_list: break
-            choice = Menu(book_list, return_on_fw=ret_on_FW)
-            if choice == 'f': continue
-
-            book_id = book_list[int(choice)]
-                # - prendiamo il libro per avere i metadati
-            if not book_id == prev_book_id:
-                _filter = { "_id": book_id }
-                book = self._ePubs.get_record(_filter)
-                prev_book_id = book_id
-
-            result = self.text_near_occurrencies(regex=pattern, data=book['content'])
-            self._displayResults(book, result)
-
-        # return ret_list
-
-
-    #################################################
-    # - near...
-    # p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('stanza', 'ospiti', '{0,5}'))
-    # p=re.compile('stanza', re.IGNORECASE)
-    # -----
-    # p.findall(text)
-    # p.findall(text, re.IGNORECASE)
-    #################################################
-    def text_near_occurrencies(self, regex, data=[], fPRINT=False):
-        if isinstance(data, (str)):
-            data=[data]
-
-        _before=inp_args.text_size
-        _after=inp_args.text_size
-        result = {}
-
-        result['data'] = {}
-
-        counter=0
-        for item in data: # sono capitoli, descrizione, titoli o altro
-            occurrencies = [(i.start(), i.end(), i.group()) for i in regex.finditer(item)]
-            for res in occurrencies:
-                near_start, near_end, near_str = res
-                near_len=len(near_str)
-                regex_01 = re.compile(re.escape(near_str), re.IGNORECASE)
-
-                # - create entry in result
-                if not near_str in result.keys():
-                    result[near_str] = {}
-                    result[near_str]['counter'] = 0
-
-                # - get text around the near string
-                _from=near_start if near_start-_before<0 else near_start-_before
-                _to=near_start+near_len+_after
-                text=item[_from:_to].replace('\n', ' ')
-                new_text = ' '.join(text.split()) # remove multiple blanks
-
-                # incr counter for specific word
-                result[near_str]['counter'] += 1
-                counter += 1 # counter totale
-
-                # replace near_string with colored_str
-                colored_str = C.magentaH(text=near_str, get=True)
-                new_text = regex_01.sub(colored_str, new_text)
-
-                # - wrap text to easy displaying
-                tb=textwrap.wrap(new_text, 80, break_long_words=True)
-
-                # - save it into result list
-                result['data'][counter] = []
-                result['data'][counter].extend(tb)
-
-                if fPRINT:
-                    for l in tb:
-                        print('    ', l)
-                    print()
-
-
-        return result
 
 
 def main(gVars, dir, file_pattern='.epub', move_file=False):

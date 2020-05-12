@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-05-2020 08.57.49
+# Version ......: 12-05-2020 19.04.56
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -86,20 +86,72 @@ if __name__ == '__main__':
     # elif 'search' in inpArgs:
     #     result = myDB.main_search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
 
-    elif 'search' in inpArgs:
-        result = myDB.field_search(
-                        fld_name=inpArgs.field,
-                        words=inpArgs.words,
-                        book_id=inpArgs.book_id,
-                        ignore_case=True)
+    # elif 'search' in inpArgs:
+    #     result = myDB.field_search(
+    #                     fld_name=inpArgs.field,
+    #                     words=inpArgs.words,
+    #                     book_id=inpArgs.book_id,
+    #                     ignore_case=True)
 
-    elif 'regex' in inpArgs:
-        # result = myDB.search_perf(
-        result = myDB.regex_near_search(
-        # result = myDB.regex_near_search_step2(
-                        fld_name=inpArgs.field,
-                        near=inpArgs.near,
-                        ignore_case=True)
+    elif 'search' in inpArgs.action:
+        # if len(inpArgs.words) == 1:
+        #     result = myDB.search_one_word(
+        #             fld_name=inpArgs.field,
+        #             word=inpArgs.words,
+        #             )
+        #     for item in result:
+        #         print(item)
+        #     print(len(result))
+
+        # pdb.set_trace()
+        if len(inpArgs.words)==2 and inpArgs.near:
+            result = myDB.search_two_near_words(
+                    fld_name=inpArgs.field,
+                    words=inpArgs.words,
+                    near=inpArgs.near,
+                    )
+            # for item in result:
+            #     if '_id' in item:
+            #         print(item['_id'])
+            #     else:
+            #         print(item)
+            print(len(result))
+
+        elif len(inpArgs.words) > 0 and inpArgs.regex:
+            result = myDB.search_more_words_regex(
+                    fld_name=inpArgs.field,
+                    words=inpArgs.words,
+                    )
+            # for item in result:
+            #     if '_id' in item:
+            #         print(item['_id'])
+            #     else:
+            #         print(item)
+            print(len(result))
+
+        elif len(inpArgs.words) > 0:
+            result = myDB.search_more_words(
+                    fld_name=inpArgs.field,
+                    words=inpArgs.words,
+                    )
+            # for item in result:
+            #     if '_id' in item:
+            #         print(item['_id'])
+            #     else:
+            #         print(item)
+            print(len(result))
+
+
+
+    # elif 'regex' in inpArgs:
+    #     # result = myDB.search_perf(
+    #     result = myDB.regex_near_search(
+    #     # result = myDB.regex_near_search_step2(
+    #     # result = myDB.regex_near_search_OK(
+    #                     fld_name=inpArgs.field,
+    #                     words=inpArgs.words,
+    #                     near=inpArgs.near,
+    #                     ignore_case=True)
 
     # elif 'book_search' in inpArgs:
     #     result = myDB.eBook_search(words=inpArgs.words, book_id=inpArgs.id, ignore_case=True)

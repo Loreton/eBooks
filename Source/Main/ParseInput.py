@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 05-05-2020 08.15.17
+# Version ......: 10-05-2020 17.36.01
 #
 # #############################################
 
@@ -26,12 +26,20 @@ def parseInput():
     search_parser = subparsers.add_parser ("search", help = "search on several fields")
     search_parser.add_argument('--book-id', help='Book_ID to search only on it', required=False, default=None)
     search_parser.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
+    search_parser.add_argument('--regex', help='use regex search', action='store_true')
     search_parser.add_argument('--words',
                                 metavar='',
                                 required=True,
                                 default=[],
                                 nargs='*',
                                 help="""strings to be searched. BLANK separator""")
+    search_parser.add_argument('--near',
+                                metavar='',
+                                required=False,
+                                type=int,
+                                default=[],
+                                nargs='*',
+                                help='''(int int) min max number of words separatings the words ''')
     search_parser.add_argument('--field',
                                 metavar='',
                                 required=False,
@@ -42,34 +50,29 @@ def parseInput():
 
 
 
-    regex_parser = subparsers.add_parser ("regex", help = "search using regex. Dictionary coll will not be used.")
-    regex_parser.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
-    regex_parser.add_argument('--near',
-                                metavar='',
-                                required=False,
-                                default=[],
-                                nargs='*',
-                                help='''"word1 {min,max} word2"
-                                word1: is first word to be searched
-                                word2: is second word to be searched
-                                min: min number of words between word1 and word2
-                                max: max number of words between word1 and word2
-                                Ex.: sono {1,4} contenta
-                                ''')
-                                # Ex.: "sono {1,4} contenta"
-    regex_parser.add_argument('--expression',
-                                metavar='',
-                                required=False,
-                                default=[],
-                                nargs='*',
-                                help="""strings to be searched. BLANK separator""")
-    regex_parser.add_argument('--field',
-                                metavar='',
-                                required=False,
-                                default='content',
-                                choices=['author', 'title', 'content', 'tags'],
-                                # nargs='*',
-                                help="""field to be searched. [DEFAULT: content] """)
+    # regex_parser = subparsers.add_parser ("regex", help = "search using regex. Dictionary coll will not be used.")
+    # regex_parser.add_argument('--text-size', help='size of the found text to be displayed.', required=False, default=150, type=int)
+    # regex_parser.add_argument('--near',
+    #                             metavar='',
+    #                             required=False,
+    #                             type=int,
+    #                             nargs='*',
+    #                             default=[-1,-1],
+    #                             help='''(int int) min max number of words separatings the words ''')
+    #                             # Ex.: "sono {1,4} contenta"
+    # regex_parser.add_argument('--words',
+    #                             metavar='',
+    #                             required=True,
+    #                             # default=[],
+    #                             nargs='*',
+    #                             help="""strings to be searched. BLANK separator""")
+    # regex_parser.add_argument('--field',
+    #                             metavar='',
+    #                             required=False,
+    #                             default='content',
+    #                             choices=['author', 'title', 'content', 'tags'],
+    #                             # nargs='*',
+    #                             help="""field to be searched. [DEFAULT: content] """)
 
 
 

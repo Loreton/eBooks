@@ -2,7 +2,7 @@
 # Progamma per testare regex
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 05-05-2020 17.07.01
+# Version ......: 11-05-2020 19.09.57
 #
 
 import sys
@@ -10,6 +10,7 @@ import os
 from dotmap import DotMap
 import pdb
 import re
+import time
 
 
 def get_data():
@@ -58,6 +59,8 @@ def get_data():
             "\n Ringraziamenti \n Il primo grazie va a tutti i blog dei miei blog tour. Siete meravigliosi per il tempo che dedicate a condividere e recensire i miei lavori; non saprete mai quanto è importante per me. \n Un grazie super speciale va a Kylie di Give Me Books, per la spettacolare recensione  che mi ha dedicato al  primissimo giorno di uscita. Ti adoro, tesoro. \n Grazie di cuore alla splendida LM Creations per questa copertina. La adoro da morire; siete fantastici e con voi si lavora benissimo. \n Un grazie enorme a Justin Keeton per la sua bellezza perfetta per questa cover; sei un modello fantastico. Grazie anche al fotografo Golden di Furiousfotog per aver creato questo artwork spettacolare a partire dalla foto di Justin. \n A Lauren, la mia folle e fantastica editor. Fai sempre un lavoro incredibile. Non potrei fare a meno di te e ti adoro, tesoro. \n Alle mie amiche Belle, Aurora e Sali, perché leggono sempre i miei lavori e mi aiutano a fare del mio meglio. E anche per essere sempre pronte a parlarmi e a farmi sorridere. Vi voglio bene, siete le mie migliori amiche. \n E, ovviamente, un grazie enorme va anche alla mia admin, MJ, perché si occupa della mia pagina e la fa funzionare sempre al meglio. Non potrei vivere senza di te, ragazza. \n E, ultime ma di certo non meno importanti, grazie a tutte le mie lettrici. Siete voi che avete reso tutto questo una splendida realtà; non smettete mai di farmi sentire tutto il vostro amore e la vostra passione. Siete voi che rendete così spettacolare questo viaggio. \n \n \n \n \n \n ",
             "\n \n \n "
         ],
+        "single_line1": "\n Capitolo 28 \n Adesso \n Marcus \n Dove diavolo è finita? Sono passate sei ore e non sono riuscito a mettermi in contatto con lei. Cazzo, ma che diavolo sto combinando? Sono bloccato in una maledetta spirale emotiva da cui non riesco più a uscire. La voglio. Non la voglio. Non è così che doveva andare. Doveva rimanere una faccenda tranquilla e priva di emozioni, e poi, alla fine dei due anni del contratto, doveva finire. Non dovevano esserci queste dannate emozioni. \n Sento il telefono squillare e sussulto. Sto camminando avanti e indietro nel mio ufficio da due ore, aspettando che mi chiami. Ma lei non mi ha chiamato. Al suono del telefono che squilla, mi lancio a raccoglierlo, afferrandolo senza neanche guardare lo schermo. «Katia?», esclamo, odiando il mio tono frenetico. Non dovrebbe importarmene tanto. Niente affatto. \n «Non sono Katia, sono Pierre». \n «Che cazzo vuoi?», sbotto. \n Lui sospira. «Marcus, io e te non saremo mai amici, ma hai sposato mia figlia e lei oggi è venuta da me a chiedermi di te. Le ho detto la verità, quindi ora sa cosa fai davvero. Non sto giudicando nessuno, Marcus, ma sono suo padre, e volevo che lo sapessi, perché sta soffrendo. Sto cercando di avvertirti. Di aiutarti». \n Dannazione. \n Lui la vuole aiutare. \n E vuole aiutare anche me. \n «Grazie», mormoro. \n «Lei ti ama, Marcus. Non so per quale motivo. E per questo,  mi farò da parte e lascerò che ti ami. Ma non darmi un motivo per venire a darti la caccia». \n Poi chiude la telefonata. Dannazione. Questo casino sta diventando sempre più terribile. Sospiro, passandomi una mano tra i capelli e ringhiando con rabbia. Prima di avere la possibilità di pensare al fatto che Katia sia andata da suo padre per chiedergli di me, per non parlare del fatto che Walter sia giunto a un passo dal rovinare tutto, sento il telefono squillare ancora. Questa volta guardo lo schermo, e vedo il nome di Katia. Rispondo e lo premo contro l’orecchio. \n «Katia, dove sei?». \n C’è un lungo silenzio. \n «Marcus?». \n Qualcosa non va, lo sento subito dalla sua voce. È roca, come se avesse pianto, ma sembra qualcosa di peggio, come se le avessero appena detto che il suo migliore amico è morto. \n «Katia, che succede?» \n «Si tratta di mia madre...», mormora lei. «È rimasta coinvolta in un incidente stradale». \n \n \n \n Katia \n Fisso stordita il muro bianco. Non sento niente. Niente  di niente . Tutto il mondo mi sta crollando addosso e non ho nessuno a cui aggrapparmi. Dusty ci ha provato, ma non lo voglio qui con me. Candy mi ha chiamato, ma non ho risposto. Ho chiamato Marcus, e lui mi ha detto che sarebbe arrivato, ma non c’è nulla che vada bene, in realtà. Mia madre è in sala operatoria, Ellie è isterica, e io sono seduta qui da sola. Dusty si è allontanato mezz’ora fa per prendere del caffè. \n Non riesco a starmene immobile, così mi alzo. Tutto il mondo mi gira intorno, mentre corro lungo le sale e i corridoi. Se dovesse succedere qualcosa a mia madre... non posso neanche pensarci. Lei è tutto ciò che ho. So che è stato un incidente, so che Ellie non voleva schiantarsi con la macchina, ma ora potrei perdere l’unica persona che davvero mi è rimasta. Chi diavolo mi rimane, senza di lei? Sussulto, e infine le lacrime fanno crollare il muro dietro il quale si erano trincerate. \n Mi rigano le guance e io singhiozzo forte. \n Corro fuori, sotto la pioggia. Le fredde gocce mi cadono addosso, e non faccio che piangere ancora di più. Sento le gambe deboli, il cuore spezzato e gli occhi che bruciano per le lacrime che continuano a riempirli e a scivolarmi sul viso. Supero appena il parcheggio, prima che le ginocchia cedano e mi ritrovi a terra. Mi afferro i capelli con le dita e piango, piango così forte che inizio a urlare. \n Dei fari mi illuminano il viso, ma non alzo lo sguardo. Non riesco più a fermarmi. Ho perso ogni forma di controllo, ormai. Sto buttando fuori tutto, e il terrore di perdere mia madre, l’unica àncora di salvezza che mi è rimasta, mi paralizza. \n Uno sportello si chiude di scatto, poi sento dei passi pesanti avvicinarsi. Prima che me ne renda conto, delle braccia forti si stringono intorno a me. Braccia familiari. Braccia di cui avevo bisogno da troppo tempo, perché mi sostenessero proprio come stanno facendo adesso. Marcus mi affonda il viso nel collo, tenendomi così stretta che mi è difficile respirare. \n E poi lo fa. \n Diventa la persona di cui ho bisogno. \n Diventa tutto ciò che ho. \n Diventa ciò che ho desiderato tanto a lungo, con una sola, singola parola. \n «Piccola». \n \n Sono raggomitolata contro Marcus, con il viso nascosto nel suo collo. Ormai attendiamo da quattro ore. Dusty, Candy, Ellie, e perfino Pierre... sono tutti qui in attesa con noi. Non li guardo, non parlo con loro, non so neanche chi li abbia chiamati. Ho bisogno soltanto di mio marito. Ho bisogno che lui mi dia ancora ciò che mi sta dando. Finalmente... tutto sembra  giusto . Nel giorno peggiore della mia vita, lui sta cambiando il mio mondo per il meglio. \n «Piccola», ripete ancora. Non c’è parola più bella che possa dirmi. «Il medico è qui». \n Alzo il viso dalla sua spalla e mi guardo intorno, notando un anziano medico che si avvicina. Mi rialzo in piedi e Marcus mi aiuta a sorreggermi posandomi una mano sul fianco. Poi mi conduce verso il medico. Sento le mani tremare e mi afferro alla camicia di Marcus, di colpo incapace di respirare. \n Il medico si ferma davanti a noi, con gli occhi azzurri che mi guardano in faccia. «Sua madre è uscita dalla sala operatoria e sta bene. Aveva qualche frattura e qualche piccola emorragia interna, ma abbiamo sistemato tutto. Ha subìto anche un lieve trauma cranico, ma riteniamo che si riprenderà del tutto. È stata molto fortunata». \n «E il suo cervello, che è già   parecchio  danneggiato?» \n «Non c’è niente di cui preoccuparsi, Katia. Ritengo che si riprenderà e questo incidente non rallenterà i suoi progressi». \n E con questo, sento le ginocchia cedere. Marcus mi afferra al volo, mentre altre lacrime mi rigano le guance. Ma questa volta sono di sollievo. Grazie a Dio, si riprenderà. Oh, Dio, si riprenderà. \n \n «Ho avuto così tanta paura», mormoro, stringendo la sua mano. \n Mia madre mi guarda. Ha gli occhi contornati di lividi scuri e un bendaggio intorno alla testa. Ci sono tubicini ovunque, ma per il resto sembra stare bene. \n «Mi spiace tanto, tesoro», sussurra, con la voce roca. \n «Mamma, non lasciarmi mai. Io... non saprei cosa fare». \n Lei mi prende il viso tra le mani. Piego la testa, appoggiandomi al mio palmo, e chiudo gli occhi, respirando il suo profumo. Le sue dita si scostano di colpo, e io riapro gli occhi. Sta guardando oltre la porta della stanza. Mi giro lentamente e vedo Pierre sulla soglia, che la guarda con un’espressione gentile. Mi giro verso di lei e le rivolgo un lieve sorriso. \n «Vi lascio soli». \n Lei riporta gli occhi su di me. Sembra spaventata. Mi piego a baciarle una guancia. \n «Andrà tutto bene», la rassicuro. «Non ti farà  agitare, mamma. È stato qui ad aspettare che ti riprendessi quasi quanto me». \n Lei deglutisce e torna a guardare Pierre. La bacio di nuovo e le prometto che tornerò a trovarla domattina. Il medico ci ha concesso solo un quarto d’ora con lei, prima di farla riposare. Incrocio Pierre sulla porta e lui mi guarda. «Non turbarla». \n Lui annuisce, con un’espressione gentile. \n Esco e trovo Marcus appoggiato al muro, in attesa. Si stacca dalla parete, quando mi vede. Poi allunga una mano e me la porta dietro la testa, per attirarmi a sé e premere la fronte contro la mia. «Stai bene?». \n Annuisco. \n «Torniamo a casa, d’accordo?» \n «Sì». \n Mentre mi conduce fuori, mi rendo conto che quello che mi ha dato Marcus stasera è quella parte di lui che ho sempre cercato, nell’ultimo anno. Si è aperto. Mi ha mostrato che forse, soltanto forse, mi ero sbagliata, sul suo conto. \n Non ho idea che il giorno dopo, tutto il mio mondo crollerà in pezzi. \n E la Katia che sono morirà. \n Rinascerò nel peggior modo possibile. \n Come un mostro. \n \n \n \n \n ",
+        "single_line2": "\n Capitolo 25 \n Adesso \n Katia \n «Argh!», strillo, lanciando la borsa sul letto e battendo un piede a terra. Sì, proprio così. \n La mia borsetta preferita si è appena rotta. Il manico si è spezzato. È l’unica che davvero adori e mi dispiace tantissimo. Mi butto sul letto, atterrando sullo stomaco. Sono imbronciata come una bambina e non me ne importa. \n «Che ti succede?». \n Alzo lo sguardo e vedo Marcus appoggiato allo stipite della porta. È a torso nudo ed è bellissimo. \n «Ciao, marito». \n Lui sorride, divertito. «Che succede, Katia?» \n «La mia borsetta si è rotta». \n Lui inarca un sopracciglio. «E questo giustificherebbe questa...», mi indica con una mano, «questa scenata?» \n «Non sto facendo una scenata!», protesto. «Era importante, per me. Speciale. La adoravo». \n «Comprane un’altra uguale». \n «Lo farei, ma non so do ve sia stata acquistata». \n Mi osserva, pensieroso. \n E io abbasso gli occhi verso il suo inguine. Mmmmmm. \n «Non è che per caso potresti venire qui e permettermi di leccarti un pochino?», mormoro. \n Lui sbuffa. «Katia». \n «Avanti, Marcus. Non puoi presentarti così e aspettarti che io non voglia leccarti». \n Lui fa un passo avanti. Il cuore inizia a martellarmi nel petto. Le cose, tra me e lui, sono andate molto bene, nell’ultima settimana. Non direi che sono perfette, ma non c’è tensione e abbiamo avuto anche momenti per parlare. È stato... una novità. Lui si ferma davanti a me e mi ritrovo davanti il suo inguine. Oh, sì, grazie mille. \n «Hai davvero una   v  maschile perfetta», sussurro, allungando le dita ad accarezzarlo. Lui sussulta. \n « E cosa sarebbe una  v  maschile?» \n «Questa», rispondo, tracciandola con le dita. «Sexy». \n «Mi vuoi solo toccare, Katia, o pensi di far mi decidere che sia valsa la pena di venire fin qui?». \n Sorrido, alzando lo sguardo. «Oh, ne varrà la pena, vedrai». \n E glielo dimostro. \n \n \n \n Marcus \n «Trovala e basta, non mi interessa dove. E non mi importa del costo». \n «Amico», borbotta Mack. «Ma ti senti male?» \n «Fottiti, amico. Ho bisogno che la tua ragazza me la trovi, okay?» \n «Ma sul serio?» \n «Ti sembra che stia scherzando, cazzo?» \n «Marcus Tandem», sbuffa lui. «Ti sei innamorato?» \n «Vaffanculo, Mack». \n Attacco e mi appoggio allo schienale. \n Fanculo l’amore. \n Fanculo tutto questo. \n Ma che diavolo sta succedendo? \n \n \n \n Katia \n Dopo il lavoro, il giorno seguente, entro in camera mia. \n Mi blocco dove sono quando vedo qualcosa sul cuscino. È un pacchetto regalo. \n Mi guardo intorno, ma non c’è nessuno. Incapace di contenere l’entusiasmo, corro avanti e mi lancio sul letto, recuperandolo. Prendo il biglietto allegato e lo leggo. \n K, \n senza motivo. Volevo e basta. \n M \n Non riesco a fare a meno di sorridere, mentre lascio cadere il biglietto e strappo la carta che avvolge il pacchetto. Sussulto, e poi strillo di felicità. È una borsa nuova, perfettamente uguale a quella che si è rotta. Marcus mi ha comprato quella borsa. Proprio quella che volevo. Quella che adoro. La felicità mi gonfia il petto e non riesco a trattenere un grido di gioia. \n Poi mi alzo e corro in ufficio. Marcus sta entrando con dei clienti, ma gli corro incontro senza curarmene. Mi vede e mi afferra al volo mentre mi lancio su di lui, avvolgendogli le braccia al collo. Lo bacio sulle guance, sulle labbra, ovunque, e poi mi scosto. «Mi hai comprato quella borsa». \n «L’avevi rotta». \n «Sei il migliore, Marcus!». \n «Katia», mi sussurra all’orecchio. «Sto lavorando». \n Giusto. \n Mi lascia andare e mi scosto, salutando timidamente gli uomini con lui, che sorridono divertiti al mio piccolo show. \n «Ti ringrazierò meglio più tardi», sorrido. \n E poi fuggo via. \n Niente può fermare la mia felicità. \n \n \n \n \n ",
         "tags" : [],
         "indexed_fields" : [
             "content",
@@ -71,44 +74,169 @@ def get_data():
             "_id" : "Jewel_Bella_Amami_fino_alla_fine"
         }
     }
+
+    book['all'] = ' '.join(book['content'])
     return book
 
 
 
-def FindAll(p, data):
+def FindAll(p, data, fPRINT=False):
+    if isinstance(data, str): data=[data]
+    result=[]
+    '''
     for item in data:
         occurrencies = p.findall(item)
         if  occurrencies:
-            print(occurrencies)
+            if fPRINT:print(occurrencies)
+            result.extend(occurrencies)
+    '''
 
-def FindIter(p, data):
+    occurrencies = p.findall(' '.join(data))
+    if  occurrencies:
+        if fPRINT:print(occurrencies)
+        result.extend(occurrencies)
+
+    return result
+
+def FindIter(p, data, fPRINT=False):
+    if isinstance(data, str): data=[data]
+    result=[]
+    '''
     for item in data:
         occurrencies = [(i.start(), i.end(), i.group()) for i in p.finditer(item)]
         if  occurrencies:
-            print(occurrencies)
+            if fPRINT:print(occurrencies)
+            result.extend(occurrencies)
+    '''
+
+    occurrencies = [(i.start(), i.end(), i.group()) for i in p.finditer(' '.join(data))]
+    if  occurrencies:
+        if fPRINT:print(occurrencies)
+        result.extend(occurrencies)
+    return result
 
 
 
 
 
-
-def Search(p, data):
+def Search(p, data, fPRINT=False):
+    if isinstance(data, str): data=[data]
+    result=[]
+    '''
     for item in data:
         x=p.search(item, re.IGNORECASE)
         if  x:
             # print(x)
-            print(x.span())
-            print(x.start(), x.end())
-            print(x.group())
+            # print(x.span())
+            if fPRINT:print('start: {0:5}, end: {1:5} group: {2}'.format(x.start(), x.end(), x.group()))
+            result.append('start: {0:5}, end: {1:5} group: {2}'.format(x.start(), x.end(), x.group()))
+            # print(x.group())
+    '''
 
+    x=p.search(' '.join(data), re.IGNORECASE)
+    if  x:
+        # print(x)
+        # print(x.span())
+        if fPRINT:print('start: {0:5}, end: {1:5} group: {2}'.format(x.start(), x.end(), x.group()))
+        result.append('start: {0:5}, end: {1:5} group: {2}'.format(x.start(), x.end(), x.group()))
+        # print(x.group())
+
+    return result
+
+
+    # - search any word (OR)
+def regex_OR(words):
+    # p=re.compile(r'\b(?:{0})\b'.format('|'.join(words)), re.IGNORECASE)
+    p=re.compile(r'\b({0})\b'.format('|'.join(words)), re.IGNORECASE)
+    print(p)
+    FindIter(p, data['content'])
+
+
+    # - search all words (AND) solo in sequenza
+def regex_AND(words):
+    p=re.compile(r'\b({0})\b'.format('.*'.join(words)), re.IGNORECASE)
+    print(p)
+    FindIter(p, data['content'])
+
+    # - search all words (AND) in qualsiasi ordine
+    # - + veloce di AND3
+def regex_AND2(data, words):
+    result=0
+    for word in words:
+        p=re.compile(r'\b({word})\b'.format(**locals()), re.IGNORECASE)
+        print(p)
+        if Search(p, data, fPRINT=False):
+            result+=1
+
+        # _list = FindAll(p, data, fPRINT=False)
+        # _list = Search(p, data, fPRINT=False)
+        # if _list:
+        #     result+=1
+        # print()
+        # for index, item in enumerate(_list):
+        #     print ('{index:4} - {item}'.format(**locals()))
+        # print(_list)
+
+    fFOUND = result==len(words)
+    print('Found:', fFOUND)
+
+
+    # - search all words (AND) in qualsiasi ordine
+    # - - veloce di AND2
+    # - in compenso torna tutte le entries per ogni word
+def regex_AND3(data, words):
+    result=0
+    p=re.compile(r'\b({0})\b'.format('|'.join(words)), re.IGNORECASE)
+    _list = FindAll(p, data, fPRINT=False)
+    # _list = FindIter(p, data, fPRINT=False)
+    # print(_list)
+    for word in words:
+        if word in _list:
+            result+=1
+
+    fFOUND = result==len(words)
+    print('Found:', fFOUND)
+
+
+    # - search sll strings (AND) solo in sequenza
+def regex_str_AND(strings):
+    p=re.compile(r'({0})'.format('.*'.join(strings)), re.IGNORECASE)
+    print(p)
+    FindIter(p, data['content'])
+
+    # - search words near
+def regex_two_near_words(word1, word2, near):
+    near='{'+ '{near[0]},{near[1]}'.format(**locals())+'}'
+    p=re.compile(r'\b{word1}\W+(?:\w+\W+){near}?{word2}\b'.format(**locals()), re.IGNORECASE)
+    print(p)
+    FindIter(p, data['content'])
 
 
 if __name__ == '__main__':
-    p=re.compile(r'\b{0}\W+(?:\w+\W+){2}?{1}\b'.format('sapore', 'miele', '{0,5}'), re.IGNORECASE)
-    book = get_data()
-    # FindAll(p, book['content'])
-    # Search(p, book['content'])
-    FindIter(p, book['content'])
+    data = get_data()
+    # words=['passate', 'diavolo','finita']
+    words=['diavolo','finita', 'passate']
+    words=['strillo','borsa', 'letto']
+    words=['letto','borsa', 'strillo']
+    strings=['illo','ors', 'etto']
+
+    # regex_OR(words)
+    # regex_AND(words)
+
+    start = time.time()
+    # regex_AND2(data['single_line2'], words)
+    regex_AND2(data['content'], words)
+    print(f'Time: {time.time() - start}')
+
+    start = time.time()
+    # regex_AND3(data['single_line2'], words)
+    regex_AND3(data['content'], words)
+    print(f'Time: {time.time() - start}')
+
+    # regex_str_AND(words)
+    # regex_two_near_words(word1='primo', word2='tutti', near=[1,3])
+    # regex_two_near_words(word1='primo', word2='grazie', near=[0,0])
+
 
     # p=re.compile('stanza', re.IGNORECASE)
     # -----
