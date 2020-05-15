@@ -2,7 +2,7 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 12-05-2020 19.04.56
+# Version ......: 13-05-2020 18.41.27
 #
 import sys; sys.dont_write_bytecode = True
 import os
@@ -25,6 +25,7 @@ from eBooks import LnEBooks
 if __name__ == '__main__':
     inpArgs          = Ln.parseInput()
     _data            = Ln.readConfigFile()
+    # pdb.set_trace()
     fCONSOLE         = inpArgs.log_console
     config           = DotMap(_data['content'])
     prj_name         = _data['prjname']
@@ -103,13 +104,16 @@ if __name__ == '__main__':
         #         print(item)
         #     print(len(result))
 
-        # pdb.set_trace()
-        if len(inpArgs.words)==2 and inpArgs.near:
-            result = myDB.search_two_near_words(
+        if inpArgs.near and len(inpArgs.words)==2:
+            records = myDB.search_two_near_words(
                     fld_name=inpArgs.field,
                     words=inpArgs.words,
-                    near=inpArgs.near,
+                    near_val=inpArgs.near,
                     )
+            myDB.manage_display(records)
+
+
+
             # for item in result:
             #     if '_id' in item:
             #         print(item['_id'])

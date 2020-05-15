@@ -1,7 +1,7 @@
 # #############################################
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 10-05-2020 17.36.01
+# Version ......: 15-05-2020 17.58.28
 #
 # #############################################
 
@@ -81,6 +81,7 @@ def parseInput():
     load_parser.add_argument('--ftype', help='file type to be included [DEFAULT=.epub]', default='*.epub')
     load_parser.add_argument('--indexing', help='update dictionary with words', action='store_true')
     load_parser.add_argument('--move-file', help='move file to destination defined in config file', action='store_true')
+    # load_parser.add_argument('--verbose', help='diplay more info', action='store_true')
     load_parser.add_argument('--max-books', help='max number of books to be loaded', required=False, type=int, default=99999999)
 
     build_parser = subparsers.add_parser ("build", help = "rebuild dictionary")

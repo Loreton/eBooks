@@ -21,15 +21,16 @@
         },
 
         {
-            "name": "regex",
+            "name": "search_near",
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
             "program": "${workspaceFolder}/__main__.py",
             "args": [
-                "regex",
+                "search",
                 "--field=content",
-                "--near=miei {0,4} tacchi",
+                "--words=miei  tacchi",
+                "--near=0",
                 "--go",
             ],
             "cwd": "${workspaceRoot}",

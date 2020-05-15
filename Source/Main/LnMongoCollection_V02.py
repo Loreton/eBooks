@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 10-05-2020 17.19.58
+# Version ......: 13-05-2020 13.11.06
 #
 import sys
 import pymongo
@@ -73,9 +73,11 @@ class MongoCollection:
                 client.server_info() # will throw an exception
 
             except:
-                logger.error("Connection error. mongoDB server may be down!")
+                err_msg="Connection error. mongoDB server may be down!"
+                logger.error(err_msg)
                 logger.error("elapsed time", time.time() - start)
-                logger.console("Connection error. mongoDB server may be down!")
+                # print(err_msg)
+                logger.critical(err_msg)
                 sys.exit(1)
 
             # logger.info ('CLIENT:', client)
@@ -194,7 +196,7 @@ class MongoCollection:
     # return cursor
     # cursor = self._ePubs._collection.find({}, no_cursor_timeout=True)
     ############################################################
-    def get_next(self, nrecs=None):
+    def get_next(self, nrecs=None, ret_field=[], skip_field=[]):
         if not nrecs: nrecs=self._range
         # logger.info('searching records', 'query', str(_my_query), self._from, 'for:', nrecs, console=False)
         logger.info(self._collection_name, '\n',
@@ -202,8 +204,20 @@ class MongoCollection:
                        'starting from: {self._from}'.format(**locals()),
                        'for..........: {nrecs}'.format(**locals())
                        )
-        # cursor = self._collection.find(_my_query, { "_id": 1 }).skip(self._from).limit(nrecs)
-        cursor = self._collection.find(self._query).skip(self._from).limit(nrecs)
+
+        # ret_this_flds={'_id': 1}
+        ret_this_flds={}
+        if ret_field:
+            for field in ret_field:
+                ret_this_flds[field]=1
+        elif skip_field:
+            for field in skip_field:
+                ret_this_flds[field]=0
+
+        print(ret_this_flds)
+        # cursor = self._collection.find(self._query, { "_id": 1 }).skip(self._from).limit(nrecs)
+        # cursor = self._collection.find(self._query).skip(self._from).limit(nrecs)
+        cursor = self._collection.find(self._query,  ret_this_flds ).skip(self._from).limit(nrecs)
         records=list(cursor) # cursor si azzera al primo utilizzo
         logger.info('found records......:', len(records))
 
