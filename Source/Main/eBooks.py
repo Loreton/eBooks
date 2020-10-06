@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 15-05-2020 18.01.31
+# Version ......: 15-05-2020 18.20.48
 #
 
 import sys
@@ -595,7 +595,7 @@ class LnEBooks:
             """
             _list=[]
             for item in menu_list:
-                book_id, = item.split(_sep_str)
+                book_id = item.split(_sep_str)[0]
                 book = self._ePubs.get_record({'_id': book_id})
                 entry ='{}{_sep_str}{}'.format(book['_id'], book['tags'], **locals())
                 _list.append(entry)
@@ -614,7 +614,8 @@ class LnEBooks:
                 continue
             else:
                 # - prendiamo il libro selezionato per avere i metadati
-                book_id, = menu_list[int(choice)].split(_sep_str)
+                # pdb.set_trace()
+                book_id = menu_list[int(choice)].split(_sep_str)[0]
                 book = self._ePubs.get_record( {"_id": book_id} )
 
                 # result = RegEx.two_near_words(data=book['content'], regex=pattern, )
@@ -640,7 +641,7 @@ class LnEBooks:
                         }
             }
         '''
-        items = occurrencies.keys()
+        keys = occurrencies.keys()
         choice = ''
         _max = len(items)
         _min = 0
@@ -665,6 +666,7 @@ class LnEBooks:
             for line in dis_line:
                 C.yellowH(text=line, tab=8)
 
+            pdb.set_trace()
 
             ''' Display data.
                 ruoto all'interno della lista visualizzando
@@ -678,7 +680,7 @@ class LnEBooks:
 
             # - display data
             for index in range(inx_from, inx_to):
-                item = dis_data[index+1]
+                item = items[index+1]
                 print('{0:5} - {1}'.format(index+1, item[0]))
                 for line in item[1:]:
                     print(' '*7, line)

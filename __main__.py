@@ -2,19 +2,64 @@
 # Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-05-2020 18.41.27
+# Version ......: 06-10-2020 17.56.17
 #
 import sys; sys.dont_write_bytecode = True
 import os
-from dotmap import DotMap
-from pathlib import Path
-import pdb
+# from pathlib import Path
 
-import Source as Ln
+# from eBooks import LnEBooks
 
-# from eBooks import main as eBooks_main
-from eBooks import LnEBooks
 
+
+from    lnLib.colorLN import LnColor; C=LnColor()
+from    lnLib.promptLN import prompt; prompt(gVars={"color":LnColor()})
+from    lnLib.loggerLN import setLogger
+import  lnLib.monkeyPathLN as PathLN
+import  lnLib.monkeyBenedictLN # per caricare i miei metodi
+
+from    Source.parseInputLN import parseInput
+from    Source.ConfigLoader import loadConfigFile
+from    Source.ResolveDictVars import ResolveDictVars
+
+
+
+
+######################################
+# sample call:
+#
+######################################
+if __name__ == '__main__':
+    """ read Main configuration file hust for logger info"""
+    myConf=loadConfigFile(filename=f'conf/eBooks.yml')
+
+    """ logger """
+    log_cfg=myConf.pop('main.logger')
+    logger=setLogger(log_cfg)
+    PathLN.setLoggerLN(logger)
+
+    script_path=Path(sys.argv[0]).resolve().parent # ... then up one level
+    os.environ['script_path']=str(script_path) # potrebbe essere usata nel config_file
+
+    ResolveDictVars(d=myConf, myLogger=logger, value_sep='/')
+    myConf.pop('templates') # remove templates root
+    ebooks=myConf['ebooks']
+
+
+    """ parsing input """
+    args, inp_log, dbg=parseInput(server_list=servers.keys(), color=LnColor())
+
+    """ override logger with input parameters """
+    if inp_log.level:   logger.set_level(inp_log.level)
+    if inp_log.console: logger.set_console(inp_log.console)
+    if inp_log.modules: logger.set_modules(inp_log.modules)
+
+    logger.info('input   arguments', vars(args))
+    logger.debug3('logging arguments', inp_log)
+    logger.debug3('debug   arguments', vars(dbg))
+    # -------------------------------
+
+    import pdb; pdb.set_trace() # by Loreto
 
 
 ######################################
@@ -22,7 +67,7 @@ from eBooks import LnEBooks
 #    python.exe __main__.py
 #  // by Loreto VSCode --> https://code.visualstudio.com/docs/python/debugging
 ######################################
-if __name__ == '__main__':
+if __name__ == '__xxxmain__':
     inpArgs          = Ln.parseInput()
     _data            = Ln.readConfigFile()
     # pdb.set_trace()

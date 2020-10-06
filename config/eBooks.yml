@@ -2,12 +2,27 @@
 
 #########################################################
 main:
+    logger:
+        filename: /tmp/eBooks.log
+        enable: true
+        level: info
+        console: false
+        disp_date: true
+        disp_fullpath_module: true
+        disp_time: true
+        modules: []
+        rotation_filesize: 10485760
+        rotation_nfiles: 5
+
     # dbase_name: Ln_eBooks_TEST
-    dbase_name: Ln_eBooks
 
 #########################################################
 # -             eBook directories
 #########################################################
+ebooks:
+
+    dbase_name: Ln_eBooks
+
     epub_input_dir:
         # /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library/To_Be_Evalueated
         /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/Ln_Library
