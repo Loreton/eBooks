@@ -2,7 +2,7 @@
 # Progamma per testare regex
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-05-2020 15.06.44
+# Version ......: 08-10-2020 15.31.38
 #
 
 import sys; sys.dont_write_bytecode = True
@@ -20,9 +20,9 @@ def prompt(msg='', validKeys='ENTER', exitKeys='x', displayValidKeys=False):
 
     # pdb.set_trace()
     if validKeys and not displayValidKeys:
-        msg = "     {msg} - ({exitKeys} to exit) ==> ".format(**locals())
+        msg = f"     {msg} - ({exitKeys} to exit) ==> "
     else:
-        msg = "     {msg} [{validKeys}] - ({exitKeys} to exit) ==> ".format(**locals())
+        msg = f"     {msg} [{validKeys}] - ({exitKeys} to exit) ==> "
 
 
     # msg=C.whiteH(text=msg, get=True)
