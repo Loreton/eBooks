@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 15-05-2020 18.20.48
+# Version ......: 08-10-2020 15.12.04
 #
 
 import sys
@@ -15,30 +15,37 @@ import re
 import textwrap
 import yaml, json
 import time
+from types import SimpleNamespace
 
 
-import ebooklib
-from ebooklib import epub
-from ebooklib.utils import parse_html_string
-import ebooklib.utils as epubUtil
-from bs4 import BeautifulSoup
-from Menu import main as Menu
+import  ebooklib
+from    ebooklib import epub
+from    ebooklib.utils import parse_html_string
+import  ebooklib.utils as epubUtil
+from    bs4 import BeautifulSoup
+
+from    Source.Menu import main as Menu
+from    lnLib.loggerLN import getLogger; logger=getLogger()
+from    lnLib.colorLN import LnColor; C=LnColor()
+from    lnLib import LnRegex as regEx
+from    lnLib.promptLN import prompt
 
 # import nltk
 # nltk.download('punkt')
 
-from LnMongoCollection_V02 import MongoCollection
+from Source.Mongo.LnMongoCollection_V02 import MongoCollection
 
-class LnEBooks:
+class eBooksLN:
         # ***********************************************
         # ***********************************************
-    def __init__(self, gVars, db_name):
-        global gv, logger, C, Ln, inp_args
-        gv     = gVars
-        C      = gVars.Color
-        logger = gVars.lnLogger
-        Ln     = gVars.Ln
-        inp_args   = gVars.args
+    def __init__(self, db_name, inp_args):
+        # global
+        # logger=myLogger
+        # gv     = gVars
+        # C      = color
+        # logger = gVars.lnLogger
+        # Ln     = gVars.Ln
+        self._inp_args   = inp_args
         self._execute = inp_args.go
 
         # - creazione DB oer contenere libri
@@ -107,9 +114,9 @@ class LnEBooks:
         try:
             hBook = epub.read_epub(file)
         except Exception as why:
-            C.yellowH(text="Error reading file: {file}".format(**locals()), tab=8)
-            C.error(text=str(why), tab=12)
-            if inp_args.move_file:
+            C.pYellowH(text="Error reading file: {file}".format(**locals()), tab=8)
+            C.pError(text=str(why), tab=12)
+            if self._inp_args.move_file:
                 target_file=file + '.err.zip'
                 logger.error('renaming file', file, 'to:', target_file, console=True)
                 Path(file).rename(target_file)
@@ -122,7 +129,7 @@ class LnEBooks:
         words=data.split()
         words.reverse()
         for word in words:
-            c_word=[ c for c in word if c.isalnum()]
+            c_word=[ c for c in word if c.pIsalnum()]
             ret_val.append(''.join(c_word))
 
         return ' '.join(ret_val)
@@ -160,8 +167,8 @@ class LnEBooks:
             book_data['description']    = _description[0][0]           if _description else ''
 
         except Exception as why:
-            C.error(text=str(why), tab=12, console=True)
-            if inp_args.move_file:
+            C.pError(text=str(why), tab=12, console=True)
+            if self._inp_args.move_file:
                 target_file=file + '.err.zip'
                 logger.error('renaming file: {file} to {target_file}'.format(**locals()), console=True)
                 Path(file).rename(target_file)
@@ -170,8 +177,8 @@ class LnEBooks:
 
         if not book_data['title']:
             if SKIP_UNKNOWN:
-                C.warning(text="{file} does't contain valid  metadata".format(**locals()), tab=4)
-                if inp_args.move_file:
+                C.pWarning(text="{file} does't contain valid  metadata".format(**locals()), tab=4)
+                if self._inp_args.move_file:
                     file.rename(file.parent / '{file.stem}{file.suffix}.no_metadata'.format(**locals()) )
                 return {}
             else:
@@ -207,7 +214,7 @@ class LnEBooks:
             while records:
                 for book in records:
                     index+=1
-                    C.yellowH(text='''
+                    C.pYellowH(text='''
                         [{index:5}/{nrec:5}] - {id}
                             book:      {title} - [{author}]
                             indexed:   {indexed}\
@@ -229,7 +236,7 @@ class LnEBooks:
     def _book_indexing(self, book={}, fields=[], force_indexing=False):
         for fld_name in fields:
             if (fld_name in book['indexed_fields']) and not force_indexing:
-                C.white(text='field {fld_name} already indexed'.format(**locals()), tab=8)
+                C.pWhite(text='field {fld_name} already indexed'.format(**locals()), tab=8)
                 continue
 
             # pdb.set_trace()
@@ -237,7 +244,7 @@ class LnEBooks:
 
             # - se ci sono dati nel campo
             if book[fld_name]:
-                C.white(text='indexing field {fld_name}'.format(**locals()), tab=8)
+                C.pWhite(text='indexing field {fld_name}'.format(**locals()), tab=8)
                 if isinstance(book[fld_name], list):
                     fld_data.extend(book[fld_name])
                 else:
@@ -252,7 +259,7 @@ class LnEBooks:
                 index=0
                 for index, word in enumerate(words, start=1):
                     if not index%500:
-                        C.white(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
+                        C.pWhite(text='word processed: {index:5}/{lun}'.format(**locals()), tab=8)
 
                     # - preparazione default record del dictionary
                     rec={
@@ -273,12 +280,12 @@ class LnEBooks:
                     else:
                         logger.console('[DRY-RUN] - record updated.', rec)
 
-                C.white(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
+                C.pWhite(text='word processed: {index:5}/{lun:5}'.format(**locals()), tab=8)
                 if not fld_name in book['indexed_fields']:
                     book['indexed_fields'].append(fld_name)
                     if self._execute: self._ePubs.updateField(rec=book, fld_name='indexed_fields')
             else:
-                C.white(text='no word in field {fld_name}'.format(**locals()), tab=8)
+                C.pWhite(text='no word in field {fld_name}'.format(**locals()), tab=8)
         print()
 
 
@@ -308,25 +315,25 @@ class LnEBooks:
             _dir = epub_file.parent
             book = self._readEbook(file=epub_file)
             if not book: continue # book not valid
-            if inp_args.indexing and indexed_books >= inp_args.max_books:
+            if self._inp_args.indexing and indexed_books >= self._inp_args.max_books:
                 return
-            elif loaded_books >= inp_args.max_books:
+            elif loaded_books >= self._inp_args.max_books:
                 return
 
 
             self._ePubs.set_id(book)
 
-            # C.yellowH(text='[{index:06}/{nFiles:06}] - {0} - [{1}]'.format(book['title'], book['author'], **locals()), tab=4)
+            # C.pYellowH(text='[{index:06}/{nFiles:06}] - {0} - [{1}]'.format(book['title'], book['author'], **locals()), tab=4)
             curr_book = self._ePubs.exists(rec=book)
 
             if curr_book:
                 _msg='already catalogued'
                 book = curr_book
                 # printColor=None
-                printColor=C.white
-                # if inp_args.verbose:
+                printColor=C.pWhite
+                # if self._inp_args.verbose:
             else:   # - insert book into eBooks_collection
-                printColor=C.yellowH
+                printColor=C.pYellowH
                 book['content'] = self._readContent(filename=epub_file)
                 try:
                     if self._execute:
@@ -337,15 +344,15 @@ class LnEBooks:
 
                     loaded_books += 1
                 except Exception as why:
-                    C.error(text=str(why))
-                    C.yellowH(text=epub_file, tab=8)
-                    if inp_args.move_file:
+                    C.pError(text=str(why))
+                    C.pYellowH(text=epub_file, tab=8)
+                    if self._inp_args.move_file:
                         epub_file.rename(epub_file / '.err.zip')
                     continue
 
 
             dmBook = DotMap(book, _dynamic=False)
-            if inp_args.verbose:
+            if self._inp_args.verbose:
                 print()
                 printColor(text='''
                 [{index:05}/{nFiles:05}]
@@ -359,7 +366,7 @@ class LnEBooks:
 
 
                 # - forcing dictionary update
-            if inp_args.indexing and not dmBook.indexed_fields:
+            if self._inp_args.indexing and not dmBook.indexed_fields:
                 _fields = ['content', 'title', 'tags', 'author']
                 if self._execute: self._book_indexing(book, fields=_fields )
                 indexed_books += 1
@@ -370,11 +377,11 @@ class LnEBooks:
             if target_dir:
                 target_file='{target_dir}/{dmBook.title}.epub'.format(**locals())
                 target_file='{target_dir}/{dmBook.title}.epub'.format(**locals())
-                C.yellowH(text='... moving to:', tab=16)
-                C.yellowH(text='dir:   {target_dir}'.format(**locals()), tab=18)
-                C.yellowH(text='fname: {dmBook.title}'.format(**locals()), tab=18)
+                C.pYellowH(text='... moving to:', tab=16)
+                C.pYellowH(text='dir:   {target_dir}'.format(**locals()), tab=18)
+                C.pYellowH(text='fname: {dmBook.title}'.format(**locals()), tab=18)
 
-                if self._execute and inp_args.move_file:
+                if self._execute and self._inp_args.move_file:
                     moved, reason = epub_file.moveTo(target_file, replace=False)
                     if not moved:
                         # - rename source
@@ -412,7 +419,7 @@ class LnEBooks:
 
         words = []
         for word in content:
-            word_alfa = [ c for c in word if c.isalpha()]
+            word_alfa = [ c for c in word if c.pIsalpha()]
             word2 = ''.join(word_alfa)
             if not word == word2:
                 # print(word, word2)
@@ -453,7 +460,7 @@ class LnEBooks:
         return Output
 
     def _chap2text(self, chap):
-        # there may be more elements you don't want, such as "style", etc.
+        # there may be more elements you don't want, such as "style", etc.p
         blacklist = ['[document]', 'noscript', 'header', 'html', 'meta', 'head','input', 'script',]
         output = ''
         soup = BeautifulSoup(chap, 'html.parser')
@@ -532,13 +539,17 @@ class LnEBooks:
         _p=r'\b({0})\b'.format('|'.join(words))
         pattern=re.compile(_p, re.IGNORECASE)
 
-
         start = time.time()
         my_query = {fld_name: {"$regex": pattern, "$options" : "i" } }
         self._ePubs.set_query(my_query, start=1, range=10)
         records = self._ePubs.get_next(nrecs=9999)
         print(f'Time: {time.time() - start}')
-
+        # for item in records:
+        #     print(f'book: {item["_id"]}')
+        menu_list=[]
+        for book in records:
+            menu_list.append(book['_id'])
+        self.manage_display(menu_list, pattern)
 
         # if ret_full:
         #     book_list=[]
@@ -579,30 +590,30 @@ class LnEBooks:
         self.manage_display(menu_list, pattern)
 
 
+    """
+        menu list: list on book_ids
+        choice f: forward
+    """
     def manage_display(self, menu_list, pattern):
         _sep_str = ' #-# '
 
         STEP=10
         choice = 'f' #default
-        # menu_list={}
-        # book_list={}
-
-        # pdb.set_trace()
         while True:
             """ ricreiamo la lista per il menu ogni volta che passiamo di qui
                 perché aggiorniamo eventuali tags modificati durante
-                lo scorrere del menu
+                la navigazione del menu
             """
             _list=[]
             for item in menu_list:
                 book_id = item.split(_sep_str)[0]
-                book = self._ePubs.get_record({'_id': book_id})
-                entry ='{}{_sep_str}{}'.format(book['_id'], book['tags'], **locals())
+                book = SimpleNamespace(**self._ePubs.get_record({'_id': book_id}))
+                entry =f'{book._id}{_sep_str}{book.tags}'
                 _list.append(entry)
 
-            # - prepara il menu_list
+            # - prepara il nuovo menu_list
             menu_list = {}
-            _list = sorted(_list)
+            _list=sorted(_list)
             for index, entry in enumerate(_list, start=1):
                 menu_list[index]=entry
 
@@ -614,12 +625,10 @@ class LnEBooks:
                 continue
             else:
                 # - prendiamo il libro selezionato per avere i metadati
-                # pdb.set_trace()
                 book_id = menu_list[int(choice)].split(_sep_str)[0]
-                book = self._ePubs.get_record( {"_id": book_id} )
+                book=self._ePubs.get_record( {"_id": book_id} )
 
-                # result = RegEx.two_near_words(data=book['content'], regex=pattern, )
-                occurrencies=Ln.RegEx.FindIter(pattern, data=book['content'], fPRINT=True)
+                occurrencies=regEx.FindIter(pattern, data=book['content'], fPRINT=True)
                 self._display_occurrencies(book, occurrencies)
 
     ####################################################
@@ -642,31 +651,32 @@ class LnEBooks:
             }
         '''
         keys = occurrencies.keys()
-        choice = ''
-        _max = len(items)
+        choice = '' # scelta menu
+        _max = len(occurrencies)
+        _max = 5
         _min = 0
         _step=4
         inx_from=_min
 
         # - prepard book info display data
-        dmBook=DotMap(book, _dynamic=False) # di comodo
+        nsBook=SimpleNamespace(**book) # di comodo
         dis_line=[]
         dis_line.append('')
-        dis_line.append('book: {dmBook.title} - [{dmBook.author}]'.format(**locals()))
-        dis_line.append('    - id: {dmBook._id}'.format(**locals()))
-        dis_line.append('    - tags: {dmBook.tags}'.format(**locals()))
-        for item in items:
-            counter = len(occurrencies[item])
-            dis_line.append('        - item: {item} - instances: {counter}'.format(**locals()))
+        dis_line.append(f'book: {nsBook.title} - [{nsBook.author}]')
+        dis_line.append(f'    - id: {nsBook._id}')
+        dis_line.append(f'    - tags: {nsBook.tags}')
+        for key in keys:
+            counter = len(occurrencies[key])
+            dis_line.append(f'        - item: {key} - instances: {counter}')
 
         while True:
             if choice=='b': break # return to book_list
 
             # - display book metadata
             for line in dis_line:
-                C.yellowH(text=line, tab=8)
+                C.pYellowH(text=line, tab=8)
 
-            pdb.set_trace()
+            # pdb.set_trace()
 
             ''' Display data.
                 ruoto all'interno della lista visualizzando
@@ -687,23 +697,23 @@ class LnEBooks:
                 print()
 
             # - Get keybord input
-            choice=Ln.prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
+            choice=prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
             if   choice in ['b']: break
             elif choice in ['n']: inx_from+=_step
             elif choice in ['p']: inx_from-=_step
             elif choice in ['t']:
                 if self._execute:
-                    tags=Ln.prompt('Please enter TAGs (BLANK separator)')
+                    tags=prompt('Please enter TAGs (BLANK separator)')
                     book['tags'] = tags.split()
                     result = self._ePubs.updateField(rec=book, fld_name='tags')
                     # pdb.set_trace()
                     if result.matched_count:
-                        C.cyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
+                        C.pCyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
                         self._book_indexing(book, fields=['tags'])
                         print()
                 else:
-                    C.cyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
-                    Ln.prompt()
+                    C.pCyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
+                    prompt()
 
 
 

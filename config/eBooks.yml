@@ -29,7 +29,7 @@ ebooks:
         # /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/New_books
         # /mnt/k/Download/Telegram/ePubs
 
-        # - /mnt/k/Download/ePub/err
+        # - /mnt/k/Do'ho basata sui sewnload/ePub/err
     epub_target_dir:
         /mnt/k/Filu/LnDisk/Ln-eBooks/Calibre_Portable/New_books
         # /mnt/k/Download/ePub_work

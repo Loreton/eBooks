@@ -15,6 +15,7 @@
                 "search",
                 // "--field=content",
                 "--words=corpotre",
+                "--regex",
                 "--go",
             ],
             "cwd": "${workspaceRoot}",
@@ -53,7 +54,7 @@
             "request": "launch",
             "stopOnEntry": true,
             // "pythonPath": "/usr/bin/python3",
-            // "pythonPath": "${config:python.pythonPath}",
+            // "pythonPath": "${command:python.interpreterPath}",
             // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [
@@ -73,7 +74,7 @@
             "request": "launch",
             "stopOnEntry": true,
             // "pythonPath": "/usr/bin/python3",
-            // "pythonPath": "${config:python.pythonPath}",
+            // "pythonPath": "${command:python.interpreterPath}",
             // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [
@@ -91,7 +92,7 @@
             "request": "launch",
             "stopOnEntry": true,
             // "pythonPath": "/usr/bin/python3",
-            // "pythonPath": "${config:python.pythonPath}",
+            // "pythonPath": "${command:python.interpreterPath}",
             // "program": "/mnt/k/Filu/LnDisk/GIT-REPO/LnEbook/__main__.py",
             "program": "${workspaceFolder}/__main__.py",
             "args": [

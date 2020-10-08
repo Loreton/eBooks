@@ -1,15 +1,17 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 13-05-2020 13.11.06
+# Version ......: 08-10-2020 11.43.16
 #
 import sys
 import pymongo
 import time
 import json, yaml
 from dotmap import DotMap
-from Source import LnClass
+from types import SimpleNamespace
 
+
+from    lnLib.loggerLN import getLogger; logger=getLogger()
 # https://www.w3schools.com/python/python_mongodb_create_collection.asp
 # https://realpython.com/introduction-to-mongodb-and-python/
 # http://docs.mongoengine.org/tutorial.html
@@ -23,13 +25,13 @@ class MongoCollection:
         # ***********************************************
         # ***********************************************
     def __init__(self, db_name, collection_name, myLogger, server_name='127.0.0.1', server_port='27017'):
-        global logger
-        logger = myLogger
-        self._db_name = db_name
+        # global logger
+        # logger = myLogger
+        self._db_name         = db_name
         self._collection_name = collection_name
-        self._client  = self._dbConnect(db_name, server_name, server_port)
-        self._db      = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
-        self._collection = self._db[collection_name] # create collection. A collection is not created until it gets content!
+        self._client          = self._dbConnect(db_name, server_name, server_port)
+        self._db              = self._client[db_name] # create DB In MongoDB, a database is not created until it gets content
+        self._collection      = self._db[collection_name] # create collection. A collection is not created until it gets content!
 
         self._from = 0
         self._range = 1
@@ -463,7 +465,7 @@ class MongoCollection:
                 _val = fld_new_value
 
             if _val == cur_value:
-                result = LnClass()
+                result = SimpleNamespace()
                 result.matched_count = 1
                 result.modified_count = 0
                 logger.debug1(_base_msg, ' matching, nothig to do.')

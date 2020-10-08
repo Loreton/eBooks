@@ -1,27 +1,24 @@
 #!/usr/bin/python3
-# Progamma per a sincronizzazione dei dati presenti su Drive
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 06-10-2020 17.56.17
+# Version ......: 08-10-2020 11.53.36
 #
-import sys; sys.dont_write_bytecode = True
-import os
-# from pathlib import Path
-
-# from eBooks import LnEBooks
-
-
+import  sys; sys.dont_write_bytecode = True
+import  os
+from    pathlib import Path
 
 from    lnLib.colorLN import LnColor; C=LnColor()
 from    lnLib.promptLN import prompt; prompt(gVars={"color":LnColor()})
 from    lnLib.loggerLN import setLogger
+
 import  lnLib.monkeyPathLN as PathLN
 import  lnLib.monkeyBenedictLN # per caricare i miei metodi
 
 from    Source.parseInputLN import parseInput
-from    Source.ConfigLoader import loadConfigFile
-from    Source.ResolveDictVars import ResolveDictVars
+from    lnLib.configurationLoader import LoadConfigFile
+from    lnLib.resolveDictVars import ResolveDictVars
 
+from    Source.eBooksLN import eBooksLN
 
 
 
@@ -31,10 +28,10 @@ from    Source.ResolveDictVars import ResolveDictVars
 ######################################
 if __name__ == '__main__':
     """ read Main configuration file hust for logger info"""
-    myConf=loadConfigFile(filename=f'conf/eBooks.yml')
+    myConf=LoadConfigFile(filename=f'config/eBooks.yml')
 
     """ logger """
-    log_cfg=myConf.pop('main.logger')
+    log_cfg=myConf.pop('main.logger') # remove logger tree
     logger=setLogger(log_cfg)
     PathLN.setLoggerLN(logger)
 
@@ -42,12 +39,10 @@ if __name__ == '__main__':
     os.environ['script_path']=str(script_path) # potrebbe essere usata nel config_file
 
     ResolveDictVars(d=myConf, myLogger=logger, value_sep='/')
-    myConf.pop('templates') # remove templates root
     ebooks=myConf['ebooks']
 
-
     """ parsing input """
-    args, inp_log, dbg=parseInput(server_list=servers.keys(), color=LnColor())
+    args, inp_log, dbg=parseInput(color=LnColor())
 
     """ override logger with input parameters """
     if inp_log.level:   logger.set_level(inp_log.level)
@@ -59,101 +54,37 @@ if __name__ == '__main__':
     logger.debug3('debug   arguments', vars(dbg))
     # -------------------------------
 
-    import pdb; pdb.set_trace() # by Loreto
 
-
-######################################
-# sample call:
-#    python.exe __main__.py
-#  // by Loreto VSCode --> https://code.visualstudio.com/docs/python/debugging
-######################################
-if __name__ == '__xxxmain__':
-    inpArgs          = Ln.parseInput()
-    _data            = Ln.readConfigFile()
-    # pdb.set_trace()
-    fCONSOLE         = inpArgs.log_console
-    config           = DotMap(_data['content'])
-    prj_name         = _data['prjname']
-    script_path      = _data['script_path']
-    yaml_config_file = _data['yaml_config_file']
-
-
-    # --- setting logger
-    if inpArgs.log:
-        log_dir  = os.path.join(script_path, 'log')
-        log_file = os.path.abspath(os.path.join(log_dir, '{prj_name}_{inpArgs.action}.log'.format(**locals())))
-    else:
-        log_file = None
-    lnLogger = Ln.setLogger(filename=log_file, console=fCONSOLE, debug_level=3, log_modules=inpArgs.log_modules, color=Ln.Color() )
-
-    # - STDOUT file if required
-    # stdout_file = _basename + '_stdout.log'
-    # lnStdout    = Ln.setLogger(filename=stdout_file, color=Ln.Color() )
-    #
-    # --- setting logger
-
-    # data1 = ['uno', 'due']
-    # data2 = [1,2,3,4]
-    # lnLogger.error('renaming file', 'pippo', 'pluto', data1, console=True)
-    # lnLogger.error('renaming file', data1, data2, console=True)
-    # sys.exit()
-
-    lnLogger.info('input arguments', vars(inpArgs))
-    lnLogger.info('configuration data', _data)
-    Path.setLnMonkey(lnLogger)
-
-    if inpArgs.debug:
-        C.setColor(color=C._cyanH)
-        print('     Input arguments:')
-        for k,v in vars(inpArgs).items():
-            print('         {k:<15}: {v}'.format(**locals()))
-        print()
-        C.setColor(color=C._yellowH)
-        print('     {0:<15}: {1}'.format('prj_name', prj_name))
-        print('     {0:<15}: {1}'.format('ScriptDir', str(script_path)))
-        print('     {0:<15}: {1}'.format('config file', yaml_config_file))
-        print()
-        sys.exit(1)
-
-    C    = Ln.Color()
-    # --- set global variables
-    gv          = DotMap(_dynamic=False)
-    gv.Ln       = Ln
-    gv.lnLogger = lnLogger
-    gv.Color    = C
-    gv.args     = inpArgs
-
-
-    dbname=inpArgs.db_name if inpArgs.db_name else config.main.dbase_name
-    myDB=LnEBooks(gv, db_name=dbname)
-    if 'update_fieldx' in inpArgs:
+    dbname=args.db_name if args.db_name else ebooks['dbase_name']
+    myDB=eBooksLN(db_name=dbname, inp_args=args)
+    if 'update_fieldx' in args:
         result = myDB.update_field_many( )
 
-    # elif 'search' in inpArgs:
-    #     result = myDB.main_search( field_name=inpArgs.fieldname, words=inpArgs.words, ignore_case=True)
+    # elif 'search' in args:
+    #     result = myDB.main_search( field_name=args.fieldname, words=args.words, ignore_case=True)
 
-    # elif 'search' in inpArgs:
+    # elif 'search' in args:
     #     result = myDB.field_search(
-    #                     fld_name=inpArgs.field,
-    #                     words=inpArgs.words,
-    #                     book_id=inpArgs.book_id,
+    #                     fld_name=args.field,
+    #                     words=args.words,
+    #                     book_id=args.book_id,
     #                     ignore_case=True)
 
-    elif 'search' in inpArgs.action:
-        # if len(inpArgs.words) == 1:
+    elif 'search' in args.action:
+        # if len(args.words) == 1:
         #     result = myDB.search_one_word(
-        #             fld_name=inpArgs.field,
-        #             word=inpArgs.words,
+        #             fld_name=args.field,
+        #             word=args.words,
         #             )
         #     for item in result:
         #         print(item)
         #     print(len(result))
 
-        if inpArgs.near and len(inpArgs.words)==2:
+        if args.near and len(args.words)==2:
             records = myDB.search_two_near_words(
-                    fld_name=inpArgs.field,
-                    words=inpArgs.words,
-                    near_val=inpArgs.near,
+                    fld_name=args.field,
+                    words=args.words,
+                    near_val=args.near,
                     )
             myDB.manage_display(records)
 
@@ -166,55 +97,55 @@ if __name__ == '__xxxmain__':
             #         print(item)
             print(len(result))
 
-        elif len(inpArgs.words) > 0 and inpArgs.regex:
-            result = myDB.search_more_words_regex(
-                    fld_name=inpArgs.field,
-                    words=inpArgs.words,
+        elif len(args.words) > 0 and args.regex:
+            records = myDB.search_more_words_regex(
+                    fld_name=args.field,
+                    words=args.words,
                     )
-            # for item in result:
+            print(len(records))
+
             #     if '_id' in item:
             #         print(item['_id'])
             #     else:
             #         print(item)
-            print(len(result))
 
-        elif len(inpArgs.words) > 0:
-            result = myDB.search_more_words(
-                    fld_name=inpArgs.field,
-                    words=inpArgs.words,
-                    )
-            # for item in result:
-            #     if '_id' in item:
-            #         print(item['_id'])
-            #     else:
-            #         print(item)
-            print(len(result))
-
+        # elif len(args.words) > 0:
+        #     result = myDB.search_more_words(
+        #             fld_name=args.field,
+        #             words=args.words,
+        #             )
+        #     # for item in result:
+        #     #     if '_id' in item:
+        #     #         print(item['_id'])
+        #     #     else:
+        #     #         print(item)
+        #     print(len(result))
 
 
-    # elif 'regex' in inpArgs:
+
+    # elif 'regex' in args:
     #     # result = myDB.search_perf(
     #     result = myDB.regex_near_search(
     #     # result = myDB.regex_near_search_step2(
     #     # result = myDB.regex_near_search_OK(
-    #                     fld_name=inpArgs.field,
-    #                     words=inpArgs.words,
-    #                     near=inpArgs.near,
+    #                     fld_name=args.field,
+    #                     words=args.words,
+    #                     near=args.near,
     #                     ignore_case=True)
 
-    # elif 'book_search' in inpArgs:
-    #     result = myDB.eBook_search(words=inpArgs.words, book_id=inpArgs.id, ignore_case=True)
+    # elif 'book_search' in args:
+    #     result = myDB.eBook_search(words=args.words, book_id=args.id, ignore_case=True)
 
-    elif 'load' in inpArgs:
-        input_dir=inpArgs.dir if inpArgs.dir else config.main.epub_input_dir
-        target_dir=config.main.epub_target_dir if inpArgs.move_file else None
+    elif 'load' in args:
+        input_dir=args.dir if args.dir else config.main.epub_input_dir
+        target_dir=config.main.epub_target_dir if args.move_file else None
 
-        myDB.load_eBooks(input_dir, file_pattern=inpArgs.ftype, target_dir=target_dir)
+        myDB.load_eBooks(input_dir, file_pattern=args.ftype, target_dir=target_dir)
 
-    elif 'build' in inpArgs:
-        myDB.build_dictionary(fields=inpArgs.fields, force_indexing=inpArgs.force_indexing)
+    elif 'build' in args:
+        myDB.build_dictionary(fields=args.fields, force_indexing=args.force_indexing)
 
-    elif 'change_id' in inpArgs:
+    elif 'change_id' in args:
         myDB.change_ID()
 
 

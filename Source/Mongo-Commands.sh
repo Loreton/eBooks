@@ -41,7 +41,8 @@ set "DPATH=k:\Filu\LnDisk\Ln-eBooks\Calibre_Portable\Ln_Library\Ln_Mongodb"
 
 # La directory non deve trovarsi su una directory shared.
 # "mongod" --dbpath "/home/loreto/LnMongoDB"  --directoryperdb --bind_ip localhost --port 21000
-
+sudo service mongodb start
+sudo vi /etc/mongodb.conf
 
 
 ####################################################
