@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-10-2020 11.53.36
+# Version ......: 11-10-2020 17.06.02
 #
 import  sys; sys.dont_write_bytecode = True
 import  os
 from    pathlib import Path
+from    types import SimpleNamespace
+import pyaml
 
 from    lnLib.colorLN import LnColor; C=LnColor()
 from    lnLib.promptLN import prompt; prompt(gVars={"color":LnColor()})
@@ -20,6 +22,79 @@ from    lnLib.resolveDictVars import ResolveDictVars
 
 from    Source.eBooksLN import eBooksLN
 
+"""
+    inp_list=[
+        {index { title: title, tags: tags }}
+        {index { title: title, tags: tags }}
+        {index { title: title, tags: tags }}
+        ]
+"""
+
+def search():
+    print('search')
+    prompt()
+def update():
+    print('update')
+    prompt()
+def delete():
+    print('delete')
+    prompt()
+def quit():
+    sys.exit()
+
+
+def Menu(inp_list=[]):
+    from subprocess import call
+    if not inp_list:
+        inp_list=[]
+        inp_list.append({0: 'dummy'})
+        for index in range(1, 100+1):
+            data=SimpleNamespace()
+            data.index=f'{index:02}'
+            data.title=f'title_{index:02}'
+            data.tags=f'tags_{index:02}'
+            item={index: data.__dict__}
+            inp_list.append(item)
+        # for index in range(1, 100+1):
+        #     item=SimpleNamespace()
+        #     item.index=index
+        #     item.title=f'title_{index:02}'
+        #     item.tags=f'tags_{index:02}'
+        #     inp_list.append(item.__dict__)
+        # for item in inp_list:
+        #     print(item)
+    tot_item=len(inp_list)
+    _from=0
+    menu_entries=10
+
+    while True:
+        _ = call('clear' if os.name =='posix' else 'cls')
+        print('\n'*2)
+
+        """ check display range """
+        if _from>=tot_item: _from=tot_item-menu_entries
+        if _from<1: _from=1
+        _to = _from+menu_entries
+        if _to>=tot_item: _to=tot_item
+
+        for index in range(_from, _to):
+            item=inp_list[index][index]
+            print(f"    [{index:02}]: {item['title']} - {item['tags']}")
+
+        msg='s[earch] - u[pdate] - d[elete] n[ext] p[prev] - q[uit]'
+        choice      = input(msg).strip().lower()
+        if choice=='n':
+            _from+=menu_entries
+        elif choice=='p':
+            _from-=menu_entries
+        elif choice in ['s', 'u', 'd', 'q']:
+            choice_dict = {
+                's': search,
+                'u': update,
+                'd': delete,
+                'q': quit
+            }
+            choice_dict[choice]()
 
 
 ######################################
@@ -27,6 +102,8 @@ from    Source.eBooksLN import eBooksLN
 #
 ######################################
 if __name__ == '__main__':
+    Menu()
+    sys.exit()
     """ read Main configuration file hust for logger info"""
     myConf=LoadConfigFile(filename=f'config/eBooks.yml')
 

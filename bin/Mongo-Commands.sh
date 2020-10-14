@@ -1,3 +1,5 @@
+#!/bin/bash
+
 db.getCollection('ePubs').find({}).count()
 db.getCollection('ePubs').find({'chapters': {"$regex": "tempo"}}).count()
 db.getCollection('ePubs').find({'author': {"$regex": "scono"}}).count()
@@ -100,3 +102,7 @@ Where:
 mongoimport  --host 127.0.0.1:21000 --db Ln_eBooks --collection ePubs --file k:\Download\mongo_exported\ePubs_noArray.json
 mongoimport  --host 127.0.0.1:21000 --db Ln_eBooks --collection ePubs --file k:\Download\mongo_exported\ePubs_array.json --jsonArray
 mongoimport  --host 127.0.0.1:21000 --db Ln_eBooks --collection Dictionary --file k:\Download\mongo_exported\Dictionary.json --jsonArray
+
+
+TYPE='Dictionary' && mongoimport  --host 127.0.0.1:27017 --db Ln_eBooks --collection ${TYPE} --file /mnt/k/Download/mongo_exported/2020-05-01_${TYPE}_noArray.json
+TYPE='ePubs' && mongoimport  --host 127.0.0.1:27017 --db Ln_eBooks --collection ${TYPE} --file /mnt/k/Download/mongo_exported/2020-05-01_${TYPE}_noArray.json

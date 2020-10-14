@@ -2,7 +2,7 @@
 # Progamma per processare un ebook
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 12-10-2020 08.30.00
+# Version ......: 11-10-2020 18.15.07
 #
 
 import sys
@@ -550,8 +550,8 @@ class eBooksLN:
             menu_list.append(menu_entry)
 
         choice_dict = {
-            # 't': self._update_tag,
-            'item_selected': self._displaySearchResult, non so come passare i paramentri
+            't': self._update_tag,
+            'item_selected': display,
             'd': delete,
             'q': quit
         }
@@ -559,6 +559,20 @@ class eBooksLN:
         eBook_Menu(menu_list, choice_dict)
 
         return records
+
+    def _update_tag(self, book_id):
+        if self._execute:
+            tags=prompt('Please enter TAGs (BLANK separator)')
+            book['tags'] = tags.split()
+            result = self._ePubs.updateField(rec=book, fld_name='tags')
+            if result.matched_count:
+                C.pCyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
+                self._book_indexing(book, fields=['tags'])
+                print()
+        else:
+            C.pCyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
+            prompt()
+
 
 
 
@@ -594,52 +608,211 @@ class eBooksLN:
         self.manage_display(menu_list, pattern)
 
 
+    """
+        menu list: list on book_ids
+        choice f: forward
+    """
+    def manage_display(self, menu_list, pattern):
+        _sep_str = ' #-# '
+
+        STEP=10
+        choice = 'f' #default
+        while True:
+            """ ricreiamo la lista per il menu ogni volta che passiamo di qui
+                perché aggiorniamo eventuali tags modificati durante
+                la navigazione del menu
+            """
+            _list=[]
+            if isinstance(menu_list, dict):
+                _appo=[]
+                for index, item in menu_list.items():
+                    _appo.append(item)
+                menu_list=_appo
+
+            for item in menu_list:
+                book_id = item.split(_sep_str)[0]
+                book = SimpleNamespace(**self._ePubs.get_record({'_id': book_id}))
+                entry =f'{book._id}{_sep_str}{book.tags}'
+                _list.append(entry)
+
+            # - prepara il nuovo menu_list
+            menu_list = {}
+            _list=sorted(_list)
+            for index, entry in enumerate(_list, start=1):
+                menu_list[index]=entry
+
+            # - menu looping trought the book list
+            if not menu_list: break
+            choice = Menu(menu_list, return_on_fw=False)
+
+            if choice == 'f':
+                continue
+            else:
+                # - prendiamo il libro selezionato per avere i metadati
+                book_id = menu_list[int(choice)].split(_sep_str)[0]
+                book=self._ePubs.get_record( {"_id": book_id} )
+
+                self._displayResults_New(book, pattern)
+                # occurrencies=regEx.FindIter(pattern, data=book['content'], fPRINT=True)
+                # result=self._color_words_in_text(book['content'], occurrencies)
+                # self._displayResults(book, result)
 
     ####################################################
-    #
+    # - occurrencies = {
+    #        "miei, poi gir\u00f2 bruscamente sui tacchi": [
+    #            [ 878, 890 ],
+    #            [ 166684, 166721 ],
+    #        ]
+    #       }
     ####################################################
-    def _update_tag(self, book_id):
-        if self._execute:
-            tags=prompt('Please enter TAGs (BLANK separator)')
-            book['tags'] = tags.split()
-            result = self._ePubs.updateField(rec=book, fld_name='tags')
-            if result.matched_count:
-                C.pCyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
-                self._book_indexing(book, fields=['tags'])
+    def _display_occurrencies_DELETE(self, book, occurrencies):
+        ''' Sample
+            {
+                "word1": {"counter": 1 },
+                "word2": {"counter": 1 },
+                "data": {
+                            "1": ["Lee Child"],
+                            "2": ["Child pippo"],
+                        }
+            }
+
+        {'word1': [
+                (2553, 2561),
+                (2678, 3456)
+                ]
+        }
+        '''
+        words = occurrencies.keys()
+        choice = '' # scelta menu
+        _max = len(occurrencies)
+        _max = 5
+        _min = 0
+        _step=4
+        inx_from=_min
+
+        # - prepard book info display data
+        nsBook=SimpleNamespace(**book) # di comodo
+        dis_line=[]
+        dis_line.append('')
+        dis_line.append(f'book: {nsBook.title} - [{nsBook.author}]')
+        dis_line.append(f'    - id: {nsBook._id}')
+        dis_line.append(f'    - tags: {nsBook.tags}')
+
+
+        result=[]
+        for word in words:
+            positions=occurrencies[word]
+            """ numero di occurrencies per ogni word """
+            counter = len(occurrencies[word])
+            dis_line.append(f'        - item: {word} - instances: {counter}')
+
+            for pos in positions:
+                # incr counter for specific word
+                # result[word]['counter'] += 1
+                # counter += 1 # counter totale
+
+                # - get text around the found word
+                _from=0 if pos-_before<0 else pos-_before
+                _to=pos+word_len+_after
+                text=item[_from:_to].replace('\n', ' ')
+                new_text = ' '.join(text.split()) # remove multiple blanks
+
+                '''
+                new_text=text.replace(cur_word, colored_word) # no good perché case-sensitive
+
+                redata = re.compile(re.escape(cur_word), re.IGNORECASE)
+                new_text = redata.sub(colored_word, text)
+
+                '''
+
+                # replace word(s) with colored_word
+                # ruotiamo sulle word in modo da colorarle
+                # se fossero presenti nello stesso testo
+                for i, w in enumerate(words):
+                    colored_word = colors[i](text=w, get=True)
+                    new_text = re.sub(w, colored_word, new_text, flags=re.IGNORECASE)
+
+                # - wrap text to easy displaying
+                tb=textwrap.wrap(new_text, 80, break_long_words=True)
+
+                # - save it into result list
+                result['data'][counter] = []
+                result['data'][counter].extend(tb)
+
+                if fPRINT:
+                    for l in tb:
+                        print('    ', l)
+                    print()
+
+
+
+        while True:
+            if choice=='b': break # return to book_list
+
+            # - display book metadata
+            for line in dis_line:
+                C.pYellowH(text=line, tab=8)
+
+            ''' Display data.
+                ruoto all'interno della lista visualizzando
+                [step] results per volta
+            '''
+
+            # - set range to display menu
+            if inx_from>=_max: inx_from=_max-_step
+            if inx_from<0:     inx_from=0
+            inx_to = inx_from+_step
+            if inx_to>_max:    inx_to=_max
+
+            # - display data
+            for index in range(inx_from, inx_to):
+                item = items[index+1]
+                print('{0:5} - {1}'.format(index+1, item[0]))
+                for line in item[1:]:
+                    print(' '*7, line)
                 print()
-        else:
-            C.pCyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
-            prompt()
+
+            # - Get keybord input
+            choice=prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
+            if   choice in ['b']: break
+            elif choice in ['n']: inx_from+=_step
+            elif choice in ['p']: inx_from-=_step
+            elif choice in ['t']:
+                if self._execute:
+                    tags=prompt('Please enter TAGs (BLANK separator)')
+                    book['tags'] = tags.split()
+                    result = self._ePubs.updateField(rec=book, fld_name='tags')
+                    if result.matched_count:
+                        C.pCyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
+                        self._book_indexing(book, fields=['tags'])
+                        print()
+                else:
+                    C.pCyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
+                    prompt()
 
 
 
-    ####################################################
-    #
-    ####################################################
+
+    """
+        occurrencies=
+                { 'word1': [
+                    (2553, 2561),
+                    (2678, 3456)
+                    ]
+                }
+     - return = {
+                   word1:
+                       counter: x  # numero di occoorrenze
+                       data: []     # text con le occorrensze colorate
+                   word2:
+                       counter: x
+                       data: []
+                   wordn...
+    """
     def _color_words_in_text(self, text, occurrencies, fPRINT=False):
-        """
-            occurrencies=
-                    { 'word1': [
-                        (2553, 2561),
-                        (2678, 3456)
-                        ]
-                    }
-         - return = {
-                       word1: []     # text con le occorrensze colorate
-                       word2: []     # text con le occorrensze colorate
-                       wordn...
-         - return = {
-                       word1:
-                           counter: x  # numero di occoorrenze
-                           data: []     # text con le occorrensze colorate
-                       word2:
-                           counter: x
-                           data: []
-                       wordn...
-        """
         if isinstance(text, list): text=' '.join(text)
-        text_before=self._inp_args.text_size
-        text_after=self._inp_args.text_size
+        _lpad=self._inp_args.text_size
+        _rpad=self._inp_args.text_size
         result = {}
 
         # - preparazione word colorate
@@ -647,18 +820,21 @@ class eBooksLN:
         words=occurrencies.keys()
         tot_counter=0
         for word in words:
-            result[word] = []
-            ptr=result[word]
+            result[word] = {}
+            result[word]['counter'] = len(words)
+            tot_counter += len(words) # counter totale
+            result['data'] = {}
+            ptr=result['data']
 
             word_len=len(word)
             for pos in occurrencies[word]:
                 _from, _to = pos
-                # - get text around the word
-                _from -= text_before
-                if _from<0: _from=0
-                _to=_to+text_after
+                # - get text around the found word
+                _from=0 if _from-_lpad<0 else _from-_lpad
+                _to=_to+_rpad
                 data=text[_from:_to].replace('\n', ' ')
                 data = ' '.join(data.split()) # remove multiple blanks
+
 
                 '''
                 new_text=text.replace(cur_word, colored_word) # no good perché case-sensitive
@@ -679,30 +855,102 @@ class eBooksLN:
                 tb=textwrap.wrap(data, 80, break_long_words=True)
 
                 # - save it into result list
-                # ptr[tot_counter] = []
-                # ptr[tot_counter].extend(tb)
-                result[word]=data
+                ptr[tot_counter] = []
+                ptr[tot_counter].extend(tb)
+
                 if fPRINT:
                     pyaml.p(result)
 
         return result
 
 
-    def _displayBookMetadata(self, book, data):
+    ####################################################
+    # - Search the words for a specific field
+    # -
+    # - data = {
+    # -           word_name1: counter
+    # -           word_name2: counter
+    # -           word_name..n: counter
+    # -           ebooks: [] (book_id list cvontainig all the words)
+    # -         }
+    ####################################################
+    def _displayResults(self, book, data):
+        # data=' '.join(book['content'])
+        # occurrencies=regEx.FindIter(pattern, data=data, fPRINT=False)
+        # result=self._color_words_in_text(data, occurrencies)
+        ''' Sample
+            {
+                "word1": {"counter": 1 },
+                "word2": {"counter": 1 },
+                "data": {
+                            "1": ["Lee Child"],
+                            "2": ["Child pippo"],
+                        }
+            }
+        '''
+        dis_data = data.pop('data', [])
+        words = data.keys()
+        choice = ''
+        _max = len(dis_data)
+        _min = 0
+        _step=4
+        _from=_min
+
         # - prepard book info display data
-        nsBook=SimpleNamespace(book) # di comodo
+        dmBook=DotMap(book, _dynamic=False) # di comodo
         dis_line=[]
         dis_line.append('')
-        dis_line.append(f'book: {nsBook.title} - [{nsBook.author}]')
-        dis_line.append(f'    - id: {nsBook._id}')
-        dis_line.append(f'    - tags: {nsBook.tags}')
+        dis_line.append('book: {dmBook.title} - [{dmBook.author}]'.format(**locals()))
+        dis_line.append('    - id: {dmBook._id}'.format(**locals()))
+        dis_line.append('    - tags: {dmBook.tags}'.format(**locals()))
         for word in words:
             counter = data[word]['counter']
-            dis_line.append(f'        - word: {word} - instances: {counter}')
+            dis_line.append('        - word: {word} - instances: {counter}'.format(**locals()))
 
-        # - display book metadata
-        for line in dis_line:
-            C.pYellowH(text=line, tab=8)
+        while True:
+            if choice=='b': break # return to book_list
+
+            # - display book metadata
+            for line in dis_line:
+                C.pYellowH(text=line, tab=8)
+
+
+            ''' Display data.
+                ruoto all'interno della lista visualizzando
+                [step] results per volta'''
+
+            # - set range to display menu
+            if _from>=_max: _from=_max-_step
+            if _from<0:     _from=0
+            _to = _from+_step
+            if _to>_max:    _to=_max
+
+            # - display data
+            for index in range(_from, _to):
+                item = dis_data[index+1]
+                print('{0:5} - {1}'.format(index+1, item[0]))
+                for line in item[1:]:
+                    print(' '*7, line)
+                print()
+
+            # - Get keybord input
+            choice=prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
+            if   choice in ['b']: break
+            elif choice in ['n']: _from+=_step
+            elif choice in ['p']: _from-=_step
+            elif choice in ['t']:
+                if self._execute:
+                    tags=prompt('Please enter TAGs (BLANK separator)')
+                    book['tags'] = tags.split()
+                    result = self._ePubs.updateField(rec=book, fld_name='tags')
+                    if result.matched_count:
+                        C.pCyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
+                        self._book_indexing(book, fields=['tags'])
+                        print()
+                else:
+                    C.pCyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
+                    prompt()
+
 
 
     ####################################################
@@ -719,23 +967,20 @@ class eBooksLN:
         _book=' '.join(book['content'])
         occurrencies=regEx.FindIter(pattern, data=_book, fPRINT=False)
         data=self._color_words_in_text(_book, occurrencies)
-        self, _displayBookMetadata(book, data)
+        # - prepard book info display data
+        nsBook=SimpleNamespace(book) # di comodo
+        dis_line=[]
+        dis_line.append('')
+        dis_line.append(f'book: {nsBook.title} - [{nsBook.author}]')
+        dis_line.append(f'    - id: {nsBook._id}')
+        dis_line.append(f'    - tags: {nsBook.tags}')
+        for word in words:
+            counter = data[word]['counter']
+            dis_line.append(f'        - word: {word} - instances: {counter}')
 
-        colored_text = data.pop('data', [])
-        # crate menu_list
-        for item in colored_text:
-            menu_entry=[item, '']
-            menu_list.append(menu_entry)
-
-        choice_dict = {
-            't': self._update_tag,
-            'item_selected': None,
-            'q': 'return'
-        }
-
-
-        eBook_Menu(menu_list, choice_dict)
-
+        # - display book metadata
+        for line in dis_line:
+            C.pYellowH(text=line, tab=8)
 
         ''' Sample
             {
@@ -747,6 +992,95 @@ class eBooksLN:
                         }
             }
         '''
+
+    ####################################################
+    # - Search the words for a specific field
+    # -
+    # - data = {
+    # -           word_name1: counter
+    # -           word_name2: counter
+    # -           word_name..n: counter
+    # -           ebooks: [] (book_id list cvontainig all the words)
+    # -         }
+    ####################################################
+    def _displayResults_New(self, book, pattern):
+        _book=' '.join(book['content'])
+        occurrencies=regEx.FindIter(pattern, data=_book, fPRINT=False)
+        data=self._color_words_in_text(_book, occurrencies)
+        ''' Sample
+            {
+                "word1": {"counter": 1 },
+                "word2": {"counter": 1 },
+                "data": {
+                            "1": ["Lee Child"],
+                            "2": ["Child pippo"],
+                        }
+            }
+        '''
+        dis_data = data.pop('data', [])
+        words = data.keys()
+        choice = ''
+        _max = len(dis_data)
+        _min = 0
+        _step=4
+        _from=_min
+
+        # - prepard book info display data
+        dmBook=DotMap(book, _dynamic=False) # di comodo
+        dis_line=[]
+        dis_line.append('')
+        dis_line.append('book: {dmBook.title} - [{dmBook.author}]'.format(**locals()))
+        dis_line.append('    - id: {dmBook._id}'.format(**locals()))
+        dis_line.append('    - tags: {dmBook.tags}'.format(**locals()))
+        for word in words:
+            counter = data[word]['counter']
+            dis_line.append('        - word: {word} - instances: {counter}'.format(**locals()))
+
+        while True:
+            if choice=='b': break # return to book_list
+
+            # - display book metadata
+            for line in dis_line:
+                C.pYellowH(text=line, tab=8)
+
+
+            ''' Display data.
+                ruoto all'interno della lista visualizzando
+                [step] results per volta'''
+
+            # - set range to display menu
+            if _from>=_max: _from=_max-_step
+            if _from<0:     _from=0
+            _to = _from+_step
+            if _to>_max:    _to=_max
+
+            # - display data
+            import pdb; pdb.set_trace() # by Loreto
+            for index in range(_from, _to):
+                item = dis_data[index+1]
+                print('{0:5} - {1}'.format(index+1, item[0]))
+                for line in item[1:]:
+                    print(' '*7, line)
+                print()
+
+            # - Get keybord input
+            choice=prompt('[n]ext [p]rev [b]ooks_list [t]ag', validKeys='n|p|b|t')
+            if   choice in ['b']: break
+            elif choice in ['n']: _from+=_step
+            elif choice in ['p']: _from-=_step
+            elif choice in ['t']:
+                if self._execute:
+                    tags=prompt('Please enter TAGs (BLANK separator)')
+                    book['tags'] = tags.split()
+                    result = self._ePubs.updateField(rec=book, fld_name='tags')
+                    if result.matched_count:
+                        C.pCyanH(text='tags {0} have been added'.format(book['tags']), tab=4)
+                        self._book_indexing(book, fields=['tags'])
+                        print()
+                else:
+                    C.pCyanH(text='in DRY-RUN mode, tag setting not available', tab=4)
+                    prompt()
+
 
 
 

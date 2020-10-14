@@ -14,7 +14,7 @@
             "args": [
                 "search",
                 // "--field=content",
-                "--words=corpotre",
+                "--words=ciao",
                 "--regex",
                 "--go",
             ],

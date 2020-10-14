@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # updated by ...: Loreto Notarantonio
-# Version ......: 08-10-2020 11.43.16
+# Version ......: 11-10-2020 12.04.11
 #
 import sys
 import pymongo
@@ -156,7 +156,6 @@ class MongoCollection:
     # -  filter: {'_id': IDvalue}
     ####################################################
     def set_id(self, rec):
-        # import pdb;pdb.set_trace()
 
         _id = []
         for fld in self._id_fields:
@@ -216,7 +215,7 @@ class MongoCollection:
             for field in skip_field:
                 ret_this_flds[field]=0
 
-        print(ret_this_flds)
+        # print(ret_this_flds)
         # cursor = self._collection.find(self._query, { "_id": 1 }).skip(self._from).limit(nrecs)
         # cursor = self._collection.find(self._query).skip(self._from).limit(nrecs)
         cursor = self._collection.find(self._query,  ret_this_flds ).skip(self._from).limit(nrecs)
