@@ -1,1 +1,0 @@
-/mnt/k/Filu/LnDisk/GIT-REPO/Python/LnPyLib/Regex-LN/LnRegex.py

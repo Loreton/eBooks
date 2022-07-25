@@ -1,1 +1,0 @@
-/mnt/k/Filu/LnDisk/GIT-REPO/Python/LnPyLib/Configuration-LN/configurationLoader.py
