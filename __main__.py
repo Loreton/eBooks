@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # updated by ...: Loreto Notarantonio
-# Date .........: 05-02-2025 15.18.15
+# Date .........: 05-02-2025 15.32.27
 
 import sys; sys.dont_write_bytecode=True
 import os
@@ -194,7 +194,7 @@ def process_file(fileIn: str, fileOut: str, search_string: list=[], write_file: 
         print(f"{color.redH}ERROR reading file: {fileIn}")
         return
 
-    # --- calcolo se tutte le parole sono trovate
+    # --- calcolo se tutte le parole sono trovate trest
     n_matches=0
     for string in search_string:
         if string in  content:
