@@ -130,6 +130,5 @@ dmypy.json
 
 #- by Loreto
 .sublime/
-eBooks_for_test/
-bin/*20??-??-??_*.zip
+.venv/
 # **/*.zip
