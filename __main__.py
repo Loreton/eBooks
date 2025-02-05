@@ -1,243 +1,263 @@
-#!/usr/bin/python3
-#
+#! /usr/bin/env python3
 # updated by ...: Loreto Notarantonio
-# Version ......: 11-10-2020 17.06.02
+# Date .........: 05-02-2025 15.18.15
+
+import sys; sys.dont_write_bytecode=True
+import os
+
+
+import tika # pip install tika
+tika.initVM() # ha bisogno di java... https://stackoverflow.com/questions/51514246/use-tika-with-python-runtimeerror-unable-to-start-tika-server
+from tika import parser
+
+from pathlib import Path
+
+
+
+
+
+TAB2=' '*2
+TAB4=' '*4
+TAB6=' '*6
+
+
+import argparse
+
 #
-import  sys; sys.dont_write_bytecode = True
-import  os
-from    pathlib import Path
-from    types import SimpleNamespace
-import pyaml
+##############################################################
+# - Parse Input
+##############################################################
+def ParseInput():
+    def check_dir(path):
+        p = Path(path)
+        if p.is_dir():
+            return str(p.resolve())
+        else:
+            print('    [Ln] - Input arg ERROR: dir: {p} is not valid.'.format(**locals()))
+            sys.exit(1)
 
-from    lnLib.colorLN import LnColor; C=LnColor()
-from    lnLib.promptLN import prompt; prompt(gVars={"color":LnColor()})
-from    lnLib.loggerLN import setLogger
+    # =============================================
+    # = Parsing
+    # =============================================
+    if len(sys.argv) == 1:
+        sys.argv.append('-h')
+    # required='openwrt' in sys.argv or 'dnsmasq' in sys.argv,
 
-import  lnLib.monkeyPathLN as PathLN
-import  lnLib.monkeyBenedictLN # per caricare i miei metodi
+    parser = argparse.ArgumentParser(description='ebooks management')
 
-from    Source.parseInputLN import parseInput
-from    lnLib.configurationLoader import LoadConfigFile
-from    lnLib.resolveDictVars import ResolveDictVars
+    parser.add_argument('--extension', required=False, metavar='', default='.epub',
+                help='specify extension to be searched (default: %(default)s)')
 
-from    Source.eBooksLN import eBooksLN
+    parser.add_argument('--dir-name',  required=False, metavar='', default='.', type=check_dir,
+                help='specify root directory (default: %(default)s)')
 
-"""
-    inp_list=[
-        {index { title: title, tags: tags }}
-        {index { title: title, tags: tags }}
-        {index { title: title, tags: tags }}
-        ]
-"""
+    parser.add_argument('--out-dir',  required=False, metavar='', default=None, type=check_dir,
+                help='specify root directory (default: %(default)s)')
 
-def search():
-    print('search')
-    prompt()
-def update():
-    print('update')
-    prompt()
-def delete():
-    print('delete')
-    prompt()
-def quit():
-    sys.exit()
+    parser.add_argument('--author', required=False, metavar='', default=["*"], nargs='*',
+                help="""author(s) name.
+    E' anche possibile indicare una o più stringhe separate da BLANK
+    Es: --author author01 author02 ... "author 03"  (default: %(default)s)""")
 
+    parser.add_argument('--search', required=True, metavar='', default=[], nargs='*',
+                help="""search string.
+    E' anche possibile indicare una o più stringhe separate da BLANK
+    Es: --search string01 "string 02" ... "string n" (default: %(default)s)""")
 
-def Menu(inp_list=[]):
-    from subprocess import call
-    if not inp_list:
-        inp_list=[]
-        inp_list.append({0: 'dummy'})
-        for index in range(1, 100+1):
-            data=SimpleNamespace()
-            data.index=f'{index:02}'
-            data.title=f'title_{index:02}'
-            data.tags=f'tags_{index:02}'
-            item={index: data.__dict__}
-            inp_list.append(item)
-        # for index in range(1, 100+1):
-        #     item=SimpleNamespace()
-        #     item.index=index
-        #     item.title=f'title_{index:02}'
-        #     item.tags=f'tags_{index:02}'
-        #     inp_list.append(item.__dict__)
-        # for item in inp_list:
-        #     print(item)
-    tot_item=len(inp_list)
-    _from=0
-    menu_entries=10
-
-    while True:
-        _ = call('clear' if os.name =='posix' else 'cls')
-        print('\n'*2)
-
-        """ check display range """
-        if _from>=tot_item: _from=tot_item-menu_entries
-        if _from<1: _from=1
-        _to = _from+menu_entries
-        if _to>=tot_item: _to=tot_item
-
-        for index in range(_from, _to):
-            item=inp_list[index][index]
-            print(f"    [{index:02}]: {item['title']} - {item['tags']}")
-
-        msg='s[earch] - u[pdate] - d[elete] n[ext] p[prev] - q[uit]'
-        choice      = input(msg).strip().lower()
-        if choice=='n':
-            _from+=menu_entries
-        elif choice=='p':
-            _from-=menu_entries
-        elif choice in ['s', 'u', 'd', 'q']:
-            choice_dict = {
-                's': search,
-                'u': update,
-                'd': delete,
-                'q': quit
-            }
-            choice_dict[choice]()
+    parser.add_argument('--go',      action='store_true',
+                help='specify if command must be executed.  (default: %(default)s)')
+    parser.add_argument('--verbose', action='store_true',
+                help='Display all messages (default: %(default)s)')
 
 
-######################################
-# sample call:
-#
-######################################
+
+        # logging and debug options
+    parser.add_argument('--display-args', help='Display input paramenters', action='store_true')
+
+
+    # args = vars(parser.parse_args())
+    args = parser.parse_args()
+    # print (args); sys.exit()
+    if not args.out_dir:
+        # args.out_dir=Path(args.dir_name).resolve().parent / "tmp"
+        args.out_dir=str(Path(args.dir_name).resolve() / "tmp")
+
+    if args.display_args:
+        import json
+        json_data = json.dumps(vars(args), indent=4, sort_keys=True)
+        print('input arguments: {json_data}'.format(**locals()))
+        sys.exit(0)
+
+
+    return  args
+
+
+# ==============================================
+# - funzione utile per usarla nei display....
+# - ref https://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
+# ==============================================
+def getColors():
+    from types import SimpleNamespace
+    colors=SimpleNamespace(
+        red        = '\033[0;31m',
+        redH       = '\033[1;31m',
+        green      = '\033[0;32m',
+        greenH     = '\033[1;32m',
+        yellow     = '\033[0;33m',
+        yellowH    = '\033[1;33m',
+        blue       = '\033[0;34m',
+        blueH      = '\033[1;34m',
+        purple     = '\033[0;35m',
+        purpleH    = '\033[1;35m',
+        cyan       = '\033[0;36m',
+        cyanH      = '\033[1;36m',
+        gray       = '\033[0;37m',
+        white      = '\033[1;37m',
+        reset      = '\033[0m',
+    )
+    return colors
+
+
+# ######################################################
+# # original example
+# ######################################################
+def orig_example():
+    fileIn = "berk011veel01_01.epub"
+    fileIn = "/media/loreto/LnDisk_SD_ext4/Filu/ln-eBooks/New_books/2025-01/01 - Un matrimonio di convenienza - Felicia Kingsley.epub"
+    fileOut = "Felicia Kingsley.txt"
+
+    parsed = parser.from_file(fileIn, service='text')
+    content = parsed["content"]
+
+    with open(fileOut, 'w', encoding='utf-8') as fout:
+        fout.write(content)
+
+
+# ######################################################
+# # get directory tree
+# ######################################################
+def TreeList(root_path, folder=None):
+    root_path=Path(root_path)
+    tree_list=list(root_path.glob('**'))
+
+    return tree_list
+
+# ######################################################
+# # get list of files recursive
+# ######################################################
+def fileList(root_path, folder='', pattern='*.*'):
+    root_path=Path(root_path)
+    root_path=root_path / folder
+    file_list=list(root_path.glob(f'**/{pattern}'))
+
+    return file_list
+
+
+
+# ######################################################
+# # se newSTR == '' andiamo in FIND only
+# ######################################################
+def findText(content: list= [], search_string: list=[], fVerbose: bool=False):
+    # nMatches=len(search_string)
+    for index, line in enumerate(content):
+        found_in_line=False
+        for string in search_string:
+            if string in line:
+                cur_line = line.replace(string, color.yellowH + string + color.reset) # inseriamo il colore
+                found_in_line=True
+
+
+        if found_in_line:
+            if fVerbose: print (f"{TAB6}[{index+0:3}]: {content[index-1]}")
+            print (f"{TAB6}[{index+1:3}]: {cur_line}")
+            if fVerbose: print (f"{TAB6}[{index+2:3}]: {content[index+1]}")
+            print()
+    print()
+
+
+
+
+
+###################################################
+#    process current epub file
+###################################################
+def process_file(fileIn: str, fileOut: str, search_string: list=[], write_file: bool=False, fVerbose: bool=False):
+    separator='-'*80
+    try:
+        parsed = parser.from_file(str(fileIn), service='text')
+        content = parsed["content"]
+    except AttributeError as e:
+        print ("ERROR:", e)
+        sys.exit(1)
+
+    if not content:
+        print(f"{color.redH}ERROR reading file: {fileIn}")
+        return
+
+    # --- calcolo se tutte le parole sono trovate
+    n_matches=0
+    for string in search_string:
+        if string in  content:
+            n_matches+=1
+
+    if n_matches == len(search_string):
+        print(f'{color.green}{TAB2}{separator}{color.reset}')
+        print(f"{color.green}{TAB2}- processing.... {fileIn}{color.reset}")
+        print(f'{color.green}{TAB2}{separator}{color.reset}')
+
+        content_list = [line.strip() for line in  content.split('\n') if line.strip() != ""]
+
+        if write_file:
+            with open(fileOut, 'w', encoding='utf-8') as fout:
+                fout.write('\n'.join(content_list))
+
+        findText(content=content_list, search_string=search_string, fVerbose=fVerbose)
+    else:
+        if fVerbose:
+            print(color.gray + f'skipping.... {fileIn}', color.reset)
+
+
+
+###################################################
+#    Ctrl-C capture
+###################################################
+import signal
+def signal_handler(signalLevel, frame):
+    ### Ctrl-c
+    if int(signalLevel)==2:
+        print('\n'*3)
+        choice = input("       Ctrl-c was pressed. [q]quit [any-key] restart \n\n")
+        if choice == 'q':
+            os.kill(int(os.getpid()), signal.SIGTERM)
+            os.system("clear")
+            sys.exit(1)
+
+signal.signal(signal.SIGINT, signal_handler)
+
+
+###################################################
+#    M A I N
+###################################################
 if __name__ == '__main__':
-    Menu()
-    sys.exit()
-    """ read Main configuration file hust for logger info"""
-    myConf=LoadConfigFile(filename=f'config/eBooks.yml')
-
-    """ logger """
-    log_cfg=myConf.pop('main.logger') # remove logger tree
-    logger=setLogger(log_cfg)
-    PathLN.setLoggerLN(logger)
-
-    script_path=Path(sys.argv[0]).resolve().parent # ... then up one level
-    os.environ['script_path']=str(script_path) # potrebbe essere usata nel config_file
-
-    ResolveDictVars(d=myConf, myLogger=logger, value_sep='/')
-    ebooks=myConf['ebooks']
-
-    """ parsing input """
-    args, inp_log, dbg=parseInput(color=LnColor())
-
-    """ override logger with input parameters """
-    if inp_log.level:   logger.set_level(inp_log.level)
-    if inp_log.console: logger.set_console(inp_log.console)
-    if inp_log.modules: logger.set_modules(inp_log.modules)
-
-    logger.info('input   arguments', vars(args))
-    logger.debug3('logging arguments', inp_log)
-    logger.debug3('debug   arguments', vars(dbg))
-    # -------------------------------
+    color=getColors()
+    args = ParseInput()
+    ebookRootDir=Path(args.dir_name).resolve()
+    search_string=args.search
+    # print(ebookRootDir)
+    # print(search_string)
 
 
-    dbname=args.db_name if args.db_name else ebooks['dbase_name']
-    myDB=eBooksLN(db_name=dbname, inp_args=args)
-    if 'update_fieldx' in args:
-        result = myDB.update_field_many( )
+    # ebookRootDir='/media/loreto/LnDisk_SD_ext4/Filu/ln-eBooks/New_books'
+    # outDir=ebookRootDir.parent / "tmp"
 
-    # elif 'search' in args:
-    #     result = myDB.main_search( field_name=args.fieldname, words=args.words, ignore_case=True)
-
-    # elif 'search' in args:
-    #     result = myDB.field_search(
-    #                     fld_name=args.field,
-    #                     words=args.words,
-    #                     book_id=args.book_id,
-    #                     ignore_case=True)
-
-    elif 'search' in args.action:
-        # if len(args.words) == 1:
-        #     result = myDB.search_one_word(
-        #             fld_name=args.field,
-        #             word=args.words,
-        #             )
-        #     for item in result:
-        #         print(item)
-        #     print(len(result))
-
-        if args.near and len(args.words)==2:
-            records = myDB.search_two_near_words(
-                    fld_name=args.field,
-                    words=args.words,
-                    near_val=args.near,
-                    )
-            myDB.manage_display(records)
-
-
-
-            # for item in result:
-            #     if '_id' in item:
-            #         print(item['_id'])
-            #     else:
-            #         print(item)
-            print(len(result))
-
-        elif len(args.words) > 0 and args.regex:
-            records = myDB.search_more_words_regex(
-                    fld_name=args.field,
-                    words=args.words,
-                    )
-            print(len(records))
-
-            #     if '_id' in item:
-            #         print(item['_id'])
-            #     else:
-            #         print(item)
-
-        # elif len(args.words) > 0:
-        #     result = myDB.search_more_words(
-        #             fld_name=args.field,
-        #             words=args.words,
-        #             )
-        #     # for item in result:
-        #     #     if '_id' in item:
-        #     #         print(item['_id'])
-        #     #     else:
-        #     #         print(item)
-        #     print(len(result))
-
-
-
-    # elif 'regex' in args:
-    #     # result = myDB.search_perf(
-    #     result = myDB.regex_near_search(
-    #     # result = myDB.regex_near_search_step2(
-    #     # result = myDB.regex_near_search_OK(
-    #                     fld_name=args.field,
-    #                     words=args.words,
-    #                     near=args.near,
-    #                     ignore_case=True)
-
-    # elif 'book_search' in args:
-    #     result = myDB.eBook_search(words=args.words, book_id=args.id, ignore_case=True)
-
-    elif 'load' in args:
-        input_dir=args.dir if args.dir else config.main.epub_input_dir
-        target_dir=config.main.epub_target_dir if args.move_file else None
-
-        myDB.load_eBooks(input_dir, file_pattern=args.ftype, target_dir=target_dir)
-
-    elif 'build' in args:
-        myDB.build_dictionary(fields=args.fields, force_indexing=args.force_indexing)
-
-    elif 'change_id' in args:
-        myDB.change_ID()
-
-
-
-
-def test():
-    '''
-    ./__main__.py book_search --words ciao dopo --id Jess_L_Oltre_le_bugie
-    ./__main__.py search --field title --words sceglier
-
-    - cerca nei int title + author
-    ./__main__.py search --field _id --words domani
-
-    - load book into dictionary
-    ./__main__.py  load --author --chapters --title --description
-    '''
-
-
+    # import pdb; pdb.set_trace() # by Loreto
+    # tree=TreeList(ebookRootDir)
+    # for dir_path in tree:
+    #     print(dir_path)
+    files=fileList(ebookRootDir, pattern=f'*{args.extension}')
+    # for file in files[0:3]:
+    for filepath in files:
+        fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
+        for name in args.author:
+            if name == "*" or name.lower() in str(filepath).lower():
+                process_file(fileIn=filepath, fileOut=fileOut, search_string=search_string, fVerbose=args.verbose)
