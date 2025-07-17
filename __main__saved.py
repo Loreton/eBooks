@@ -1,11 +1,15 @@
 #! /usr/bin/env python3
 # updated by ...: Loreto Notarantonio
-# Date .........: 17-07-2025 17.11.35
+# Date .........: 05-02-2025 17.28.56
 #
 
 import sys; sys.dont_write_bytecode=True
 import os
 
+
+import tika # pip install tika
+tika.initVM() # ha bisogno di java... https://stackoverflow.com/questions/51514246/use-tika-with-python-runtimeerror-unable-to-start-tika-server
+from tika import parser
 
 from pathlib import Path
 
@@ -115,7 +119,29 @@ def getColors():
     return colors
 
 
+# ######################################################
+# # original example
+# ######################################################
+def orig_example():
+    fileIn = "berk011veel01_01.epub"
+    fileIn = "/media/loreto/LnDisk_SD_ext4/Filu/ln-eBooks/New_books/2025-01/01 - Un matrimonio di convenienza - Felicia Kingsley.epub"
+    fileOut = "Felicia Kingsley.txt"
 
+    parsed = parser.from_file(fileIn, service='text')
+    content = parsed["content"]
+
+    with open(fileOut, 'w', encoding='utf-8') as fout:
+        fout.write(content)
+
+
+# ######################################################
+# # get directory tree
+# ######################################################
+def TreeList(root_path, folder=None):
+    root_path=Path(root_path)
+    tree_list=list(root_path.glob('**'))
+
+    return tree_list
 
 # ######################################################
 # # get list of files recursive
@@ -129,6 +155,27 @@ def fileList(root_path, folder='', pattern='*.*'):
 
 
 
+# ######################################################
+# # se newSTR == '' andiamo in FIND only
+# ######################################################
+def findText(content: list= [], search_string: list=[], fVerbose: bool=False):
+    # nMatches=len(search_string)
+    for index, line in enumerate(content):
+        found_in_line=False
+        for string in search_string:
+            if string in line:
+                cur_line = line.replace(string, color.yellowH + string + color.reset) # inseriamo il colore
+                found_in_line=True
+
+
+        if found_in_line:
+            if fVerbose: print (f"{TAB6}[{index+0:3}]: {content[index-1]}")
+            print (f"{TAB6}[{index+1:3}]: {cur_line}")
+            if fVerbose: print (f"{TAB6}[{index+2:3}]: {content[index+1]}")
+            print()
+    print()
+
+
 
 
 
@@ -138,7 +185,7 @@ def fileList(root_path, folder='', pattern='*.*'):
 def process_file(fileIn: str, fileOut: str, search_string: list=[], write_file: bool=False, fVerbose: bool=False):
     separator='-'*80
     try:
-        parsed = tika.parser.from_file(str(fileIn), service='text')
+        parsed = parser.from_file(str(fileIn), service='text')
         content = parsed["content"]
     except AttributeError as e:
         print ("ERROR:", e)
@@ -197,13 +244,21 @@ if __name__ == '__main__':
     args = ParseInput()
     ebookRootDir=Path(args.dir_name).resolve()
     search_string=args.search
+    # print(ebookRootDir)
+    # print(search_string)
 
 
+    # ebookRootDir='/media/loreto/LnDisk_SD_ext4/Filu/ln-eBooks/New_books'
+    # outDir=ebookRootDir.parent / "tmp"
+
+    # import pdb; pdb.set_trace() # by Loreto
+    # tree=TreeList(ebookRootDir)
+    # for dir_path in tree:
+    #     print(dir_path)
     files=fileList(ebookRootDir, pattern=f'*{args.extension}')
     # for file in files[0:3]:
     for filepath in files:
-        print(filepath);
-    #     fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
-    #     for name in args.author:
-    #         if name == "*" or name.lower() in str(filepath).lower():
-    #             process_file(fileIn=filepath, fileOut=fileOut, search_string=search_string, fVerbose=args.verbose)
+        fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
+        for name in args.author:
+            if name == "*" or name.lower() in str(filepath).lower():
+                process_file(fileIn=filepath, fileOut=fileOut, search_string=search_string, fVerbose=args.verbose)
