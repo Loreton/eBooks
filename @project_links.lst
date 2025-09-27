@@ -1,0 +1,20 @@
+source_Dir="../lnPyLib"
+dest_Dir="Source/lnLib"
+
+    #- logger
+    Logger/ColoredLogger_V103.py          ColoredLogger.py ### rename it
+
+    #- subprocess
+    # System/checkingRunningProcess.py
+    # System/subprocessLN.py
+
+    #- utils
+    Regex/LnRegex.py
+    Utils/functionExecutionTime.py
+    # Utils/lnUtils.py
+    # Utils/dictUtils.py
+    # Utils/devicesDB_New_20230902.py         devicesDB.py
+    # Utils/devicesDB_sqLite.py
+
+
+
