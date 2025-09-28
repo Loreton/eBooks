@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # updated by ...: Loreto Notarantonio
-# Date .........: 27-09-2025 11.44.52
+# Date .........: 27-09-2025 19.17.41
 #
 
 import sys; sys.dont_write_bytecode=True
@@ -23,17 +23,6 @@ from functionExecutionTime import lnTimeIt
 
 
 
-# ######################################################
-# # get list of files recursive
-# ######################################################
-def fileList(root_path, folder='', pattern='*.*'):
-    root_path=Path(root_path)
-    root_path=root_path / folder
-    file_list=list(root_path.glob(f'**/{pattern}'))
-
-    return file_list
-
-
 
 
 
@@ -51,7 +40,7 @@ if __name__ == '__main__':
 
     gv.fBENEDICT = fBENEDICT ### --- potrebbe essere utile in altri punti del codice
     gv.project_name = "eBooks"
-    gv.version = f"{gv.project_name} version: V2025-09-27_114452"
+    gv.version = f"{gv.project_name} version: V2025-09-27_191741"
 
     ### --- setup logging
     logger = setupLogger(gv.project_name)
@@ -65,15 +54,14 @@ if __name__ == '__main__':
     gv.args = vars(args) if fBENEDICT else args
 
     ### --- change current console logging level as input required
-    logger.setLoggerLevel(console_level=args.log_console_level)
+    logger.setLoggerLevel(console_level=args.console_log_level)
 
     ### --- set all main project global variables
     gv = setMainVars(gVars=gv, search_paths=["conf"])
 
-    print(gv.color.red, "ciao", gv.color.reset)
-    print(gv.color.yellow, "come stai?\n", gv.color.reset)
+    # print(gv.color.red, "ciao", gv.color.reset)
+    # print(gv.color.yellow, "come stai?\n", gv.color.reset)
 
-    sys.exit()
     eBooks.process(gv)
 
 

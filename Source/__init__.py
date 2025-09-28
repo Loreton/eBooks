@@ -3,7 +3,7 @@
 # -*- coding: iso-8859-1 -*-
 
 # updated by ...: Loreto Notarantonio
-# Date .........: 27-09-2025 11.44.14
+# Date .........: 27-09-2025 15.53.54
 
 
 import sys; this=sys.modules[__name__]
@@ -57,18 +57,18 @@ if not _my_path: set_path()
 ###################################################
 #    Ctrl-C capture
 ###################################################
-# import signal
-# def signal_handler(signalLevel, frame):
-#     ### Ctrl-c
-#     if int(signalLevel)==2:
-#         print('\n'*3)
-#         choice = input("       Ctrl-c was pressed. [q]quit [any-key] restart \n\n")
-#         if choice == 'q':
-#             os.kill(int(os.getpid()), signal.SIGTERM)
-#             os.system("clear")
-#             sys.exit(1)
+import signal
+def signal_handler(signalLevel, frame):
+    ### Ctrl-c
+    if int(signalLevel)==2:
+        print('\n'*3)
+        choice = input("       Ctrl-c was pressed. [q]quit [any-key] restart \n\n")
+        if choice == 'q':
+            os.kill(int(os.getpid()), signal.SIGTERM)
+            os.system("clear")
+            sys.exit(1)
 
-# signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
 
 
 
@@ -79,16 +79,16 @@ def setupLogger(prj_name: str):
     from ColoredLogger import setColoredLogger, testLogger
 
     project_log_levels={
-        "notset":    0,    # DEFINED in logging module
+        "notset":    0,
         "trace":     5,
-        "debug":    10,    # DEFINED in logging module
+        "debug":    10,
         "notify":   15,
-        "info":     20,    # DEFINED in logging module
+        "info":     20,
         "function": 22,
         "caller":   24,
-        "warning":  30,    # DEFINED in logging module
-        "error":    40,    # DEFINED in logging module
-        "critical": 50,    # DEFINED in logging module
+        "warning":  30,
+        "error":    40,
+        "critical": 50,
     }
 
 
@@ -110,8 +110,9 @@ def setupLogger(prj_name: str):
 
 
 
-
-# def setMainVars(logger, prj_name, input_args, search_paths: list=["conf"]):
+#####################################################################
+#
+#####################################################################
 def setMainVars(gVars: dict, search_paths: list=["conf"]):
     global gv
     gv=gVars
