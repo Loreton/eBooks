@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # updated by ...: Loreto Notarantonio
-# Date .........: 27-09-2025 19.17.41
+# Date .........: 30-09-2025 11.31.09
 #
 
 import sys; sys.dont_write_bytecode=True
@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     gv.fBENEDICT = fBENEDICT ### --- potrebbe essere utile in altri punti del codice
     gv.project_name = "eBooks"
-    gv.version = f"{gv.project_name} version: V2025-09-27_191741"
+    gv.version = f"{gv.project_name} version: V2025-09-30_113109"
 
     ### --- setup logging
     logger = setupLogger(gv.project_name)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # print(gv.color.red, "ciao", gv.color.reset)
     # print(gv.color.yellow, "come stai?\n", gv.color.reset)
 
-    eBooks.process(gv)
+    eBooks.Main(gv)
 
 
     '''

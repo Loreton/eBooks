@@ -3,7 +3,7 @@
 # -*- coding: iso-8859-1 -*-
 
 # updated by ...: Loreto Notarantonio
-# Date .........: 27-09-2025 14.13.34
+# Date .........: 30-09-2025 18.02.44
 
 import sys
 import os
@@ -87,6 +87,7 @@ def operatorsFlags(my_parser):
     operators_group.add_argument('--and',    action='store_true', default=False, help=f'{Color.cyan}and between words{Color.reset}')
     operators_group.add_argument('--or',     action='store_true', default=False, help=f'{Color.cyan}or several words{Color.reset}')
     operators_group.add_argument('--near',   action='store_true', default=False, help=f'{Color.cyan}match string{Color.reset}')
+    operators_group.add_argument('--string', action='store_true', default=False, help=f'{Color.cyan}match string{Color.reset}')
 
 
 
@@ -102,7 +103,7 @@ def argsPostProcess(my_args):
     ### -- convertire alcuni attibuti in uppercase
     new_attrs = {}
     for k, v in attrs.items():
-        if k in ["and", "or",  "near", ""]:
+        if k in ["and", "or",  "near", "string"]:
             new_attrs[k.upper()] = v
         else:
             new_attrs[k] = v
@@ -146,7 +147,7 @@ def ParseInput(gVars: (SimpleNamespace, dict)):
     input_args.add_argument('--out-dir',  required=False, metavar='', default='/tmp/ebooks', type=check_tmp_dir,
                 help=f'{Color.cyan}specify output directory to save ebooks converted to txt {l.default}')
 
-    input_args.add_argument('--author', required=False, default=["*"], nargs='*',
+    input_args.add_argument('--author', required=False, default=[], nargs='*',
                 metavar='',
                 help=f"""{Color.cyan}author(s) name.
                             E' anche possibile indicare una o più stringhe separate da BLANK
@@ -161,7 +162,12 @@ def ParseInput(gVars: (SimpleNamespace, dict)):
     # - common options
     common_options(parser)
 
+
+    ### --- get input
     args = parser.parse_args()
+
+
+    ### --- process input args
     args = argsPostProcess(args)
 
     if args.display_args:

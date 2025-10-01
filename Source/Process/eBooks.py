@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # updated by ...: Loreto Notarantonio
-# Date .........: 28-09-2025 18.24.58
+# Date .........: 30-09-2025 18.06.06
 #
 
 import sys; sys.dont_write_bytecode=True
@@ -249,6 +249,85 @@ def read_epub_01(epub_file: str, fileout: str=None):
     return ebook
 
 
+###########################################################
+### --- GET title
+###########################################################
+def getTitle(book):
+    titles = book.get_metadata('DC', 'title') ### --- return list
+
+    if titles:
+        title = titles[0][0]
+    else:
+        title = "no-title" ### --- prendi nome del file fino alla virgola
+
+    title = LnRegex.FindFirstEnclosed(source_data=title, prefix='(', suffix=")", replace_with="", ignore_case=True)
+    if title:
+        title = ' '.join(title.split())
+
+    return title
+
+###########################################################
+### --- getAuthor
+###########################################################
+def getFirstAuthors(book):
+    creators = book.get_metadata('DC', 'creator') ### --- return list
+
+    authors = [c[0] for c in creators if c]
+
+    if not authors or not authors[0]:
+        authors = ["Sconosciuto"]
+
+    return authors[0]
+
+
+###########################################################
+### --- getAuthors
+###########################################################
+def getAuthors(book, only_first: bool=True):
+    creators = book.get_metadata('DC', 'creator') ### --- return list
+
+    authors = [c[0] for c in creators if c]
+
+    if not authors or not authors[0]:
+        authors = ["Sconosciuto"]
+
+    if authors:
+        if not authors[0]: ### --- potrebbe essere None
+            authors=["Sconosciuto"]
+    else:
+        authors=["Sconosciuto"]
+
+    if not isinstance(authors, (list, tuple)):
+        authors = [authors]
+
+
+    clean_authors=[]
+    chars = [',', "-", "xxxx"]
+
+    for author in authors:
+        # if "Sarina" in author:
+            # import pdb; pdb.set_trace() # by Loreto
+        for char in chars:
+            if char in author:
+                _authors=author.split(char)
+                if len(_authors) <= 2:
+                    clean_authors.append(author.replace(char, ''))
+                    break
+                else:
+                    clean_authors.extend(author.split(char))
+                    break
+        else:
+            clean_authors.append(author)
+
+    print(clean_authors)
+    print(authors)
+    import pdb; pdb.set_trace() # by Loreto
+    return authors
+
+
+
+
+
 
 # ######################################################
 # # get list of files recursive
@@ -262,11 +341,15 @@ def fileList(root_path, folder='', pattern='*.*'):
 
 
 
-def process(gVars):
+###########################################################
+### --- M A I N
+###########################################################
+def Main(gVars):
     global gv, logger
     gv = gVars
     logger = gv.logger
     args   = gv.args
+    LnRegex.setup(gVars=gv)
 
     ebookRootDir=Path(args.dir_name).resolve()
 
@@ -274,35 +357,52 @@ def process(gVars):
     files=fileList(ebookRootDir, pattern='*.epub')
 
     index=0
-    # for filepath in files[0:3]:
+    allAuthors=[]
     for filepath in files:
+    # for filepath in files[0:3]:
         file = Path(filepath)
         index += 1
-        # fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
 
-        logger.info("[%s] - processing book: %s", index, file.name)
+        ### --- READ ebook
+        logger.info("")
+        logger.info("[%s] processing book: %s", index, file.name)
         try:
             book = epub.read_epub(filepath)
         except Exception as e:
             logger.error("Errore durante l'apertura del file: %s - %s", filepath,  e)
             continue
 
-        data = book.get_metadata('DC', 'title') ### --- return list
-        title = [c[0].replace("(Italian Edition)", '') for c in data]
-        title = ' - '.join(title)
-        if title == "Il verdetto":
-            import pdb; pdb.set_trace() # by Loreto
-        creators = book.get_metadata('DC', 'creator') ### --- return list
-        authors = [c[0] for c in creators if c[0]]
-        author = ' - '.join(authors) if authors else 'Sconosciuto'
-        print(title)
-        print(author)
+        ### --- GET title
+        title = getTitle(book)
 
-        continue
+        ### --- GET authors
+        author = getFirstAuthors(book)
 
-        title, authors = extractMetadata(book)
+
+        if gv.args.author:
+            _author = author.lower()
+            for name in gv.args.author:
+                if name.lower() in _author:
+                    break
+            else:
+                logger.info("    skipping due to author")
+                continue
+
+        if not author in allAuthors:
+            allAuthors.append(author)
+
         logger.info("      title:  %s", title)
-        logger.info("      author: %s", authors)
-        ebook = process_epub(book=book, title=title, authors=authors, out_dir=args.out_dir)
+        logger.info("      author: %s", author)
+        # logger.info("      new-file: %s", f"{author} - {title}.epub")
+        # ebook = process_epub(book=book, title=title, authors=authors, out_dir=args.out_dir)
 
 
+    fileout=f'{gv.args.out_dir}/ALL_AUTHORS.txt'
+    with open(fileout, 'w', encoding='utf-8') as fout:
+        for author in allAuthors:
+            print(author)
+            # fout.write(' '.join(author))
+            fout.write(author)
+            fout.write('\n')
+
+    print(f"authors file has been created '{fileout}'")
