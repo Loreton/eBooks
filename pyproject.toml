@@ -23,7 +23,7 @@ dev = [
 ]
 
 [project.scripts]
-ebook = "eBooks.main:main"
+ebooks = "eBooks.main:main"
 
 [project.license]
 text = "MIT"
