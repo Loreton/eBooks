@@ -1,1 +1,0 @@
-/media/loreto/LnDisk_SD_ext4/Filu/GIT-REPO/Python/lnPyLib/Logger/ColoredLogger_V103.py

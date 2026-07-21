@@ -1,0 +1,57 @@
+[build-system]
+requires = [
+    "setuptools>=68",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eBooks"
+version = "0.1.1"
+description = ""
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "ebooklib>=0.20",
+    "pylnlib",
+    "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+ebook = "eBooks.main:main"
+
+[project.license]
+text = "MIT"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+ignore = [
+    "E401",
+    "E402",
+    "E702",
+    "E701",
+]
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
+reportUnusedVariable = "warning"
+reportUnusedImport = "warning"
+reportOptionalMemberAccess = "warning"
+reportMissingTypeStubs = false
+
+[tool.setuptools.packages.find]
+where = [
+    "src",
+]
+
+[tool.uv.sources.pylnlib]
+path = "../pyLnLib"
+editable = true
