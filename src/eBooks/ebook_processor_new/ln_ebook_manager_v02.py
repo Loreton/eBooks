@@ -191,12 +191,14 @@ class EpubProcessor:
     # Export
     # ======================================================================
 
-    def export_text(self, filename: Path|str) -> Path:
+    def export_text(self, filename: Path|str, overwrite: bool = False) -> Path:
         filename = Path(filename)
         if not filename.parent.exists():
             filename.parent.mkdir(parents=True, exist_ok=True)
 
-        filename = unique_filename(filename)
+        if not overwrite:
+            filename = unique_filename(filename)
+
         with filename.open("w", encoding="utf-8") as fp:
 
             fp.write("=" * 60 + "\n")
