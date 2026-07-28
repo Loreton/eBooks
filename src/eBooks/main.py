@@ -1,111 +1,143 @@
-#! /usr/bin/env python3
-# updated by ...: Loreto Notarantonio
-# Date .........: 21-07-2026 16.42.09
-#
+#!/usr/bin/env python3
+# ebook_processor/main.py
+"""
+Example usage of the EbookProcessor
+"""
 
-#---------- external modules to be installed ----------------------
-# uv add --editable /home/loreto/filu/Programming/gitREPO/pyLnLib
-# uv add ebboklib
-#------------------------------------------------------------------
-#
 import sys
-sys.dont_write_bytecode=True
-# import os
-# from types import SimpleNamespace
+sys.dont_write_bytecode = True
 
-# from pathlib import Path
+from pathlib import Path
 
 
-# import  Source
-# from    Source import  setupLogger, setMainVars ### definito in __init__.py
-# from    ParseInput import ParseInput
-# # from    mainGlobalVars import setMainVars
-# import  eBooks
-# from    benedict import benedict
+# from pyLnLib import init_logger
+from pyLnLib.git.pyproject_class import PyProjectManager
+
+# from pyLnLib.context   import ctx, get_project_vars
+from pyLnLib.context_V2   import init_context
+from pyLnLib.logger    import init_logger
+from pyLnLib.files     import get_yaml_engine
+from pyLnLib.lndict    import lnDict
 
 
-# from functionExecutionTime import lnTimeIt
+from eBooks.ebook_processor import EbookProcessor
 
 
 
-###################################################
-#    M A I N
-###################################################
+
+def initialize_program() -> lnDict:
+    if 'debugpy' in sys.modules:
+        import os
+        print(os.environ.get("ZED_APP_PATH"))
+        print(os.environ.get("ZED_ENVIRONMENT"))
+        print(os.environ.get("ZED_TERM"))
+        print(os.environ.get("TERM_PROGRAM"))
+
+    pyproject = PyProjectManager(Path.cwd())
+    appl_version = pyproject.get_version()
+    # ctx.project_name = f"eBooks-{ctx.version}"
+    ctx = init_context(name=f"eBooks-{appl_version}", tmp_dir=f"/tmp/ebooks-{appl_version}", version=appl_version)
+    #### 2. read static project_list file
+    yaml_engine=get_yaml_engine(search_paths=[ctx.config_dir], recursive=True)
+    config_file = ctx.config_dir / "authors.yaml"
+    config_data: lnDict = lnDict(yaml_engine.load(str(config_file)))
+
+    # pv: lnDict=get_project_vars()
+    ctx.config = config_data
+    return ctx
+
+
+
+
 def main():
-    print("ok")
-    sys.exit("completed")
-    ### --- select global vars definition type
-    fBENEDICT = False
-    gv = SimpleNamespace()
-    if fBENEDICT:
-        gv = benedict(keyattr_enabled=True, keyattr_dynamic=False)  # copy all input args to gv
+    """Funzione main per testare la classe"""
+    ctx = initialize_program()
 
-    gv.fBENEDICT = fBENEDICT ### --- potrebbe essere utile in altri punti del codice
-    gv.project_name = "eBooks"
-    gv.version = f"{gv.project_name} version: V2026-07-21_164209"
+    #### - logger initializzation
+    logger = init_logger(logger_name=ctx.name, logging_dir=ctx.log_dir)
 
-    ### --- setup logging
-    logger = setupLogger(gv.project_name)
-    logger.warning(gv.version)
-    gv.logger    = logger
-    gv.color                = gv.logger.Colors
-    gv.logLevels            = list(gv.logger.logLevels.keys())
+    #### - processor initializzation
+    logger.info("🚀 Avvio processamento ebook...")
+    processor = EbookProcessor(decode_type='lxml', normalize_text=True)
+    # Directory di esempio
+    root_dir = Path(ctx.config.dirs.top_dir)  # Cambia con la tua directory
+    output_dir = Path(ctx.config.dirs.output_dir)  # Directory di output
 
-    ### --- parse Input
-    args = ParseInput(gVars=gv)
-    gv.args = vars(args) if fBENEDICT else args
+    if not root_dir.exists():
+        logger.error(f"Directory non trovata: {root_dir}")
+        return
 
-    ### --- change current console logging level as input required
-    logger.setLoggerLevel(console_level=args.console_log_level)
+    # Processa tutti gli EPUB nella directory, organizzando per autore
+    logger.info("🚀 Avvio processamento ebook...")
 
-    ### --- set all main project global variables
-    gv = setMainVars(gVars=gv, search_paths=["conf"])
+    _results = processor.process_directory(
+        root_dir,
+        output_dir,
+        organize_by_author=True,
+        skip_duplicates=True
+    )
 
-    # print(gv.color.red, "ciao", gv.color.reset)
-    # print(gv.color.yellow, "come stai?\n", gv.color.reset)
+    # Mostra statistiche sugli autori
+    author_stats = processor.get_author_statistics()
+    print("\n" + "=" * 60)
+    print("📚 STATISTICHE AUTORI")
+    print("=" * 60)
+    print(f"Autori unici trovati: {author_stats['total_unique_authors']}")
 
-    eBooks.Main(gv)
+    if author_stats['authors']:
+        print("\nAutori:")
+        for author in author_stats['authors'][:10]:  # Mostra solo primi 10
+            variants = author_stats['variants'][author]
+            if len(variants) > 1:
+                print(f"  - {author} (varianti: {len(variants)})")
+            else:
+                print(f"  - {author}")
+
+        if len(author_stats['authors']) > 10:
+            print(f"  ... e altri {len(author_stats['authors']) - 10} autori")
+
+    # Mostra statistiche conflitti
+    stats = processor.get_statistics()
+    conflicts = stats['conflicts']
+
+    print("\n" + "=" * 60)
+    print("⚠️  STATISTICHE CONFLITTI")
+    print("=" * 60)
+    print(f"File salvati: {conflicts['total_files']}")
+    if conflicts['total_conflicts'] > 0:
+        print(f"Conflitti risolti: {conflicts['total_conflicts']}")
+        print(f"Rapporto conflitti: {conflicts['conflict_ratio']:.2%}")
+    else:
+        print("Nessun conflitto rilevato ✅")
+
+    # Cerca un testo specifico
+    search_term = input("\n🔍 Inserisci testo da cercare (o premi Invio per saltare): ").strip()
+    if search_term:
+        search_results = processor.search_in_directory(root_dir, search_term)
+        print(f"\n🔍 Trovate {len(search_results)} occorrenze di '{search_term}'")
+
+        if search_results:
+            print("\nPrime 5 occorrenze:")
+            for i, result in enumerate(search_results[:5], 1):
+                print(f"\n{i}. Libro: {result['title']}")
+                print(f"   Autori: {', '.join(result['authors'])}")
+                print(f"   Contesto: ...{result['context']}...")
+
+    # Mostra statistiche complete
+    print("\n" + "=" * 60)
+    print("📊 STATISTICHE COMPLETE")
+    print("=" * 60)
+    print(f"File processati: {stats['files_processed']}")
+    print(f"Timestamp: {stats['timestamp']}")
+
+    if output_dir.exists():
+        print(f"\n📁 Output salvato in: {output_dir.absolute()}")
+        print(f"   - Report autori: {output_dir / '_AUTHORS_REPORT.txt'}")
+        if conflicts['total_conflicts'] > 0:
+            print(f"   - Report conflitti: {output_dir / '_CONFLICT_REPORT.txt'}")
+
+    print("\n✅ Processamento completato!")
 
 
-    '''
-    ebookRootDir=Path(args.dir_name).resolve()
-    search_string=args.search
-
-
-    files=fileList(ebookRootDir, pattern=f'*{args.extension}')
-    # for file in files[0:3]:
-    search_strings = " ".join(gv.args["search"])
-
-    for filepath in files:
-        file = Path(filepath)
-        fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
-
-        logger.info("reading book: %s", file.name)
-        clean_text = eBooks.read_epub(gVars=gv, epub_file=filepath, fileout=fileOut)
-
-        lnTimeIt(fStart=True)
-        text_split(clean_text)
-        lnTimeIt("fine dello splitting del eBook", fStart=False, fPause=False)
-
-
-
-        logger.info("searching string: %s", search_strings)
-        wordsFound = eBooks.searchString(source_string=clean_text, search_string=search_strings, exact_match=True, word_distance=5)
-        lnTimeIt(fStart=False)
-        for item in wordsFound:
-            # logger.notify(item)
-            print(item)
-            print()
-
-        import pdb; pdb.set_trace() # by Loreto
-        # print(filepath);
-    '''
-    #     fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
-    #     for name in args.author:
-    #         if name == "*" or name.lower() in str(filepath).lower():
-    #             process_file(fileIn=filepath, fileOut=fileOut, search_string=search_string, fVerbose=args.verbose)
-    '''
-    '''
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

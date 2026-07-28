@@ -1,0 +1,443 @@
+#! /usr/bin/env python3
+#
+# updated by ...: Loreto Notarantonio
+# Date .........: 30-09-2025 18.06.06
+#
+#
+import sys
+sys.dont_write_bytecode = True
+import re
+import logging
+from pathlib import Path
+from dataclasses import dataclass, field
+from datetime import datetime
+
+import ebooklib
+from ebooklib import epub
+import bs4
+
+
+from pyLnLib import get_logger
+logger = get_logger()
+
+
+@dataclass
+class EbookMetadata:
+    """Data class per i metadati dell'ebook"""
+    title: str = "Sconosciuto"
+    authors: list[str] = field(default_factory=lambda: ["Sconosciuto"])
+    language: str = "Sconosciuto"
+    publisher: str = "Sconosciuto"
+    publication_date: str = "Sconosciuto"
+
+
+class EbookProcessor:
+    """
+    Classe per processare ebook EPUB con funzionalità di:
+    - Estrazione metadati
+    - Estrazione testo pulito
+    - Ricerca di testo nei libri
+    - Scanning di directory
+    """
+
+    def __init__(self, decode_type: str = 'lxml', normalize_text: bool = True):
+        """
+        Inizializza il processor per ebook
+
+        Args:
+            decode_type: Tipo di parser per BeautifulSoup ('lxml' o 'html.parser')
+            normalize_text: Se normalizzare il testo (rimuovere spazi multipli, etc.)
+        """
+        self.decode_type = decode_type
+        self.normalize_text = normalize_text
+        self.files_processed = 0
+        self.books_processed: dict[str, dict] = {}
+
+        # Setup per lxml warnings
+        if decode_type == 'lxml':
+            import warnings
+            warnings.filterwarnings("ignore", category=bs4.XMLParsedAsHTMLWarning)
+
+    def extract_metadata(self, book: epub.EpubBook) -> EbookMetadata:
+        """
+        Estrae i metadati dal libro EPUB
+
+        Args:
+            book: Oggetto libro EPUB
+
+        Returns:
+            EbookMetadata: Metadati estratti
+        """
+        metadata = EbookMetadata()
+
+        # Estrai titolo
+        try:
+            titles = book.get_metadata('DC', 'title')
+            if titles:
+                metadata.title = self._get_first_item(titles)
+        except Exception as e:
+            logger.warning(f"Error extracting title: {e}")
+
+        # Estrai autori
+        try:
+            creators = book.get_metadata('DC', 'creator')
+            if creators:
+                metadata.authors = self._clean_authors([c[0] for c in creators if c])
+        except Exception as e:
+            logger.warning(f"Error extracting authors: {e}")
+
+        # Estrai lingua
+        try:
+            languages = book.get_metadata('DC', 'language')
+            if languages:
+                metadata.language = self._get_first_item(languages)
+        except Exception as e:
+            logger.warning(f"Error extracting language: {e}")
+
+        # Estrai editore
+        try:
+            publishers = book.get_metadata('DC', 'publisher')
+            if publishers:
+                metadata.publisher = self._get_first_item(publishers)
+        except Exception as e:
+            logger.warning(f"Error extracting publisher: {e}")
+
+        return metadata
+
+    def _get_first_item(self, value) -> str:
+        """Helper per estrarre il primo item da una struttura dati"""
+        if not value:
+            return "Sconosciuto"
+        if isinstance(value, (list, tuple)):
+            return self._get_first_item(value[0])
+        return str(value).strip()
+
+    def _clean_authors(self, authors: list[str]) -> list[str]:
+        """Pulisce e normalizza la lista degli autori"""
+        if not authors:
+            return ["Sconosciuto"]
+
+        clean_authors = []
+        separators = [',', '-', ';', '&', ' e ']
+
+        for author in authors:
+            if not author:
+                continue
+
+            # Prova a dividere per separatori comuni
+            for sep in separators:
+                if sep in author:
+                    parts = [p.strip() for p in author.split(sep) if p.strip()]
+                    clean_authors.extend(parts)
+                    break
+            else:
+                # Se non trova separatori, aggiungi così com'è
+                clean_authors.append(author.strip())
+
+        return clean_authors if clean_authors else ["Sconosciuto"]
+
+    def extract_text_from_epub(self, epub_file: Path) -> dict[str, any]:
+        """
+        Estrae il testo pulito da un file EPUB
+
+        Args:
+            epub_file: Percorso del file EPUB
+
+        Returns:
+            dict: Dizionario con metadati e contenuto del libro
+        """
+        if not epub_file.exists():
+            logger.error(f"File non trovato: {epub_file}")
+            return {}
+
+        try:
+            book = epub.read_epub(str(epub_file))
+        except Exception as e:
+            logger.error(f"Errore apertura file {epub_file}: {e}")
+            return {}
+
+        # Estrai metadati
+        metadata = self.extract_metadata(book)
+
+        # Estrai contenuto
+        content = {}
+        content['metadata'] = metadata
+
+        for item in book.get_items():
+            if item.get_type() == ebooklib.ITEM_DOCUMENT:
+                try:
+                    clean_text = self._process_document_item(item)
+                    if clean_text:
+                        # Usa le prime parole come identificatore della sezione
+                        section_id = self._extract_section_id(clean_text)
+                        content[section_id] = clean_text
+                except Exception as e:
+                    logger.warning(f"Errore processamento item: {e}")
+
+        return content
+
+    def _process_document_item(self, item) -> str:
+        """Processa un item documento e restituisce testo pulito"""
+        raw_content = item.content
+        decoded_content = raw_content.decode('utf-8', errors='ignore')
+
+        soup = bs4.BeautifulSoup(decoded_content, self.decode_type)
+
+        # Estrai testo
+        clean_text = soup.get_text(separator=' ', strip=True)
+
+        # Normalizza se richiesto
+        if self.normalize_text:
+            clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+
+        return clean_text
+
+    def _extract_section_id(self, text: str) -> str:
+        """Estrae un ID per la sezione dalle prime parole"""
+        if not text:
+            return "section_unknown"
+
+        # Prendi le prime parole come ID
+        first_words = text.split(' ', 3)[:3]
+        section_id = '_'.join(first_words).strip()
+
+        # Rimuovi caratteri non validi per ID
+        section_id = re.sub(r'[^a-zA-Z0-9_]', '_', section_id)
+
+        return section_id or "section_unknown"
+
+    def search_text_in_ebook(self, epub_file: Path, search_text: str,
+                           case_sensitive: bool = False) -> list[dict[str, any]]:
+        """
+        Cerca testo in un ebook e restituisce i risultati
+
+        Args:
+            epub_file: Percorso del file EPUB
+            search_text: Testo da cercare
+            case_sensitive: Se la ricerca deve essere case-sensitive
+
+        Returns:
+            list[dict]: Lista di risultati con contesto
+        """
+        results = []
+
+        if not epub_file.exists():
+            logger.error(f"File non trovato: {epub_file}")
+            return results
+
+        try:
+            book = epub.read_epub(str(epub_file))
+            metadata = self.extract_metadata(book)
+        except Exception as e:
+            logger.error(f"Errore apertura file {epub_file}: {e}")
+            return results
+
+        search_pattern = re.compile(re.escape(search_text),
+                                  0 if case_sensitive else re.IGNORECASE)
+
+        for item in book.get_items():
+            if item.get_type() == ebooklib.ITEM_DOCUMENT:
+                try:
+                    clean_text = self._process_document_item(item)
+
+                    # Cerca il pattern nel testo
+                    matches = list(search_pattern.finditer(clean_text))
+
+                    for match in matches:
+                        # Estrai contesto (100 caratteri prima e dopo)
+                        start = max(0, match.start() - 100)
+                        end = min(len(clean_text), match.end() + 100)
+                        context = clean_text[start:end]
+
+                        results.append({
+                            'file': str(epub_file),
+                            'title': metadata.title,
+                            'authors': metadata.authors,
+                            'context': context,
+                            'match': match.group(),
+                            'position': match.start()
+                        })
+
+                except Exception as e:
+                    logger.warning(f"Errore ricerca in item: {e}")
+
+        return results
+
+    def scan_directory(self, root_dir: Path, pattern: str = '*.epub',
+                       recursive: bool = True) -> list[Path]:
+        """
+        Scansiona una directory per trovare file EPUB
+
+        Args:
+            root_dir: Directory root da scansionare
+            pattern: Pattern dei file da cercare
+            recursive: Se cercare ricorsivamente
+
+        Returns:
+            list[Path]: Lista di percorsi dei file trovati
+        """
+        root_path = Path(root_dir)
+        if not root_path.exists():
+            logger.error(f"Directory non trovata: {root_path}")
+            return []
+
+        if recursive:
+            file_list = list(root_path.glob(f'**/{pattern}'))
+        else:
+            file_list = list(root_path.glob(pattern))
+
+        logger.info(f"Trovati {len(file_list)} file {pattern} in {root_path}")
+        return file_list
+
+    def process_directory(self, root_dir: Path, output_dir: Path | None = None, pattern: str = '*.epub') -> dict[str, dict[str, any]]:
+        """
+        Processa tutti gli EPUB in una directory
+
+        Args:
+            root_dir: Directory da processare
+            output_dir: Directory per i file di output (opzionale)
+            pattern: Pattern dei file da processare
+
+        Returns:
+            dict: Dizionario con i risultati del processamento
+        """
+        results = {}
+        epub_files = self.scan_directory(root_dir, pattern)
+
+        for i, epub_file in enumerate(epub_files, 1):
+            logger.info(f"[{i}/{len(epub_files)}] Processando: {epub_file.name}")
+
+            try:
+                content = self.extract_text_from_epub(epub_file)
+                if content:
+                    results[str(epub_file)] = content
+                    self.files_processed += 1
+
+                    # Salva se richiesto
+                    if output_dir:
+                        self._save_book_content(epub_file, content, output_dir)
+                else:
+                    logger.warning(f"Nessun contenuto estratto da {epub_file.name}")
+
+            except Exception as e:
+                logger.error(f"Errore processando {epub_file}: {e}")
+
+        logger.info(f"Processati {self.files_processed} file con successo")
+        return results
+
+    def _save_book_content(self, epub_file: Path, content: dict, output_dir: Path):
+        """Salva il contenuto del libro in un file di testo"""
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        metadata = content.get('metadata')
+        if metadata:
+            title = metadata.title.replace(' ', '_')
+            authors = '_'.join(metadata.authors).replace(' ', '_')
+            output_dir = output_dir / authors
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
+            output_file = output_dir / f"{title}.txt"
+        else:
+            output_file = output_dir / f"{epub_file.stem}.txt"
+
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                # Scrivi metadati
+                f.write("=" * 60 + "\n")
+                f.write("METADATI\n")
+                f.write("=" * 60 + "\n")
+                if metadata:
+                    f.write(f"Titolo: {metadata.title}\n")
+                    f.write(f"Autori: {', '.join(metadata.authors)}\n")
+                    f.write(f"Lingua: {metadata.language}\n")
+                    f.write(f"Editore: {metadata.publisher}\n")
+                f.write("\n" + "=" * 60 + "\n")
+                f.write("CONTENUTO\n")
+                f.write("=" * 60 + "\n\n")
+
+                # Scrivi contenuto
+                for section_id, text in content.items():
+                    if section_id != 'metadata':
+                        f.write(f"{'=' * 40}\n")
+                        f.write(f"SEZIONE: {section_id}\n")
+                        f.write(f"{'=' * 40}\n")
+                        f.write(text[:500])  # Limita a 500 caratteri per esempio
+                        f.write("\n\n")
+
+        except Exception as e:
+            logger.error(f"Errore salvataggio file {output_file}: {e}")
+
+    def search_in_directory(self, root_dir: Path, search_text: str,
+                           pattern: str = '*.epub',
+                           case_sensitive: bool = False) -> list[dict[str, any]]:
+        """
+        Cerca testo in tutti gli EPUB di una directory
+
+        Args:
+            root_dir: Directory da scansionare
+            search_text: Testo da cercare
+            pattern: Pattern dei file da cercare
+            case_sensitive: Se la ricerca deve essere case-sensitive
+
+        Returns:
+            list[dict]: Lista di risultati della ricerca
+        """
+        all_results = []
+        epub_files = self.scan_directory(root_dir, pattern)
+
+        for epub_file in epub_files:
+            logger.info(f"Ricerca in: {epub_file.name}")
+            try:
+                results = self.search_text_in_ebook(epub_file, search_text, case_sensitive)
+                all_results.extend(results)
+            except Exception as e:
+                logger.error(f"Errore ricerca in {epub_file}: {e}")
+
+        return all_results
+
+    def get_statistics(self) -> dict[str, any]:
+        """
+        Restituisce statistiche sul processamento
+
+        Returns:
+            dict: Statistiche
+        """
+        return {
+            'files_processed': self.files_processed,
+            'books_processed': len(self.books_processed),
+            'timestamp': datetime.now().isoformat()
+        }
+
+
+# Esempio di utilizzo e funzione main
+def main():
+    """Funzione main per testare la classe"""
+    # Setup logging
+    logging.basicConfig(level=logging.INFO,
+                       format='%(asctime)s - %(levelname)s - %(message)s')
+
+    # Crea il processor
+    processor = EbookProcessor(decode_type='lxml', normalize_text=True)
+
+    # Directory di esempio
+    root_dir = Path('/home/loreto/filu/ln-eBooks/new_books')  # Cambia con la tua directory
+    output_dir = Path('output')  # Directory di output
+
+    # Esempio di scanning e processamento
+    if root_dir.exists():
+        # Processa tutti gli EPUB nella directory
+        results = processor.process_directory(root_dir, output_dir)
+
+        # Cerca un testo specifico
+        search_results = processor.search_in_directory(root_dir, "gambe")
+
+        logger.info("Processati %s file", processor.files_processed)
+        logger.info("Trovate %s occorrenze", len(search_results))
+
+        # Mostra statistiche
+        stats = processor.get_statistics()
+        logger.info(f"\nStatistiche: {stats}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,101 @@
+============================================================
+REPORT CONFLITTI NOMI FILE
+============================================================
+
+Totale file salvati: 62
+Totale conflitti risolti: 3
+Rapporto conflitti: 4.84%
+
+DETTAGLIO PER DIRECTORY:
+----------------------------------------
+
+Elliot_Kendra:
+  - Una_traccia_nel_silenzio_©_Edizione_italiana_2024___Indomitus_publishing
+
+Fargo_Layne:
+  - Non_imparano_mai_Mondadori: 2 versioni
+  - The_Favorites_Mondadori
+
+James_Ella:
+  - [Off-Limits_Romance_01]_•_Crown_Jewell._I_Gioielli_Della_Corona
+  - (Marchiata_01)_Marchiata_Hope_Edizioni
+  - Tornerò_da_te__Off_Limits_Romance_vol._3_(Italian_Edition)_Hope_Edizioni
+  - Il_ragazzo_della_porta_accanto__Off_limits_romance_Vol._2_Hope_Edizioni
+  - Crown_Jewell._I_gioielli_della_corona_(Off-Limits_Romance_01)_Hope_Edizioni
+
+Armas_Elena:
+  - Facciamo_finta_che_mi_ami_Newton_Compton_Editori
+  - Facciamo_finta_che_non_finirà_Newton_Compton_Editori
+  - Facciamo_finta_che_sia_solo_un_gioco_Newton_Compton_Editori
+  - Dilemma_d’amore_Newton_Compton_Editori
+
+Murphy_Monica:
+  - Sono_io_la_tua_preferita._You_said_I_was_your_favorite_Newton_Compton_Editori
+  - Dammi_Un'altra_Possibilità_Newton_Compton_Editori
+  - La_sottile_linea_dell'amore_(Reverie_Series_Vol._2)_(Italian_Edition)
+  - Il_mio_sogno_proibito_Newton_Compton_Editori
+  - La_risposta_è_amore_(The_Private_Club_Series_Vol._3)_(Italian_Edition)
+
+Paige_Laurelin:
+  - (Èlite_01)_Ossessione_e_potere_Always_Publishing
+  - Élite._Amore_e_potere_(Italian_Edition)
+  - Inganno_(Italian_Edition)_Always_Publishing
+  - Devozione_Always_Publishing
+
+Kennedy_Elle:
+  - L'eredità_Newton_Compton_Editori
+  - Partita_bollente_Harlequin_Mondadori
+  - Il_complesso_della_brava_ragazza._Good_Girl_Complex_Newton_Compton_editori
+  - Effetto_amore_Newton_Compton_Editori
+  - La_verità_tra_di_noi._Rogue_Newton_Compton_Editori
+  - (Him_01)_Io_+_Te_Always_Publishing
+  - Body_Check_(Italian_Edition)_HaperCollins_Italia
+  - Metodo_d'amore_Newton_Compton_Editori
+  - Cattiva_ragazza_per_un'estate._The_Summer_Girl_Newton_Compton_Editori
+  - Il_segreto_tra_noi_due._Misfit_©_2023_Newton_Compton_editori_s.r.l.
+  - Elle_Kennedy_,Partita_bollente_-_Il_gioco_delle_tentazioni_,_Nancy_Warren
+
+Hazelwood_Ali:
+  - Below_Zero__Amore_sottozero_(Italian_Edition)_SPERLING_&_KUPFER
+  - Check_&_Mate_(Italian_Edition)_SPERLING_&_KUPFER
+  - Under_one_roof_SPERLING_&_KUPFER
+  - The_Love_Hypothesis_Sperling_&_Kupfer: 2 versioni
+  - Love,_theoretically._La_fisica_dell'amore_SPERLING_&_KUPFER
+  - Love_on_the_brain_SPERLING_&_KUPFER
+  - Stuck_With_You._Un_ascensore_per_due_Penguin
+  - Under_one_roof_Sperling_&_Kupfer
+
+Perry_Devney:
+  - Crossroads._Incroci_imperfetti_Newton_Compton_Editori
+  - Come_in_ogni_attimo_(Lark_Cove)_(Italian_Edition)_Always_Publishing
+  - Come_due_fragili_destini_(Lark_Cove)_(Italian_Edition)_Always_Publishing
+  - Come_la_prima_volta_(Always_Romance)_(Italian_Edition)_Always_Publishing
+  - Come_per_magia_tu_Always_Publishing
+  - Il_tempio_della_fortuna_(Italian_Edition)_Always_Publishing
+
+Tomforde_Liz:
+  - 2_The_right_move._Conquista_da_campione_Liz_Tomford_(Windy_&City)_(Italian_Edition)_Always_Publishing
+
+Kent_Rina:
+  - Cruel_King
+
+Giovanni_Maurizio_De:
+  - Una_lettera_per_Sara_(Nero_Rizzoli)_RIZZOLI_LIBRI
+  - Il_pianto_dell’alba_Einaudi
+  - Il_posto_di_ognuno_Emmebook
+  - Il_metodo_del_coccodrillo_Mondadori
+
+Bowen_Sarina:
+  - Insieme_(Serie_Him)_(Italian_Edition)_Always_Publishing
+
+sconosciuto:
+  - sconosciuto_LibreOffice_3.3
+
+Miller_Raine:
+  - Cherry_Girl
+  - (La_trilogia_dei_sensi_01)_Nudo_d'autore_Corbaccio
+  - Sporche_Bugie_Hope_Edizioni
+  - Ricco_sfondato___La_Dinastia_dei_Blackstone_Vol.1_(Italian_Edition): 2 versioni
+
+DeMille_Brit:
+  - (Vegas_Crush_03)_Rossa_Fatale_Hope_Edizioni

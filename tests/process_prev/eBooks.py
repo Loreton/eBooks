@@ -1,10 +1,11 @@
 #! /usr/bin/env python3
+#
 # updated by ...: Loreto Notarantonio
 # Date .........: 30-09-2025 18.06.06
 #
-
+# ruff: noqa: I001 - Import block is un-sorted or un-formatted help: Organize imports (Ruff I001)
+#
 import sys; sys.dont_write_bytecode=True
-import os
 import re
 
 from pathlib import Path
@@ -14,13 +15,6 @@ import ebooklib
 from   ebooklib import epub
 import bs4 ### --- BeautifulSoup
 
-
-
-### -------------------
-### --- Loreto Modules
-### -------------------
-from functionExecutionTime import function_executing_time
-import LnRegex
 
 
 

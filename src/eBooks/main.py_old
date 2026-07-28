@@ -1,0 +1,129 @@
+#! /usr/bin/env python3
+# updated by ...: Loreto Notarantonio
+# Date .........: 21-07-2026 16.42.09
+#
+
+
+#---------- external modules to be installed ----------------------
+# uv add --editable /home/loreto/filu/Programming/gitREPO/pyLnLib
+# uv add ebboklib
+#------------------------------------------------------------------
+#
+import sys
+# sys.dont_write_bytecode=True
+import os
+from pathlib import Path
+# from types import SimpleNamespace
+
+from pyLnLib.git.pyproject_class import PyProjectManager
+
+from     pyLnLib.context   import ctx, get_project_vars
+from     pyLnLib.colors    import get_colors
+from     pyLnLib.logger    import init_logger
+from     pyLnLib.files     import get_yaml_engine, get_file_list
+from     pyLnLib.lndict     import lnDict
+
+from .core.parse_input import parseInput
+from .process import eBooks as lnebooks
+
+C=get_colors()
+
+# from functionExecutionTime import lnTimeIt
+def initialize_project() -> lnDict:
+    if 'debugpy' in sys.modules:
+        print(os.environ.get("ZED_APP_PATH"))
+        print(os.environ.get("ZED_ENVIRONMENT"))
+        print(os.environ.get("ZED_TERM"))
+        print(os.environ.get("TERM_PROGRAM"))
+
+    pyproject = PyProjectManager(Path.cwd())
+    ctx.version = pyproject.get_version()
+    ctx.set_project_name(f"eBooks-{ctx.version}")
+
+    #### 2. read static project_list file
+    # ctx.logger = logger
+    yaml_engine=get_yaml_engine(search_paths=[ctx.get_config_dir()], recursive=True)
+    config_file = ctx.get_config_dir() / "authors.yaml"
+    config_data: lnDict = lnDict(yaml_engine.load(str(config_file)))
+
+    pv: lnDict=get_project_vars()
+    pv.update(config_data)
+    return pv
+
+
+
+###################################################
+#    M A I N
+###################################################
+def main():
+    #### 1. logger initializzation
+    logger=init_logger(logger_name=ctx.project_name, test=False)
+    #### 3. initialize project variables (pv)
+    pv = initialize_project()
+
+
+    #### 4. processo input arguments....
+    args = parseInput()
+    pv["input_args"]=vars(args) # include args in project_vars
+    pv.save_yaml(filepath=ctx.get_log_dir() / "project_vars.yaml", title="project_vars", indent=4)
+
+    # -----------------------------------------
+    # - update logger as requested by input arguments
+    # -----------------------------------------
+    logger.setShowCaller(show_caller=False)
+
+    # -----------------------------------------
+    # - print project variables if requested
+    # -----------------------------------------
+    if args.vars_project:
+        print(pv)
+        sys.exit(0)
+
+    ### --- change current console logging level as input required
+    logger.setConsoleLoggerLevel(level=args.console_log_level)
+
+
+    ebookRootDir=Path(args.top_dir).resolve()
+    # search_string=args.search
+
+
+
+    files=list(get_file_list(top_dir=ebookRootDir, file_pattern=f'*{args.extensions[0]}', verbose=False))
+    search_strings = " ".join(gv.args["search"])
+
+    for filepath in files:
+        file = Path(filepath)
+        fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
+
+        logger.info("reading book: %s", file.name)
+        clean_text = lnebooks.read_epub(gVars=gv, epub_file=filepath, fileout=fileOut)
+
+        lnTimeIt(fStart=True)
+        text_split(clean_text)
+        lnTimeIt("fine dello splitting del eBook", fStart=False, fPause=False)
+
+
+
+        logger.info("searching string: %s", search_strings)
+        wordsFound = lnebooks.searchString(source_string=clean_text, search_string=search_strings, exact_match=True, word_distance=5)
+        lnTimeIt(fStart=False)
+        for item in wordsFound:
+            # logger.notify(item)
+            print(item)
+            print()
+
+        import pdb; pdb.set_trace() # by Loreto
+        # print(filepath);
+    '''
+    '''
+    #     fileOut = f"{args.out_dir}/{filepath.stem.replace(' ', '_')}.txt"
+    #     for name in args.author:
+    #         if name == "*" or name.lower() in str(filepath).lower():
+    #             process_file(fileIn=filepath, fileOut=fileOut, search_string=search_string, fVerbose=args.verbose)
+    '''
+    '''
+    sys.exit("completed")
+    eBooks.Main(gv)
+
+if __name__ == '__main__':
+    main()
