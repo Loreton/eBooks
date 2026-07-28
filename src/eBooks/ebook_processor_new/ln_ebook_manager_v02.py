@@ -2,12 +2,20 @@
 # ln_ebook_manager.py
 #
 # from curses import meta
+from __future__ import annotations
+
 from pathlib import Path
+from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
 from ebooklib import epub, ITEM_DOCUMENT
 
 
+@dataclass(slots=True)
+class Section:
+    file: str
+    title: str | None
+    text: str
 
 
 class EpubProcessor:
@@ -16,6 +24,12 @@ class EpubProcessor:
     def __init__(self, filename: str | Path):
 
         self._filename = Path(filename)
+        """  memorizzare le sezioni.
+        Altrimenti, ogni chiamata a get_sections() riparsa tutto l'EPUB.
+        Se poi chiami get_text() e export_text(), il parsing viene eseguito tre volte.
+        """
+        # self._sections = None
+        self._sections: list[Section] | None = None
 
         if not self._filename.is_file():
             raise FileNotFoundError(self._filename)
@@ -58,8 +72,53 @@ class EpubProcessor:
     # ======================================================================
     # Content
     # ======================================================================
+    def get_sections(self) -> list[Section]:
+        """
+        Return the ebook sections.
 
-    def get_sections(self) -> list[dict]:
+        The EPUB is parsed only the first time this method is called.
+        """
+
+        if self._sections is not None:
+            return self._sections
+
+        sections: list[Section] = []
+
+        for item in self._book.get_items():
+
+            if item.get_type() != ITEM_DOCUMENT:
+                continue
+
+            soup = BeautifulSoup(
+                item.get_body_content(),
+                "html.parser"
+            )
+
+            text = soup.get_text(separator=" ", strip=True)
+
+            title = None
+
+            if soup.title:
+                title = soup.title.get_text(strip=True)
+
+            if not title:
+                h1 = soup.find("h1")
+                if h1:
+                    title = h1.get_text(strip=True)
+
+            sections.append(
+                Section(
+                    file=item.file_name,
+                    title=title,
+                    text=text,
+                )
+            )
+
+        self._sections = sections
+        return self._sections
+
+
+    def get_sections_(self) -> list[dict]:
         """
         Return the ebook sections.
 
@@ -71,6 +130,9 @@ class EpubProcessor:
                 "text": "..."
             }
         """
+        if self._sections is not None:
+            return self._sections
+
 
         sections = []
 
@@ -104,23 +166,37 @@ class EpubProcessor:
                 }
             )
 
-        return sections
+
+        self._sections = sections
+        return self._sections
+
 
     def get_text(self) -> str:
-
         return "\n\n".join(
-            section["text"]
+            section.text
             for section in self.get_sections()
-            if section["text"]
+            if section.text
         )
+        # return "\n\n".join(
+        #     section["text"]
+        #     for section in self.get_sections()
+        #     if section["text"]
+        # )
 
     # ======================================================================
     # Export
     # ======================================================================
 
-    def export_text(self, filename: str | Path):
+    # def export_text(self, output_dir: Path|str, filename: Path|str|None = None) -> Path:
+    def export_text(self, filename: Path|str) -> Path:
+        # if filename is None:
+            # filename = self._filename  # nome del file appena letto
+            # filename = self._filename.name  # nome del file originale (senza path))
+            # filename = self.get_title()  # nome del file originale (senza path))
 
         filename = Path(filename)
+        if not filename.parent.exists():
+            filename.parent.mkdir(parents=True, exist_ok=True)
 
         with filename.open("w", encoding="utf-8") as fp:
 
@@ -147,14 +223,31 @@ class EpubProcessor:
                 fp.write(f"SEZIONE {n}\n")
                 fp.write("=" * 40 + "\n")
 
-                fp.write(f"File   : {section['file']}\n")
+                fp.write(f"File   : {section.file}\n")
 
-                if section["title"]:
-                    fp.write(f"Titolo : {section['title']}\n")
+                if section.title:
+                    fp.write(f"Titolo : {section.title}\n")
 
                 fp.write("\n")
-                fp.write(section["text"])
+                fp.write(section.text)
                 fp.write("\n\n")
+
+            # for n, section in enumerate(self.get_sections(), start=1):
+
+            #     fp.write("=" * 40 + "\n")
+            #     fp.write(f"SEZIONE {n}\n")
+            #     fp.write("=" * 40 + "\n")
+
+            #     fp.write(f"File   : {section['file']}\n")
+
+            #     if section["title"]:
+            #         fp.write(f"Titolo : {section['title']}\n")
+
+            #     fp.write("\n")
+            #     fp.write(section["text"])
+            #     fp.write("\n\n")
+
+        return filename
 
     # ======================================================================
     # Private
