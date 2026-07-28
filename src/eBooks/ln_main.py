@@ -45,7 +45,7 @@ def test_01(epub_path: str|Path, export_dir: Path | None = None) -> None:
     logger.info("sections:   %s", len(book.get_sections()))
 
     if export_dir is not None:
-        filename = Path(export_dir) / epub_path.with_suffix('.txt').name
+        filename = Path(export_dir) / str(book.get_author()) / epub_path.with_suffix('.txt').name
         # book.export_text(output_dir=export_dir, filename=epub_path.with_suffix('.txt').name)
         _ = book.export_text(filename=filename)
         logger.info('exported to: "%s"', filename)
