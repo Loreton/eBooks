@@ -159,7 +159,7 @@ wheels = [
 
 [[package]]
 name = "pylnlib"
-version = "0.1.27"
+version = "0.1.29"
 source = { editable = "../pyLnLib" }
 dependencies = [
     { name = "pyyaml" },

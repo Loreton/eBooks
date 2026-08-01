@@ -3,6 +3,9 @@ dirs:
     # output_dir: '/home/loreto/filu/ln-eBooks/new_books/output'
     top_dir: '/home/loreto/filu/ln-eBooks/new_books/single_test_book'
     output_dir: '/home/loreto/filu/ln-eBooks/new_books/single_test_book/output'
+    extensions:
+        - epub
+        - txt
 
 autore:
     - A. M. Homes

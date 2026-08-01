@@ -5,14 +5,14 @@
 from pathlib import Path
 
 # pyLnLib modules
-from pyLnLib.logger import init_logger
+from pyLnLib.logger import get_logger
 from pyLnLib.files import scan_directory
 
 
 # this program modules
 from eBooks import EpubProcessor
 
-
+logger = get_logger()
 
 
 
@@ -44,16 +44,16 @@ def test_01(epub_path: str|Path, export_dir: Path | None = None) -> None:
     logger.info("identifier: %s", book.get_identifier())
     logger.info("sections:   %s", len(book.get_sections()))
 
-    if export_dir is not None:
-        filename = Path(export_dir) / str(book.get_author()) / epub_path.with_suffix('.txt').name
-        saved_filename = book.export_text(filename=filename, overwrite=True)
-        logger.info('exported to: "%s"', saved_filename)
+    # if export_dir is not None:
+    #     filename = Path(export_dir) / str(book.get_author()) / epub_path.with_suffix('.txt').name
+    #     saved_filename = book.export_text(filename=filename, overwrite=True)
+    #     logger.info('exported to: "%s"', saved_filename)
 
 
 
 
 if __name__ == "__main__":
-    logger = init_logger()
+    logger.initialize(name="eBooks", console_logger_level="INFO")
     f_scan=True
 
     if f_scan:

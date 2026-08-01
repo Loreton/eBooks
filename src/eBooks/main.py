@@ -5,27 +5,24 @@ Example usage of the EbookProcessor
 """
 
 import sys
-sys.dont_write_bytecode = True
-
 from pathlib import Path
 
 
-# from pyLnLib import init_logger
+# --- pyLnLib modules
 from pyLnLib.git.pyproject_class import PyProjectManager
-
-# from pyLnLib.context   import ctx, get_project_vars
-from pyLnLib.context_V2   import init_context
-from pyLnLib.logger    import init_logger
-from pyLnLib.files     import get_yaml_engine
+from pyLnLib.context   import ctx, lnContext
+from pyLnLib.files     import get_yaml_engine, scan_directory
 from pyLnLib.lndict    import lnDict
+from pyLnLib.logger    import get_logger
 
-
+# --- project modules
 from eBooks.ebook_processor import EbookProcessor
+from eBooks.core import parseInput
 
+sys.dont_write_bytecode = True
+logger = get_logger()
 
-
-
-def initialize_program() -> lnDict:
+def check_zed() -> None:
     if 'debugpy' in sys.modules:
         import os
         print(os.environ.get("ZED_APP_PATH"))
@@ -33,29 +30,43 @@ def initialize_program() -> lnDict:
         print(os.environ.get("ZED_TERM"))
         print(os.environ.get("TERM_PROGRAM"))
 
+
+
+def initialize_program() -> lnContext:
+    # 1. initialize context
     pyproject = PyProjectManager(Path.cwd())
     appl_version = pyproject.get_version()
-    # ctx.project_name = f"eBooks-{ctx.version}"
-    ctx = init_context(name=f"eBooks-{appl_version}", tmp_dir=f"/tmp/ebooks-{appl_version}", version=appl_version)
-    #### 2. read static project_list file
-    yaml_engine=get_yaml_engine(search_paths=[ctx.config_dir], recursive=True)
-    config_file = ctx.config_dir / "authors.yaml"
+    ctx.initialize(project_name="eBooks", project_temp_dir=f"/tmp/ebooks-{appl_version}", version=appl_version)
+
+
+    #### 3. read  project configuration file
+    config_file = ctx.project_config_dir / "authors.yaml"
+    yaml_engine=get_yaml_engine(search_paths=[ctx.project_config_dir], recursive=True)
     config_data: lnDict = lnDict(yaml_engine.load(str(config_file)))
 
-    # pv: lnDict=get_project_vars()
-    ctx.config = config_data
+    #### 4. insert configuration data into context
+    ctx.config.update(config_data)
     return ctx
 
 
 
-
 def main():
-    """Funzione main per testare la classe"""
-    ctx = initialize_program()
+    initialize_program()
+    args=parseInput()
+    #### 2. logger initializzation
+    logger.initialize(name="eBooks", logging_dir=ctx.project_log_dir, console_logger_level=args.console_log_level)
 
-    #### - logger initializzation
-    logger = init_logger(logger_name=ctx.name, logging_dir=ctx.log_dir)
 
+    breakpoint()
+    if args.extract:
+        file_list = scan_directory(root_dir="/home/loreto/filu/ln-eBooks/new_books", pattern='*.epub')
+        logger.info(file_list)
+        # for file in file_list:
+        #     export_dir = Path(file).parent / "export"
+            # test_01(epub_path=file, export_dir=export_dir)
+
+
+    '''
     #### - processor initializzation
     logger.info("🚀 Avvio processamento ebook...")
     processor = EbookProcessor(decode_type='lxml', normalize_text=True)
@@ -138,6 +149,7 @@ def main():
 
     print("\n✅ Processamento completato!")
 
+    '''
 
 if __name__ == "__main__":
     main()

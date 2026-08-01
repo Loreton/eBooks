@@ -6,9 +6,7 @@
 
 
 from .parse_input           import parseInput
-from .help_commands         import helpCommands
 
 __all__ = [
     'parseInput',
-    'helpCommands',
 ]
