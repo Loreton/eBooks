@@ -1,13 +1,4 @@
-dirs:
-    # top_dir: '/home/loreto/filu/ln-eBooks/new_books'
-    # output_dir: '/home/loreto/filu/ln-eBooks/new_books/output'
-    top_dir: '/home/loreto/filu/ln-eBooks/new_books/single_test_book'
-    output_dir: '/home/loreto/filu/ln-eBooks/new_books/single_test_book/output'
-    extensions:
-        - epub
-        - txt
-
-autore:
+authors:
     - A. M. Homes
     - A.M. Hargrove
     - AA. VV.

@@ -1,0 +1,18 @@
+dirs:
+    # top_dir: '/home/loreto/filu/ln-eBooks/new_books'
+    # output_dir: '/home/loreto/filu/ln-eBooks/new_books/output'
+        # - '/home/loreto/filu/ln-eBooks/new_books/single_test_book'
+    source_top_dir:
+        - '/home/loreto/filu/ln-eBooks/lnLibraries'
+    extract_dir: '/home/loreto/filu/ln-eBooks/extracted'
+    extensions:
+        - epub
+        - txt
+
+files_to_skip:
+    - "Waylon University.02. La scommessa - Ilsa Madden-Mills"
+    - "Non ho paura del buio - Dugoni, Robert"
+    - "Faster_ Il brivido dell'amore - Paola Chiozza"
+
+# authors:
+    # !include authors.yaml#authors

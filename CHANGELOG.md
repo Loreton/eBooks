@@ -1,3 +1,14 @@
+## [0.1.2] - 2026-08-02
+
+## Other
+
+- inizio sviluppo - (Release 0.1.1) (pylnlib_commit=8278eb4)
+- affinamenti - (Release 0.1.1) (pylnlib_commit=573d656)
+- aggiunti il controllo  unique_filename() per export univoco come filename - (Release 0.1.1) (pylnlib_commit=f31bff2)
+- messo il dataclass per Section - (Release 0.1.1) (pylnlib_commit=df83cf6)
+- diverse soluzioni. sperimentazione quella di chatgpt - (Release 0.1.1) (pylnlib_commit=df83cf6)
+- update on 2026.07.21 - (Release 0.1.1) (pylnlib_commit=ba0737d)
+
 ## [0.1.1] - 2026-08-01
 
 ## Other

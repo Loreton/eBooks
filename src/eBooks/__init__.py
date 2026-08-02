@@ -18,14 +18,15 @@ if False:
     ]
 
 else:
-    from .ebook_processor_new.ln_ebook_manager_v02 import EpubProcessor
+    # from .ebook_processor_new.ln_ebook_manager_v02 import EpubProcessor
     # from .ebook_processor_new.ebook_manager_deepseek01 import EpubProcessor
     # from .ebook_processor_new.ebook_manager_gemini01 import EpubProcessor
     # from .ebook_processor_new.ebook_manager_gpt01 import EpubProcessor
     from .core.parse_input import parseInput
+    # from .core.ln_ebook_manager import EpubProcessor
 
     __all__ = [
-        'EpubProcessor',
+        # 'EpubProcessor',
         'parseInput',
     ]
 __version__ = "1.0.0"

@@ -14,10 +14,17 @@ from pyLnLib.context   import ctx, lnContext
 from pyLnLib.files     import get_yaml_engine, scan_directory
 from pyLnLib.lndict    import lnDict
 from pyLnLib.logger    import get_logger
+from pyLnLib.epub      import EpubProcessor
+from pyLnLib.system import start_signal_handler
 
 # --- project modules
-from eBooks.ebook_processor import EbookProcessor
+# from eBooks.ebook_processor import EbookProcessor
 from eBooks.core import parseInput
+
+start_signal_handler(True)
+# if True: ###. disabilitato perché non funziona bene
+#     import si
+#     signal.signal(signal.SIGINT, signalHandler)
 
 sys.dont_write_bytecode = True
 logger = get_logger()
@@ -40,15 +47,49 @@ def initialize_program() -> lnContext:
 
 
     #### 3. read  project configuration file
-    config_file = ctx.project_config_dir / "authors.yaml"
+    config_file = ctx.project_config_dir / "ebooks_config.yaml"
     yaml_engine=get_yaml_engine(search_paths=[ctx.project_config_dir], recursive=True)
     config_data: lnDict = lnDict(yaml_engine.load(str(config_file)))
-
+    config_data.save_yaml(title="processed_config", filepath=ctx.project_log_dir / "ebooks_config.yaml")
     #### 4. insert configuration data into context
     ctx.config.update(config_data)
     return ctx
 
 
+def save_text_file(text: str, output_dir: Path, filename: str) -> None:
+    file_path = output_dir / filename
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(text)
+
+
+def process_epub(epub_path: str|Path, export_dir: Path | None = None, index: str|None=None) -> None:
+    book = EpubProcessor(epub_path)
+    author = book.author
+    # filename = book.filename
+    index=f"{index} - "  if index is not None else ''
+
+    logger.info("%sprocessing: %s/%s", index, book.author, book.filename.name)
+    # justxtract
+    if export_dir:
+        if author:
+            output_dir = Path(export_dir) / author
+            saved_filename = book.export_text(filename=output_dir / f"{book.filename.stem}.txt", replace=False, unique=False)
+            logger.debug("saved:      \"%s\"", saved_filename)
+        return
+
+
+    logger.info("filename:   %s", book.filename)
+    logger.info("title:      %s", book.title)
+    logger.info("author:     %s", book.author)
+    logger.info("language:   %s", book.language)
+    logger.info("identifier: %s", book.identifier)
+    logger.info("sections:   %s", len(book.get_sections()))
+    # Salva il report degli autori e dei conflitti
+        # book._save_conflict_report(output_dir)
+
+def test_01(epub_path: str|Path, export_dir: Path | None = None) -> None:
+    epub_path = Path(epub_path)
+    book = EpubProcessor(epub_path)
 
 def main():
     initialize_program()
@@ -56,14 +97,17 @@ def main():
     #### 2. logger initializzation
     logger.initialize(name="eBooks", logging_dir=ctx.project_log_dir, console_logger_level=args.console_log_level)
 
-
-    breakpoint()
     if args.extract:
-        file_list = scan_directory(root_dir="/home/loreto/filu/ln-eBooks/new_books", pattern='*.epub')
-        logger.info(file_list)
-        # for file in file_list:
-        #     export_dir = Path(file).parent / "export"
-            # test_01(epub_path=file, export_dir=export_dir)
+        # breakpoint()
+        for source_dir in ctx.config.dirs.source_top_dir:
+            file_list = scan_directory(root_dir=source_dir, pattern='*.epub')
+            nfiles=len(file_list)
+            logger.info(file_list)
+            for index, file in enumerate(file_list):
+                if file.stem in ctx.config.files_to_skip:
+                    logger.warning(f"Skipping {file.stem}")
+                    continue
+                process_epub(epub_path=file, export_dir=ctx.config.dirs.extract_dir, index=f"{index:04}/{nfiles:04}")
 
 
     '''
