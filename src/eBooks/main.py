@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 # --- pyLnLib modules
+# from eBooks.calibre.test01 import test01_main
 from pyLnLib.git.pyproject_class import PyProjectManager
 from pyLnLib.context   import ctx, lnContext
 from pyLnLib.files     import get_yaml_engine, scan_directory
@@ -16,15 +17,11 @@ from pyLnLib.lndict    import lnDict
 from pyLnLib.logger    import get_logger
 from pyLnLib.epub      import EpubProcessor
 from pyLnLib.system import start_signal_handler
+from pyLnLib.calibre import test_calibre
 
 # --- project modules
-# from eBooks.ebook_processor import EbookProcessor
 from eBooks.core import parseInput
 
-start_signal_handler(True)
-# if True: ###. disabilitato perché non funziona bene
-#     import si
-#     signal.signal(signal.SIGINT, signalHandler)
 
 sys.dont_write_bytecode = True
 logger = get_logger()
@@ -40,6 +37,7 @@ def check_zed() -> None:
 
 
 def initialize_program() -> lnContext:
+
     # 1. initialize context
     pyproject = PyProjectManager(Path.cwd())
     appl_version = pyproject.get_version()
@@ -87,11 +85,16 @@ def process_epub(epub_path: str|Path, export_dir: Path | None = None, index: str
     # Salva il report degli autori e dei conflitti
         # book._save_conflict_report(output_dir)
 
-def test_01(epub_path: str|Path, export_dir: Path | None = None) -> None:
-    epub_path = Path(epub_path)
-    book = EpubProcessor(epub_path)
+
 
 def main():
+    start_signal_handler(True)
+
+    CALIBRE_PATH = "/home/loreto/filu/ln-eBooks/lnLibraries/Others"  # MODIFICA QUI
+    CALIBRE_PATH = "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"  # MODIFICA QUI
+    test_calibre(calibre_path=CALIBRE_PATH)
+    sys.exit()
+
     initialize_program()
     args=parseInput()
     #### 2. logger initializzation
