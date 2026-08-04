@@ -10,48 +10,26 @@ from pathlib import Path
 
 # --- pyLnLib modules
 # from eBooks.calibre.test01 import test01_main
-from pyLnLib.git.pyproject_class import PyProjectManager
-from pyLnLib.context   import ctx, lnContext
-from pyLnLib.files     import get_yaml_engine, scan_directory
-from pyLnLib.lndict    import lnDict
+# from pyLnLib.git.pyproject_class import PyProjectManager
+# from pyLnLib.context   import ctx, lnContext
+# from pyLnLib.files     import get_yaml_engine, scan_directory
+# from pyLnLib.lndict    import lnDict
 from pyLnLib.logger    import get_logger
 from pyLnLib.epub      import EpubProcessor
-from pyLnLib.system import start_signal_handler
-from pyLnLib.calibre import test_calibre
+# from pyLnLib.system import start_signal_handler
+# from pyLnLib.calibre import test_calibre, CalibreMetadataReader
+
 
 # --- project modules
-from eBooks.core import parseInput
+from .core.initialize_program import initialize_program, foo_debug
 
 
 sys.dont_write_bytecode = True
 logger = get_logger()
 
-def check_zed() -> None:
-    if 'debugpy' in sys.modules:
-        import os
-        print(os.environ.get("ZED_APP_PATH"))
-        print(os.environ.get("ZED_ENVIRONMENT"))
-        print(os.environ.get("ZED_TERM"))
-        print(os.environ.get("TERM_PROGRAM"))
 
 
 
-def initialize_program() -> lnContext:
-
-    # 1. initialize context
-    pyproject = PyProjectManager(Path.cwd())
-    appl_version = pyproject.get_version()
-    ctx.initialize(project_name="eBooks", project_temp_dir=f"/tmp/ebooks-{appl_version}", version=appl_version)
-
-
-    #### 3. read  project configuration file
-    config_file = ctx.project_config_dir / "ebooks_config.yaml"
-    yaml_engine=get_yaml_engine(search_paths=[ctx.project_config_dir], recursive=True)
-    config_data: lnDict = lnDict(yaml_engine.load(str(config_file)))
-    config_data.save_yaml(title="processed_config", filepath=ctx.project_log_dir / "ebooks_config.yaml")
-    #### 4. insert configuration data into context
-    ctx.config.update(config_data)
-    return ctx
 
 
 def save_text_file(text: str, output_dir: Path, filename: str) -> None:
@@ -88,18 +66,9 @@ def process_epub(epub_path: str|Path, export_dir: Path | None = None, index: str
 
 
 def main():
-    start_signal_handler(True)
-
-    CALIBRE_PATH = "/home/loreto/filu/ln-eBooks/lnLibraries/Others"  # MODIFICA QUI
-    CALIBRE_PATH = "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"  # MODIFICA QUI
-    test_calibre(calibre_path=CALIBRE_PATH)
-    sys.exit()
-
-    initialize_program()
-    args=parseInput()
-    #### 2. logger initializzation
-    logger.initialize(name="eBooks", logging_dir=ctx.project_log_dir, console_logger_level=args.console_log_level)
-
+    ctx = initialize_program()
+    foo_debug()
+    args = ctx.args
     if args.extract:
         # breakpoint()
         for source_dir in ctx.config.dirs.source_top_dir:

@@ -5,6 +5,7 @@ dirs:
     source_top_dir:
         - '/home/loreto/filu/ln-eBooks/lnLibraries'
     extract_dir: '/home/loreto/filu/ln-eBooks/extracted'
+    calibre_path: "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"
     extensions:
         - epub
         - txt

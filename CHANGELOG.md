@@ -1,3 +1,9 @@
+## [0.1.3] - 2026-08-04
+
+## Other
+
+- continua inserimento lettura calibre - (Release 0.1.2) (pylnlib_commit=9a83c46)
+
 ## [0.1.2] - 2026-08-02
 
 ## Other
