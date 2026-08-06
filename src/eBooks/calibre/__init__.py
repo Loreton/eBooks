@@ -1,5 +1,5 @@
-from .calibre import test01_main
+from .calibre import get_duplicated_books
 
 __all__ = [
-    "test01_main",
+    "get_duplicated_books",
 ]

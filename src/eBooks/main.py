@@ -4,27 +4,19 @@
 Example usage of the EbookProcessor
 """
 
-import sys
+# import sys
 from pathlib import Path
 
 
 # --- pyLnLib modules
-# from eBooks.calibre.test01 import test01_main
-# from pyLnLib.git.pyproject_class import PyProjectManager
-# from pyLnLib.context   import ctx, lnContext
-# from pyLnLib.files     import get_yaml_engine, scan_directory
-# from pyLnLib.lndict    import lnDict
 from pyLnLib.logger    import get_logger
 from pyLnLib.epub      import EpubProcessor
-# from pyLnLib.system import start_signal_handler
-# from pyLnLib.calibre import test_calibre, CalibreMetadataReader
 
 
 # --- project modules
-from .core.initialize_program import initialize_program, foo_debug
+from .init.initialize_program import initialize_program, ln_breakpoint
+from .calibre.calibre import get_duplicated_books
 
-
-sys.dont_write_bytecode = True
 logger = get_logger()
 
 
@@ -32,45 +24,14 @@ logger = get_logger()
 
 
 
-def save_text_file(text: str, output_dir: Path, filename: str) -> None:
-    file_path = output_dir / filename
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(text)
-
-
-def process_epub(epub_path: str|Path, export_dir: Path | None = None, index: str|None=None) -> None:
-    book = EpubProcessor(epub_path)
-    author = book.author
-    # filename = book.filename
-    index=f"{index} - "  if index is not None else ''
-
-    logger.info("%sprocessing: %s/%s", index, book.author, book.filename.name)
-    # justxtract
-    if export_dir:
-        if author:
-            output_dir = Path(export_dir) / author
-            saved_filename = book.export_text(filename=output_dir / f"{book.filename.stem}.txt", replace=False, unique=False)
-            logger.debug("saved:      \"%s\"", saved_filename)
-        return
-
-
-    logger.info("filename:   %s", book.filename)
-    logger.info("title:      %s", book.title)
-    logger.info("author:     %s", book.author)
-    logger.info("language:   %s", book.language)
-    logger.info("identifier: %s", book.identifier)
-    logger.info("sections:   %s", len(book.get_sections()))
-    # Salva il report degli autori e dei conflitti
-        # book._save_conflict_report(output_dir)
-
-
 
 def main():
     ctx = initialize_program()
-    foo_debug()
+    # data=get_no_path_books(reader=ctx.calibre)
+    data=get_duplicated_books(reader=ctx.calibre)
+    ln_breakpoint()
     args = ctx.args
     if args.extract:
-        # breakpoint()
         for source_dir in ctx.config.dirs.source_top_dir:
             file_list = scan_directory(root_dir=source_dir, pattern='*.epub')
             nfiles=len(file_list)
@@ -169,3 +130,35 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+def save_text_file(text: str, output_dir: Path, filename: str) -> None:
+    file_path = output_dir / filename
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(text)
+
+
+def process_epub(epub_path: str|Path, export_dir: Path | None = None, index: str|None=None) -> None:
+    book = EpubProcessor(epub_path)
+    author = book.author
+    # filename = book.filename
+    index=f"{index} - "  if index is not None else ''
+
+    logger.info("%sprocessing: %s/%s", index, book.author, book.filename.name)
+    # justxtract
+    if export_dir:
+        if author:
+            output_dir = Path(export_dir) / author
+            saved_filename = book.export_text(filename=output_dir / f"{book.filename.stem}.txt", replace=False, unique=False)
+            logger.debug("saved:      \"%s\"", saved_filename)
+        return
+
+
+    logger.info("filename:   %s", book.filename)
+    logger.info("title:      %s", book.title)
+    logger.info("author:     %s", book.author)
+    logger.info("language:   %s", book.language)
+    logger.info("identifier: %s", book.identifier)
+    logger.info("sections:   %s", len(book.get_sections()))
