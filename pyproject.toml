@@ -41,12 +41,8 @@ ignore = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.11"
+pythonVersion = "3.14"
 typeCheckingMode = "standard"
-reportUnusedVariable = "warning"
-reportUnusedImport = "warning"
-reportOptionalMemberAccess = "warning"
-reportMissingTypeStubs = false
 
 [tool.setuptools.packages.find]
 where = [

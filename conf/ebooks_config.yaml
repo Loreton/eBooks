@@ -5,11 +5,15 @@ dirs:
     source_top_dir:
         - '/home/loreto/filu/ln-eBooks/lnLibraries'
     extract_dir: '/home/loreto/filu/ln-eBooks/extracted'
-    calibre_path: "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"
-    # calibre_path: "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne_appo"
-    extensions:
-        - epub
-        - txt
+
+libraries:
+    - "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"
+    - "/home/loreto/filu/ln-eBooks/lnLibraries/new_Entries"
+    - "/home/loreto/filu/ln-eBooks/lnLibraries/Ale"
+
+extensions:
+    - epub
+    - txt
 
 files_to_skip:
     - "Waylon University.02. La scommessa - Ilsa Madden-Mills"

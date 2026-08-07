@@ -11,10 +11,11 @@ from pathlib import Path
 # --- pyLnLib modules
 from pyLnLib.logger    import get_logger
 from pyLnLib.epub      import EpubProcessor
+from pyLnLib.files      import scan_directory
 
 
 # --- project modules
-from .init.initialize_program import initialize_program, ln_breakpoint
+from .init.initialize_program import initialize_program
 from .calibre.calibre import get_duplicated_books
 
 logger = get_logger()
@@ -28,8 +29,7 @@ logger = get_logger()
 def main():
     ctx = initialize_program()
     # data=get_no_path_books(reader=ctx.calibre)
-    data=get_duplicated_books(reader=ctx.calibre)
-    ln_breakpoint()
+    _data=get_duplicated_books(reader=ctx.calibre)
     args = ctx.args
     if args.extract:
         for source_dir in ctx.config.dirs.source_top_dir:
