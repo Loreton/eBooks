@@ -2,12 +2,12 @@
 
 # from pathlib import Path
 # from pyLnLib.context import ctx
-from enum import unique
 
 from pyLnLib.calibre import CalibreMetadataReader
 from pyLnLib import keyboardPrompt
+from pyLnLib import get_emoji
 
-
+E=get_emoji()
 
 # ============================================================
 # UTILIZZO
@@ -22,6 +22,7 @@ def get_duplicated_books(reader: CalibreMetadataReader, fields: list[str]|None=N
     # Ottieni i libri con i campi che ti servono
     if not fields:
         fields = ['id', 'title', 'authors', 'path', '#Status', '#ReadDate']
+    # books = reader.get_books_dict(fields=fields)
     books = reader.get_books(fields=fields)
     db_path=reader.db_path
     print(f"\n\t📚 on db_path: {db_path}")
@@ -31,9 +32,9 @@ def get_duplicated_books(reader: CalibreMetadataReader, fields: list[str]|None=N
     unique_book = []
     duplicated_book = []
     no_path = []
-
+    breakpoint()
     for i, book in enumerate(books, 1):
-        file_path = reader.get_book_file_path(book)
+        file_path = reader.get_book_file_path(book, debug=True  )
         title=book.get('title', 'NO title')
         authors=book.get('authors', 'N/D').replace('|', ' ')
         if file_path is None:
