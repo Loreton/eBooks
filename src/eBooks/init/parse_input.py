@@ -22,6 +22,7 @@ def common_options(parser, name: str):
     # group.add_argument('--config-file',  required=False, metavar='', default='config.yaml', type=str,
                 # help=f'{C.cyan}specify root directory {v.default}')
 
+    group.add_argument('--show-log-function-name',action='store_true', help=f'{C.green}show function on log line {v.default}')
     group.add_argument( "--console-log-level",
                             # metavar=f'{C.yellowH}<optional>{C.reset}',
                             metavar='',
@@ -36,7 +37,6 @@ def common_options(parser, name: str):
 
     # common_flags = parser.add_argument_group(f'{C.white}execution flags{C.reset}')
     # if parser_name in ['no_path']:
-    # group.add_argument('--force-function',action='store_true', help=f'{C.green}force function level on log {v.default}')
     # group.add_argument('--force-trace',   action='store_true', help=f'{C.green}force trace    level on log {v.default}')
     # group.add_argument('--force-notify',  action='store_true', help=f'{C.green}force notify   level on log {v.default}')
     group.add_argument('--go',            action='store_true', help=f'{C.green}specify if command must be executed. {v.default}')
@@ -176,5 +176,6 @@ def parseInput() -> argparse.Namespace:
         print('input arguments: {json_data}'.format(**locals()))
         sys.exit(0)
 
-
+    if args.show_log_function_name:
+        logger.show_function_name(True)
     return  args

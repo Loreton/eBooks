@@ -1,3 +1,11 @@
+## [0.1.3] - 2026-08-09
+
+## Other
+
+- affinamenti - (Release 0.1.3) (pylnlib_commit=956349b)
+- messe basi per inputParser() - (Release 0.1.3) (pylnlib_commit=5c0bb2f)
+- affinamenti - (Release 0.1.3) (pylnlib_commit=d8ad957)
+
 ## [0.1.3] - 2026-08-08
 
 ## Other

@@ -4,8 +4,8 @@
 Example usage of the EbookProcessor
 """
 
-# import sys
-from pathlib import Path
+import sys
+# from pathlib import Path
 
 
 # --- pyLnLib modules
@@ -16,7 +16,7 @@ from pyLnLib.files      import scan_directory
 
 # --- project modules
 from .init.initialize_program import initialize_program
-from .calibre.calibre import get_duplicated_books
+# from .calibre.calibre import show_duplicated_books
 
 logger = get_logger()
 
@@ -27,11 +27,20 @@ logger = get_logger()
 def main():
     ctx = initialize_program()
 
+    # reader = CalibreMetadataReader(calibre_path)
+
+    # ===== 1. Indici caricati all'avvio =====
+    logger.info("📊 Libreria:")
+    logger.info(f"\tTotale libri:      {ctx.calibre.count}")
+    logger.info(f"\tTotale autori:     {len(ctx.calibre.authors)}")
+    logger.info(f"\tDuplicati trovati: {ctx.calibre.duplicate_count}")
+
+
     if ctx.args.choice == 'duplicated':
-        _data=get_duplicated_books(reader=ctx.calibre)
+        logger.info(ctx.calibre.get_duplicate_report())
 
     elif ctx.args.choice == 'no-path':
-        _data=get_duplicated_books(reader=ctx.calibre)
+        _data=show_duplicated_books(reader=ctx.calibre)
 
     elif ctx.args.choice == 'search':
         ...
@@ -48,6 +57,7 @@ def main():
                 process_epub(epub_path=file, export_dir=ctx.config.dirs.extract_dir, index=f"{index:04}/{nfiles:04}")
 
 
+    # sys.exit("temporary exit")
 
 if __name__ == "__main__":
     main()

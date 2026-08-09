@@ -6,74 +6,17 @@
 from pyLnLib.calibre import CalibreMetadataReader
 from pyLnLib import keyboardPrompt
 from pyLnLib import get_emoji
+from pyLnLib.logger import get_logger
 
 E=get_emoji()
+logger=get_logger()
 
 # ============================================================
 # UTILIZZO
 # ============================================================
-def get_duplicated_books(reader: CalibreMetadataReader, fields: list[str]|None=None) -> None:
-    f_print: bool = False
-
-    print("=" * 70)
-    print("📚 LETTURA METADATI DA CALIBRE")
-    print("=" * 70)
-
-    # Ottieni i libri con i campi che ti servono
-    if not fields:
-        fields = ['id', 'title', 'authors', 'path', '#Status', '#ReadDate']
-    # books = reader.get_books_dict(fields=fields)
-    books = reader.get_books(fields=fields)
-    db_path=reader.db_path
-    print(f"\n\t📚 on db_path: {db_path}")
-    print(f"\t📚 Trovati {len(books)} libri\n")
-
-    # Mostra i primi 3
-    unique_book = []
-    duplicated_book = []
-    no_path = []
-    breakpoint()
-    for i, book in enumerate(books, 1):
-        file_path = reader.get_book_file_path(book, debug=True  )
-        title=book.get('title', 'NO title')
-        authors=book.get('authors', 'N/D').replace('|', ' ')
-        if file_path is None:
-            no_path.append(f"{authors} - {title}")
-        if title in unique_book:
-            duplicated_book.append(f"{authors} - {title}")
-        else:
-            unique_book.append(title)
-
-        if f_print:
-            print(f"📖 Libro {i}: {title}")
-            print(f"   Autori: {authors}")
-            print(f"   Editore: {book.get('publisher', 'N/D')}")
-            print(f"   status: {book.get('#Status', 'N/D')}")
-            print(f"   file_path: {file_path}")
-
-            for field in reader.get_custom_fields():
-                if book.get(field):
-                    print(f"   {field}: {book.get(field)}")
-            print()
 
 
 
-    # print(len(unique_book))
-    # for book in sorted(duplicated_book):
-    #     print(book)
-    print("unique_book:     ", len(unique_book))
-    print("duplicated_book: ", len(duplicated_book))
-    print("no_path:         ", len(no_path))
-    if False:
-        n_books = len(no_path)
-        for index, book in enumerate(no_path):
-            print(f"{index:04} of {n_books:04} - {book}")
-            keyb_msg: str = '\n\t[enter] to continue '
-            _choice = keyboardPrompt( text_msg=keyb_msg, validKeys=["ENTER"])
-
-
-    import sys
-    sys.exit("Uscita temporanea")
 
 
 
