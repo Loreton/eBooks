@@ -1,19 +1,26 @@
-dirs:
-    # top_dir: '/home/loreto/filu/ln-eBooks/new_books'
-    # output_dir: '/home/loreto/filu/ln-eBooks/new_books/output'
-        # - '/home/loreto/filu/ln-eBooks/new_books/single_test_book'
-    source_top_dir:
-        - '/home/loreto/filu/ln-eBooks/lnLibraries'
-    extract_dir: '/home/loreto/filu/ln-eBooks/extracted'
+calibre_config:
+    folders:
+        - "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"
+        - "/home/loreto/filu/ln-eBooks/lnLibraries/new_Entries"
+        - "/home/loreto/filu/ln-eBooks/lnLibraries/Ale"
 
-libraries:
-    - "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"
-    - "/home/loreto/filu/ln-eBooks/lnLibraries/new_Entries"
-    - "/home/loreto/filu/ln-eBooks/lnLibraries/Ale"
+    current_library: null
+    extensions:
+        - epub
 
-extensions:
-    - epub
-    - txt
+epubs:
+
+    folders:
+        - '/home/loreto/filu/ln-eBooks/Calderone'
+        - '/home/loreto/filu/ln-eBooks/new_books'
+
+    current_library: null
+    extensions:
+        - epub
+
+
+# extraction_top_dir: '/home/loreto/filu/ln-eBooks/extracted'
+main_folder:  '/home/loreto/filu/ln-eBooks/epubs'
 
 files_to_skip:
     - "Waylon University.02. La scommessa - Ilsa Madden-Mills"

@@ -10,7 +10,7 @@ from pyLnLib.logger    import get_logger
 from pyLnLib.colors    import get_colors
 from pyLnLib.system import start_signal_handler
 # from pyLnLib import keyboardPrompt
-from pyLnLib.varie import menu_select_from_list
+# from pyLnLib.varie import menu_select_from_list
 
 
 # --- project modules
@@ -54,6 +54,10 @@ def _read_configuration() -> lnDict:
     config_data.save_yaml(title="processed_config", filepath=ctx.project_log_dir / "ebooks_config.yaml")
     return config_data
 
+
+
+
+
 #=================================================
 # setup principali funzioni per il programma
 #   crx.project_name        project name
@@ -76,7 +80,7 @@ def initialize_program() -> lnContext:
     #### 2. logger initializzation
     default_console_logger_level="info"
     logger.initialize(name="eBooks", logging_dir=ctx.project_log_dir, console_logger_level=default_console_logger_level)
-
+    ctx.logger = logger # potrebbe tornare utile
 
     #================================================
     # 3.  read  project configuration file
@@ -95,13 +99,4 @@ def initialize_program() -> lnContext:
         logger.setConsoleLoggerLevel(args.console_log_level)
 
 
-    #================================================
-    # 4. initialize calibre
-    #  - legge potenziali librerie salla configurazione
-    #  - li esplode in un mneu per permettere la scela
-    #  - initializza calibre sulla libreria richiesta
-    #================================================
-    libraries: list[str] = config_data.libraries
-    choice = menu_select_from_list(libraries)
-    ctx.initialize_calibre(libraries[choice])
     return ctx

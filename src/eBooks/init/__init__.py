@@ -6,9 +6,8 @@
 
 
 from .parse_input           import parseInput
-# from .ln_ebook_manager      import EpubProcessor
+
 
 __all__ = [
     'parseInput',
-    # 'EpubProcessor',
 ]

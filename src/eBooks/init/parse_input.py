@@ -2,13 +2,26 @@
 import sys
 from types import SimpleNamespace
 import argparse
-
-from pyLnLib.context import ctx
+from pathlib import Path
+# from pyLnLib.context import ctx
 from pyLnLib.colors import get_colors
 from pyLnLib.logger import get_logger
 
 C=get_colors()
 logger=get_logger()
+
+
+
+
+# -----------------------------
+def check_dir(path):
+    p = Path(path)
+    if (p).is_dir():
+        return str(p.resolve())
+    else:
+        logger.error(f"""path: {p} doesn't exists! """)
+        sys.exit(1)
+
 
 
 # -- add common options to specific parser
@@ -17,10 +30,7 @@ def common_options(parser, name: str):
 
     _extra_descr=f'{C.white}arguments description{C.reset}'
     extra_descr= None
-    group=parser.add_argument_group(f'{C.white}{name} common arguments{C.reset}', extra_descr)
-    # input_args = parser.add_argument_group(f'{C.white}Common input arguments{C.reset}')
-    # group.add_argument('--config-file',  required=False, metavar='', default='config.yaml', type=str,
-                # help=f'{C.cyan}specify root directory {v.default}')
+    group=parser.add_argument_group(f'{C.white}common arguments{C.reset}', extra_descr)
 
     group.add_argument('--show-log-function-name',action='store_true', help=f'{C.green}show function on log line {v.default}')
     group.add_argument( "--console-log-level",
@@ -46,38 +56,18 @@ def common_options(parser, name: str):
 
 
 # ==================
-# define group for excel
+# define group for duplicated
 # ==================
 def duplicated(parser, name: str):
-    excel_parser   = parser.add_parser(name=name, help=f"{C.cyan}visualizza tutti i libri che sono duplicati{C.reset}")
-    _extra_descr=f'{C.white}arguments description{C.reset}'
-    extra_descr= None
-    group=excel_parser.add_argument_group(f'{C.white}{name} group {C.reset}', extra_descr)
+    subp   = parser.add_parser(name=name, help=f"{C.cyan}visualizza tutti i libri che sono duplicati{C.reset}")
+    # _extra_descr=f'{C.white}arguments description{C.reset}'
+    # extra_descr= None
+    # group=excel_parser.add_argument_group(f'{C.white}{name} group {C.reset}', extra_descr)
 
-    # define exclusive_group for excel
-    exclusive_group=group.add_mutually_exclusive_group(required=True)
-    exclusive_group.add_argument('--print', action='store_true', help=f'{C.cyan}print all files {v.default}')
-    exclusive_group.add_argument('--prompt', action='store_true', help=f'{C.cyan}prompt for each file to allow delection{v.default}')
-    common_options(parser=excel_parser, name=name)
+    # exclusive_group.add_argument('--print', action='store_true', help=f'{C.cyan}print all files {v.default}')
+    # exclusive_group.add_argument('--prompt', action='store_true', help=f'{C.cyan}prompt for each file to allow delection{v.default}')
+    common_options(parser=subp, name=name)
 
-
-
-# ==================
-# define group for no_path
-# ==================
-def no_path(parser, name: str):
-    no_path_parser = parser.add_parser(name=name, help=f"{C.cyan}visualizza tutti i libri che non hanno un link ad un file{C.reset}")
-    group=no_path_parser.add_argument_group(f'{C.white}{name} group {C.reset}', f'{C.white}arguments description{C.reset}')
-    group.add_argument('--wan', action='store_true', help=f'{C.cyan}access via WAN  {v.default}')
-
-    # define exclusive_group for no_path
-    exclusive_group=group.add_mutually_exclusive_group(required=True)
-    exclusive_group.add_argument('--backup', action='store_true', help=f'{C.cyan}backup all file from no_path  {v.default}')
-    exclusive_group.add_argument('--generate', action='store_true', help=f'{C.cyan}create all file from no_path  {v.default}')
-    exclusive_group.add_argument('--dhcp', action='store_true', help=f'{C.cyan}export dhcp in no_path format  {v.default}')
-    exclusive_group.add_argument('--firewall', action='store_true', help=f'{C.cyan}export firewall in no_path format  {v.default}')
-
-    common_options(parser=no_path_parser, name=name)
 
 
 
@@ -85,38 +75,50 @@ def no_path(parser, name: str):
 # define group for extract
 # ==================
 def extract(parser, name: str):
-    this_parser = parser.add_parser(name=name, help=f"{C.cyan}extract full textfrom ebook and save them as .txt in extraction_top_dir{C.reset}")
-    this_parser.add_argument('--extraction-top-dir',  required=False, metavar='', default=ctx.config.dirs.extract_dir, type=str,
-                help=f'{C.cyan}specify root directory {v.default}')
-    common_options(parser=this_parser, name=name)
+    subp = parser.add_parser(name=name, help=f"{C.cyan}{name} extract full textfrom ebook and save them as .txt in extraction_top_dir{C.reset}")
+    group = subp.add_argument_group(f'{C.white}{name} flags{C.reset}', v.extra_description)
+
+    group.add_argument('--source-epubs',  required=False, metavar='', default=None, type=check_dir,
+                help=f'{C.cyan}specify source epubs top directory {v.default}')
+
+    excl_group=group.add_mutually_exclusive_group(required=True)
+    excl_group.add_argument('--calibre',  action='store_true', help=f'{C.cyan}use files in calibre folders as source files  {v.default}')
+    excl_group.add_argument('--epubs',    action='store_true', help=f'{C.cyan}use files in epub folders as source files {v.default}')
+
+
+    common_options(parser=subp, name=name)
+
+# ==================
+# define group for rename
+# ==================
+def rename(parser, name: str):
+    subp = parser.add_parser(name=name, help=f"{C.cyan}rename epu bile using auhtor - title{C.reset}")
+    group = subp.add_argument_group(f'{C.white}Searching flags{C.reset}')
+    # group.add_argument('--calibre',         action='store_true', help=f'{C.cyan}use calibre files and not epub single files {v.default}')
+    # this_parser.add_argument('--calibre', action='store_true', help=f'{C.cyan}export text from calibre epub files {v.default}')
+    # this_parser.add_argument('--extraction-top-dir',  required=False, metavar='', default=ctx.config.dirs.extract_dir, type=str,
+    #             help=f'{C.cyan}specify root directory {v.default}')
+    common_options(parser=subp, name=name)
 
 # ==================
 # define group for search menu
 # ==================
 def search(parser, name: str):
-    my_parser = parser.add_parser(name=name, help=f"{C.cyan}search for specific string/words{C.reset}")
-    # my_parser = parser.add_argument_group(f'{C.white}Searching flags{C.reset}')
-    my_parser.add_argument('--terms',  type=str, nargs='*', metavar='', default=[], required=True, help=f'{C.cyan}terms to search for {v.default}')
-
-    my_parser.add_argument('--boundary',  action='store_true', default=False, required=False,
-            help=f'{C.cyan}full words instead of partial strings {v.default}')
-
-    my_parser.add_argument('--ignore-case',  action='store_true', default=False, required=False,
-            help=f'{C.cyan}case insensitive {v.default}')
-
-    my_parser.add_argument('--normalize-text',  action='store_true', default=False, required=False,
-            help=f'{C.cyan}normalize text {v.default}')
-
-    my_parser.add_argument('--context-length',  type=int, default=0, metavar='', required=False,
-            help=f'{C.cyan}text-len of extra Text before and after the searched string {v.default}')
+    subp = parser.add_parser(name=name, help=f"{C.cyan}{name} for specific string/words{C.reset}")
+    group = subp.add_argument_group(f'{C.white}Searching flags{C.reset}')
+    group.add_argument('--calibre',         action='store_true', help=f'{C.cyan}use calibre files and not epub single files {v.default}')
+    group.add_argument('--terms',           type=str, nargs='*', metavar='', default=[], required=True, help=f'{C.cyan}terms to search for {v.default}')
+    group.add_argument('--boundary',        action='store_true', help=f'{C.cyan}full words instead of partial strings {v.default}')
+    group.add_argument('--ignore-case',     action='store_true', help=f'{C.cyan}case insensitive {v.default}')
+    group.add_argument('--normalize-text',  action='store_true', help=f'{C.cyan}normalize text {v.default}')
+    group.add_argument('--and',             action='store_true', dest="and_arg", help=f'{C.cyan}and between words (default OR){v.default}')
+    group.add_argument('--context-length',  type=int, metavar='', default=0, help=f'{C.cyan}text-len of extra Text before and after the searched string {v.default}')
+    group.add_argument('--max-words-between',type=int, metavar='', default=None,  help=f'{C.cyan}max distance between words 0=adiacent {v.default}')
 
     # wd_required = True if '--near' in sys.argv else False
-    my_parser.add_argument('--max-words-between',  type=int, metavar='', default=None, required=False,
-            help=f'{C.cyan}max distance between words 0=adiacent {v.default}')
 
-    my_parser.add_argument('--and',     dest="and_arg", action='store_true',  default=False, help=f'{C.cyan}and between words (default OR){v.default}')
 
-    common_options(parser=my_parser, name=name)
+    common_options(parser=subp, name=name)
 
 
 
@@ -131,6 +133,8 @@ def parseInput() -> argparse.Namespace:
         default_color=C.yellow,
         metavar_optional=f'{C.white}<optional>{C.reset}',
         metavar_mandatory=f'{C.white}<mandatory>{C.reset}',
+        # extra_description=f'{C.white}arguments description{C.reset}',
+        extra_description=None,
     )
     v.default=f'{v.default_color}(default: %(default)s){C.reset}\n\n'
 
@@ -150,7 +154,7 @@ def parseInput() -> argparse.Namespace:
     # - Main positional arguments
     # -    choice conterrà l'argomento posizionale
     # ===================================
-    positional_arguments = ["duplicated", "no_path", "extract", "search"]
+    positional_arguments = ["rename", "extract", "search", "duplicated"]
     for item in positional_arguments:
         if sys.argv[1].startswith(item[:3]):
             sys.argv[1] = item
@@ -158,7 +162,7 @@ def parseInput() -> argparse.Namespace:
 
     pos_parser     = parser.add_subparsers(dest='choice',required=True, title=f'{C.white}choices - required positional arguments{C.reset}')
     duplicated(parser=pos_parser, name='duplicated')
-    no_path(parser=pos_parser, name="no_path")
+    rename(parser=pos_parser, name="rename")
     extract(parser=pos_parser, name="extract")
     search(parser=pos_parser, name="search")
 
