@@ -89,6 +89,22 @@ def extract(parser, name: str):
     common_options(parser=subp, name=name)
 
 # ==================
+# define group for extract
+# ==================
+def copy_new(parser, name: str):
+    subp = parser.add_parser(name=name, help=f"{C.cyan}{name} extract full textfrom ebook and save them as .txt in extraction_top_dir{C.reset}")
+    group = subp.add_argument_group(f'{C.white}{name} flags{C.reset}', v.extra_description)
+
+    group.add_argument('--source-epubs',  required=True, metavar='', default=None, type=check_dir,
+                help=f'{C.cyan}specify source epubs top directory {v.default}')
+
+    excl_group=group.add_mutually_exclusive_group(required=True)
+    excl_group.add_argument('--multiple-copies', action='store_true', help=f'{C.cyan}mantains more than one file per book {v.default}')
+    excl_group.add_argument('--one-copy',    action='store_true', help=f'{C.cyan}mantain just one copy for any title {v.default}')
+
+    common_options(parser=subp, name=name)
+
+# ==================
 # define group for rename
 # ==================
 def rename(parser, name: str):
@@ -154,7 +170,7 @@ def parseInput() -> argparse.Namespace:
     # - Main positional arguments
     # -    choice conterrà l'argomento posizionale
     # ===================================
-    positional_arguments = ["rename", "extract", "search", "duplicated"]
+    positional_arguments = ["rename", "extract", "search", "duplicated", "copy_new"]
     for item in positional_arguments:
         if sys.argv[1].startswith(item[:3]):
             sys.argv[1] = item
@@ -165,6 +181,7 @@ def parseInput() -> argparse.Namespace:
     rename(parser=pos_parser, name="rename")
     extract(parser=pos_parser, name="extract")
     search(parser=pos_parser, name="search")
+    copy_new(parser=pos_parser, name="copy_new")
 
 
     # - common options for all subparsers

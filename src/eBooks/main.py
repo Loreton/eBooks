@@ -5,6 +5,8 @@ Example usage of the EbookProcessor
 """
 # ruff: noqa: SIM114 Combine `if` branches using logical `or` operator help: Combine `if` branches (Ruff SIM114)
 
+from pathlib import Path
+
 
 # --- pyLnLib modules
 from pyLnLib.logger    import get_logger
@@ -15,7 +17,7 @@ from pyLnLib.varie      import menu_select_from_list
 # --- project modules
 from .init.initialize_program import initialize_program
 from .epubs.calibre import initialize_calibre
-from .epubs.epubs import extract_text
+from .epubs.epubs import extract_text, copy_new
 
 logger = get_logger()
 
@@ -31,6 +33,12 @@ def main():
 
     elif args.choice == 'search':
         ...
+
+    elif args.choice == 'copy_new':
+        source_top_dir=Path(args.source_epubs)
+        target_top_dir=Path(ctx.config.main_epubs_path)
+        copy_new(epubs_path=source_top_dir, target_path=target_top_dir, multiple_copies=args.multiple_copies)
+
 
     elif args.choice == 'extract':
         if args.calibre:

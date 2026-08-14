@@ -2,6 +2,16 @@
 
 ## Other
 
+- update on 2026.08.14 12:27:59 - (Release 0.1.3) (pylnlib_commit=02caee8)
+- proseguiamo.... - (Release 0.1.3) (pylnlib_commit=8386e16)
+- affinamenti - (Release 0.1.3) (pylnlib_commit=956349b)
+- messe basi per inputParser() - (Release 0.1.3) (pylnlib_commit=5c0bb2f)
+- affinamenti - (Release 0.1.3) (pylnlib_commit=d8ad957)
+
+## [0.1.3] - 2026-08-14
+
+## Other
+
 - proseguiamo.... - (Release 0.1.3) (pylnlib_commit=8386e16)
 - affinamenti - (Release 0.1.3) (pylnlib_commit=956349b)
 - messe basi per inputParser() - (Release 0.1.3) (pylnlib_commit=5c0bb2f)
