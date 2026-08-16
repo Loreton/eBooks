@@ -1,14 +1,18 @@
-#
+# /home/loreto/filu/Programming/gitREPO/eBooks/src/eBooks/init/initialize_program.py
+
 from pathlib import Path
 # --- pyLnLib modules
 # from eBooks.calibre.test01 import test01_main
 from pyLnLib.git.pyproject_class import PyProjectManager
-from pyLnLib.context   import ctx, lnContext
+from pyLnLib.context   import ctx, lnContext, pVars as pv
 from pyLnLib.files     import get_yaml_engine
 from pyLnLib.lndict    import lnDict
 from pyLnLib.logger    import get_logger
 from pyLnLib.colors    import get_colors
 from pyLnLib.system import start_signal_handler
+
+from pyLnLib.epub import AuthorRegistry
+
 # from pyLnLib import keyboardPrompt
 # from pyLnLib.varie import menu_select_from_list
 
@@ -48,10 +52,13 @@ def _read_configuration() -> lnDict:
              configuration (lnDict)
     """
 
-    config_file = ctx.project_config_dir / "ebooks_config.yaml"
-    yaml_engine=get_yaml_engine(search_paths=[ctx.project_config_dir], recursive=True)
+    config_file = pv.config_dir / "ebooks_config.yaml"
+    yaml_engine=get_yaml_engine(search_paths=[pv.config_dir], recursive=True)
     config_data: lnDict = lnDict(yaml_engine.load(str(config_file)))
-    config_data.save_yaml(title="processed_config", filepath=ctx.project_log_dir / "ebooks_config.yaml")
+    config_data.save_yaml(title="processed_config", filepath=pv.log_dir / "ebooks_config.yaml")
+
+    pv.author_registry=AuthorRegistry(pv.config_dir / "authors.yaml")
+
     return config_data
 
 
@@ -79,22 +86,22 @@ def initialize_program() -> lnContext:
 
     #### 2. logger initializzation
     default_console_logger_level="info"
-    logger.initialize(name="eBooks", logging_dir=ctx.project_log_dir, console_logger_level=default_console_logger_level)
-    ctx.logger = logger # potrebbe tornare utile
+    logger.initialize(name="eBooks", logging_dir=pv.log_dir, console_logger_level=default_console_logger_level)
+    pv.logger = logger # potrebbe tornare utile
 
     #================================================
     # 3.  read  project configuration file
     # 3a. insert configuration data into context
     #================================================
     config_data=_read_configuration()
-    ctx.config.update(config_data)
+    pv.config.update(config_data)
 
 
     #================================================
     # 2. read inout args
     #================================================
     args = parseInput()
-    ctx.args.update(vars(args)) # trasformiamolo in lnDict()
+    pv.args.update(vars(args)) # trasformiamolo in lnDict()
     if args.console_log_level != default_console_logger_level:
         logger.setConsoleLoggerLevel(args.console_log_level)
 

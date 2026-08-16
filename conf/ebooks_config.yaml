@@ -19,8 +19,13 @@ epubs:
         - epub
 
 
-# extraction_top_dir: '/home/loreto/filu/ln-eBooks/extracted'
+# calderone/
+#      epubs/
+#         author_name/
+#      text/
+#         author_name/
 main_epubs_path:  '/home/loreto/filu/ln-eBooks/calderone'
+authors_list:  'authors.yaml'
 
 files_to_skip: []
     # - "Waylon University.02. La scommessa - Ilsa Madden-Mills"

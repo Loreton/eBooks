@@ -1,947 +1,734 @@
 authors:
-    - A. M. Homes
-    - A.M. Hargrove
-    - AA. VV.
-    - AA. VV. AA. VV.
-    - Aaron Chriskaten
-    - Adam Croft
-    - Adam Thomson
-    - Addestramento del cane.txt
-    - Ade Zeno
-    - admin
-    - Adriana Mazzini
-    - Adriana Trigiani
-    - Adriano Panatta
-    - Adrien Bosc
-    - Adrienne Sharp
-    - Agatha Christie
-    - Akwake Emezi
-    - Alan Brennert
-    - Alberto Bracci Testasecca
-    - Alberto Costantini
-    - Alda Merini
-    - Aldo Nove
-    - Aleksandr Solženicyn
-    - Alessandra Paola Ghisleri
-    - Alessandra Uscè
-    - Alessandro Banda
-    - Alessandro Baricco
-    - Alessandro D’Avenia
-    - Alessandro Milan
-    - Alessandro Zaltron
-    - Alessandro Zanotelli
-    - Alex Laurin
-    - Alex Marwood
-    - Alexander Knight
-    - Alexandra Rose
-    - Ali Hazelwood
-    - Ali Smith
-    - Alice Marcotti
-    - Alice Winchester
-    - ALIEN DHARMA
-    - Alison Weir
-    - Allan Bay
-    - Alyssa Palombo
-    - Amaryllis Fox
-    - Amelia Hartley
-    - Amin Maalouf
-    - Amy Bloom
-    - Amy Bratley
-    - Amy Harmon
-    - Amélie Nothomb
-    - Andie M. Long
-    - Andras Forgach
-    - Andrea Grady
-    - Andrea Long Chu
-    - Andrea Scanzi
-    - Andrew Faber
-    - Andrew Michael Hurley
-    - Andrée A. Michaud
-    - Andy Stone
-    - Angela Marsons
-    - Angie Thomas
-    - Ann Cleeves
-    - Ann Weisgarber
-    - Anna Coda
-    - Anna Dalton
-    - Anna Ellory
-    - Anna North
-    - Anna Todd
-    - Annalisa Strada
-    - Annamaria Saterini
-    - Anne Cassidy
-    - ANNE SCOTT
-    - Anthony Bourdain
-    - Anthony De Mello
-    - Anthony Ryan
-    - Antonella Moretti
-    - Antonio Ereditato
-    - Antonio Forcellino
-    - Antonio Monda
-    - Antonio Mosca
-    - Antonio Nicaso
-    - Antonio Socci
-    - Ardat
-    - Arianna Di Luna
-    - Arianna Porcelli Safonov
-    - Aristofane
-    - Armando Matteo
-    - Arthur Charles Clarke
-    - Asimov Isaac
-    - Aslı Erdoğan
-    - Attica Locke
-    - Ausias March
-    - Autore
-    - Ava Ólafsdóttir Auður
-    - Azzurra Targa
-    - B. A. Paris
-    - B. Wrightson
-    - Banana Yoshimoto
-    - Beaton M.C.
-    - Becca Fitzgerald
-    - Becca Fitzpatrick
-    - Bella Jewel
-    - Benedetta Cipriano
-    - Beppe Severgnini
-    - Beppe Tosco
-    - Bernardo Bertolucci
-    - Bernhard Schlink
-    - Beyman Giulia
-    - Bianca Ferrari
-    - Bianca Marconero
-    - Bianca Rita Cataldi
-    - Bijan Zarmandili
-    - Birgit Kluger
-    - Blake Pierce
-    - Bluebook
-    - Brian Tracy
-    - Brian Van Reet
-    - Brittainy C. Cherry
-    - Bruno Latour
-    - Byrne Tanya
-    - C.J. Tudor
-    - Callihan Kristen
-    - Calogero Manera
-    - Candace Camp
-    - Candice Fox
-    - Care Santos
-    - Caresse Gamelin
-    - Carl Chinn
-    - Carlo Greppi
-    - Carlo Politi
-    - Carlos Magdalena
-    - Carmen Jenner
-    - Carolina Dellonte
-    - Caroline Hulse
-    - Caroline Montague
-    - Casey Elle
-    - Cass Hunter
-    - Cath Howe
-    - Catherine Doyle
-    - Catherine Ferguson
-    - Catherine Rider
-    - Cecile Bertod
-    - Charles Bukowski
-    - Charlotte Brontë
-    - Charlotte Byrd
-    - Chiara Gamberale
-    - Chibundo Onuzo
-    - China Miéville
-    - Chris Offutt
-    - Christi Daugherty
-    - Christian Bergamo
-    - Christian Berkel
-    - Christopher Paolini
-    - Christopher Vick
-    - Claire Douglas
-    - Clancy Tom
-    - Greaney Mark
-    - Franks Fred Jr.
-    - Greenberg Martin
-    - Clara Sanchez
-    - Clare Mackintosh
-    - Clarice Lispector
-    - Claude LéviStrauss
-    - Claudio Strinati
-    - Clemantine Wamariya
-    - Clemens J. Setz
-    - Clive Cussler
-    - Jack Du Brul
-    - Colette McBeth
-    - Colleen Cross
-    - Colleen Gleason
-    - Colson Whitehead
-    - Conn Iggulden
-    - Corinne Michaels
-    - Cornell Woolrich
-    - Cory Doctorow
-    - Costanza Rizzacasa d'Orsogna
-    - Cressida McLaughlin
-    - Cristina Maggiotto
-    - Cristina Origone
-    - Cristina Orlandi
-    - Cristina Vichi
-    - Cynan Jones
-    - Damien Boyd
-    - Dan Brown
-    - Daniel Kalla
-    - Daniel Kehlmann
-    - Daniel Magariel
-    - Daniela Mastromatteo
-    - Daniela Ruggero
-    - Daniela Volonté
-    - Daniele Azzolini
-    - Daniele Di Benedetti
-    - Danielle Steel
-    - Daphne Du Maurier
-    - Dave Eggers
-    - David Brooks
-    - David Fivoli
-    - David Quammen
-    - David Sedaris
-    - David Szalay
-    - Davide Marino
-    - Davide Morosinotto
-    - Daša Drndić
-    - Dean Koontz
-    - Debbie Howells
-    - Debbie Macomber
-    - Deborah Fasola
-    - Deborah P.
-    - Deborah P. Cumberbatch
-    - Delmare Lagrange
-    - Delrai Malia
-    - Dennis Lehane
-    - Derek Raymond
-    - Devney Perry
-    - Dhand Roxane
-    - Diana Alberton
-    - Diane Setterfield
-    - Diego Garripoli
-    - Dillard Annie
-    - Dinah Jefferies
-    - Dionigi Cristian Lentini
-    - Domenico De Masi
-    - Don Winslow
-    - Donald Sassoon
-    - Donato Carrisi
-    - Doriana Cantoni
-    - Douglas Jackson
-    - Douglas Penelope
-    - Dugoni Robert
-    - E.L. Doctorow
-    - E.L. James
-    - Ed McBain
-    - Edgar Allan Poe
-    - Edmondo De Amicis
-    - Edna O'Brien
-    - Edoardo Leoni
-    - Eileen Ross
-    - Eka Kurniawan
-    - Eleanor H. Porter
-    - Elena Armas
-    - Elena Martignoni
-    - Eliana Di Caro
-    - Elisa Crescenzi
-    - Elisabeth Tova Bailey
-    - Elizabeth Chadwick
-    - Elizabeth Day
-    - Elizabeth Gaskell
-    - Elizabeth George
-    - Elizabeth Gilbert
-    - Elizabeth Giulia Grey
-    - Elizabeth von Arnim
-    - Elizabeth Weil
-    - Ella James
-    - Elle Kennedy
-    - ELLE RAZZAMAGLIA
-    - Ellen Keith
-    - Ellen Raskin
-    - Ellie Wade
-    - Elliot Kendra
-    - Elliott Lexie
-    - Eloy Moreno
-    - Emanuela Scarpellini
-    - Emily Cross
-    - Emily Gunnis
-    - Emma Chase
-    - Emma Healey
-    - Emma Reyes
-    - Ennio Tomaselli
-    - Enrico Pandiani
-    - Enrique VilaMatas
-    - Eric Jacques
-    - Eric Van Lustbader
-    - Erich Segal
-    - Erika Vanzin
-    - Erin Entrada Kelly
-    - Erin Hunter
-    - Erin Stewart
-    - Erle Stanley Gardner
-    - Ernst  Jünger
-    - Erri De Luca
-    - Esteban Labruna
-    - Ester Corvi
-    - Eugenio Coccia
-    - Eva Mangas
-    - Eva Woods
-    - Evelyn Storm
-    - F. Sally D.
-    - Fabio Geda
-    - Fabio Rosini
-    - Fabio Volo
-    - Fabiola D'Amico
-    - Faby Daddy
-    - Fanny D. Ross
-    - Federica Fasolini
-    - Federico Moccia
-    - Felicia Kingsley
-    - Felicia Yap
-    - Ferraro Valentina
-    - Fiona Harper
-    - Flora A. Gallert
-    - Forte Franco
-    - Fox Nicole
-    - Fran Ross
-    - Francesca C. Cominelli
-    - Francesca Cani
-    - Francesca Giannone
-    - Francesco Bonazzi
-    - Francesco Borgonovo
-    - Francesco Casolo
-    - Michele Freppaz
-    - Francesco Guccini
-    - Francesco Sole
-    - Francesco Tosco
-    - Franck Thilliez
-    - Franco Brevini
-    - Franco Forte
-    - Frank Schätzing
-    - François Jullien
-    - Françoise Bourdin
-    - Fred Vargas
-    - Freddie Mercury
-    - Greg Brooks
-    - Simon Lupton
-    - Frederick Forsyth
-    - Freida McFadden
-    - G. Fonseca
-    - G. L. Barone
-    - Gabriele Gallo
-    - Gabriele Parpiglia
-    - Gabry Fedrighelli
-    - Gad Lerner
-    - Gaia Rayneri
-    - Gardner Dozois
-    - Gavino Zucca
-    - George Gipe
-    - George Prochnik
-    - Georges Simenon
-    - Georgia Hill
-    - Gert Nygårdshaug
-    - Giacomo Mazzariol
-    - Giampaolo Pansa
-    - Giancarlo Riccomonte
-    - Gianfranco Pasquino
-    - Giani Stuparich
-    - Gianna Gabriela
-    - Gianrico Carofiglio
-    - Gigi Paoli
-    - Gillian McAllister
-    - Gioconda Belli
-    - Giorgio Nisini
-    - Giovanna Mazzilli
-    - Giuditta Ross
-    - Giulia Beyman
-    - Giulia Contini
-    - Giulio Tremonti
-    - Giunta Federico
-    - Giuseppe Marcocci
-    - Giuseppe Pontiggia
-    - Giuseppe Remuzzi
-    - Giuseppe Trepiccione
-    - Giuseppina D'Amato
-    - Giuseppina Vitale
-    - Golnaz Hashemzadeh Bonde
-    - Gore Vidal
-    - Graeme Macrae Burnet
-    - Greer Hendricks
-    - Greg Iles
-    - Greta Guerrieri
-    - Grégoire Delacourt
-    - Guido Anselmi
-    - Gustav Le Bon
-    - Gustave Flaubert
-    - Gwenda Bond
-    - Gwendolen Hope
-    - H. Joking
-    - Hagen Layla
-    - HansOlav Thyvold
-    - Harper Lee
-    - Harriet Tyce
-    - Haruf Kent
-    - Haruki Murakami
-    - Hazelwood Ali
-    - Heidi Perks
-    - Holly Bourne
-    - Howard Jacobson
-    - Håkan Nesser
-    - Ian McDonald
-    - Ian McEwan
-    - Ida Bassignano
-    - Ilaria Bernardini
-    - Ilaria Tuti
-    - Ilenia Leonardini
-    - Iles Greg
-    - Indro Montanelli
-    - Irene LeGentil
-    - Irene Pistolato
-    - Irene Stasi
-    - Isaac Asimov
-    - Isaac Bashevis Singer
-    - Isabel Allende
-    - Isabella Izzo
-    - Ito Ogawa
-    - Ivy ComptonBurnett
-    - J.K. Red
-    - J.K. Rowling
-    - Jack London
-    - Jack Mars
-    - Jack Whyte
-    - Jacobsen Roy
-    - Jacobsen Siri
-    - Ranva Hjelm
-    - Jacques Ravenne
-    - Jake La Furia
-    - Guè Pequeno
-    - James Delargy
-    - James Ella
-    - James Joyce
-    - James Patterson
-    - James Patterson
-    - Andrew Gross
-    - Jane Casey
-    - Jane Fallon
-    - Jasmine Cresswell
-    - Jason Stanley
-    - Javier Negrete
-    - JAx
-    - JeanChristophe Rufin
-    - Jeff Vandermeer
-    - Jeffery Deaver
-    - Jeffrey Eugenides
-    - Jen Beagin
-    - Jen McLaughlin
-    - Jenn Lyons
-    - Jennifer Cody Epstein
-    - Jennifer Egan
-    - Jennifer Green
-    - Jennifer L. Armentrout
-    - Jenny Hale
-    - Jens Henrik Jensen
-    - Jeroen Windmeijer
-    - Jess L
-    - Jessica Fletcher
-    - Jessica Koch
-    - Jessica Therrien
-    - Jessica Vallance
-    - Jessie Burton
-    - Jessie Chaffee
-    - Jessie Greengrass
-    - Jill Dawson
-    - Jill Sanders
-    - Jim Thompson
-    - Jo Jakeman
-    - Jo Nesbo
-    - Jo Nesbø
-    - Joanne Harris
-    - Joe Hill
-    - Joe R. Lansdale
-    - Joe Vitale
-    - Johanna Holmstrom
-    - Johannes Bückler
-    - John Boyne
-    - John Grisham
-    - John Inman
-    - John Sandford
-    - Jojo Moyes
-    - Jon Land
-    - Jonas Hassen Khemiri
-    - Jonathan Franzen
-    - Jonathan Lethem
-    - Jonathan Littell
-    - Jorge Lorenzo
-    - Joseph E. Stiglitz
-    - Joséphine Saugrain
-    - Joy Clare Madness
-    - Joy Ellis
-    - Juan Gabriel Vásquez
-    - Juan Octavio Prenz
-    - Jules Barnard
-    - Jun’ichiro Tanizaki
-    - Jurek Becker
-    - K.A. Merikan
-    - K.C. Lynn
-    - K.I. Lynn
-    - Kameron Hurley
-    - Kamila Shamsie
-    - Kandi Steiner
-    - karali karali
-    - Karen Katchur
-    - Karen Morgan
-    - Karen Swan
-    - Karen Woods
-    - Karin Slaughter
-    - Karina Halle
-    - Kate Morton
-    - Kate Suarez
-    - Katherine Collette
-    - Kathrin Sohst
-    - Kathryn Hughes
-    - Katja Pantzar
-    - Katy Mahood
-    - Kayte Nunn
-    - Keeland Vi
-    - Keigo Higashino
-    - Keith Stuart
-    - Kendra Elliot
-    - Kennedy Elle
-    - Kennedy Ryan
-    - Keren David
-    - Kevin Brooks
-    - Kiese Laymon
-    - Kim Unsu
-    - Kirby Jessi
-    - Kito Aya
-    - Klaus Bernhardt
-    - Kristel Ralston
-    - Kristen Callihan
-    - Kristin Hannah
-    - Kristin Harmel
-    - Kristin King
-    - Krystan Sutherland
-    - Kylie Brant
-    - Lars Kepler
-    - Laszlo Krasznahorkai
-    - Laura Gnocchi
-    - Laura Lindstedt
-    - Laura Rocca
-    - Laurelin Paige
-    - Lauren Blakely
-    - Lauren Rowe
-    - Layla Hagen
-    - Layne Fargo
-    - László Krasznahorkai
-    - Leigh James
-    - Leigh Lora
-    - Lena Gray
-    - Leni Zumas
-    - Leonardo Sinisgalli
-    - Leonie Swann
-    - Lesley Lokko
-    - Lesley Nneka Arimah
-    - Leslie Wolfe
-    - Levi Henriksen
-    - Lewis Carroll
-    - Lia Carnevale
-    - Libby Ryan
-    - Lili Hayward
-    - Lili Wright
-    - Linda Barbarino
-    - Linda Lafferty
-    - Linda Rosenkrantz
-    - Linda Tugnoli
-    - Linnea Nilsson
-    - Lisa Hilton
-    - Lisa Jane Smith
-    - Lisa Regan
-    - Lisa Steinke
-    - Lissa Evans
-    - Livio Fanzaga
-    - Liz Fenton
-    - Liz Lawler
-    - Lois Lowry
-    - Lora Leigh
-    - Lorenza Ronzano
-    - Lorenzo Braccesi
-    - Lorenzo Marone
-    - Lorenzo Tomasin
-    - Loris Giuriatti
-    - Louise Bay
-    - Louis Ferdinand Céline
-    - Luca Bottura
-    - Luca Martinelli
-    - Lucia Cantoni
-    - Lucia Maria Collerone
-    - Lucia Vaccarino
-    - Luciano Bolis
-    - Luciano Gallino
-    - Lucie Whitehouse
-    - Lucinda Riley
-    - Lucy Dale
-    - Lucy Foley
-    - Lucy Score
-    - Luigi Ballerini
-    - Luis Alberto Urrea
-    - Luis Sepùlveda
-    - Luis Sepúlveda
-    - Luis Sepúlveda
-    - Carlo Petrini
-    - Lulu Taylor
-    - luna mascitti
-    - Léon Bloy
-    - M. Leighton
-    - M.C. Beaton
-    - Ma Jian
-    - Macrina Mirti
-    - Madeleine H
-    - Madeline Miller
-    - Malia Delrai
-    - Manlio Castagna
-    - Manuel Vázquez Montalbán
-    - Manuela Ricci
-    - Marcella Filippa
-    - Marco Biaz
-    - Marco Ricci
-    - Marco Sartori
-    - Marcos Chicot
-    - Marcus Malte
-    - Margaret Atwood
-    - Margaret Doody
-    - Margaret Wilkerson Sexton
-    - Maria Badalamenti
-    - Maria Serena Palieri
-    - Maria Venturi
-    - Mariana Mazzucato
-    - Mariana Zapata
-    - Marie Benedict
-    - Mariella Mehr
-    - Marika S.M.
-    - Mario Fillioley
-    - Marion Zimmer Bradley
-    - Marius Gabriel
-    - Mark Greaney
-    - Martin H. Greenberg
-    - Martin Heidegger
-    - Mary Pippa Collins
-    - Marzia Sicignano
-    - Masella Marco
-    - Massimo Bocchiola
-    - Massimo Franco
-    - Massimo Recalcati
-    - Mathangi Subramanian
-    - Mathias Malzieu
-    - Matt Killeen
-    - Matteo Strukul
-    - Matthew Pearl
-    - Maurice Sachs
-    - Maurizio de Giovanni
-    - Maurizio Mattiuzza
-    - Maurizio Pancaldi
-    - Maurizio Villani
-    - Maxine Paetro
-    - Meg Waite Clayton
-    - Meg Wolitzer
-    - Megan Miranda
-    - Meghan Quinn
-    - Melinda Leigh
-    - Melissa Hill
-    - Meredhit Piaf
-    - Meredith Goldstein
-    - Mew Notice
-    - Michael Connelly
-    - Michael Crichton
-    - Michael Cunningham
-    - Michael Morpurgo
-    - Michael Wolff
-    - Michel Houellebecq
-    - Michel Pastoureau
-    - Michela Martignoni
-    - Michela Monti
-    - Michela Ray
-    - Michele Freppaz
-    - Michele Gambino
-    - Michelle Marly
-    - Michelle Richmond
-    - Micol Ostow
-    - Milly Johnson
-    - Mohsin Hamid
-    - Mona Kasten
-    - Monia Scott
-    - Monica Hesse
-    - Monica Murphy
-    - Monique Vane
-    - Morgana D. Baroque
-    - Morgane Ortin
-    - Nadia Terranova
-    - Nadine Gordimer
-    - Natalia Sanmartin Fenollera
-    - Nathalie Guarneri
-    - Natsuo Kirino
-    - Neal Barrett jr.
-    - Nellie Bly
-    - Neria De Giovanni
-    - Nesbø Jo
-    - Nicholas Peter
-    - John Hornby
-    - Nicholas Sparks
-    - Nickolas Butler
-    - Nicola Gratteri
-    - Nicolas Barreau
-    - Nicolas Mathieu
-    - Nicole Fox
-    - Nikoletta Kiss
-    - Nora Roberts
-    - Nova Lee Maier
-    - Olga Tokarczuk
-    - Oliver Bowden
-    - Olivia Spencer
-    - Orso Tosco
-    - Oscar Wilde
-    - Ottessa Moshfegh
-    - Otto Friedrich
-    - Paloma SanchezGarnica
-    - Paola Mastrocola
-    - Paola Turroni
-    - Paolo Crepet
-    - Paolo Giordano
-    - Paolo Legrenzi
-    - Armando Massarenti
-    - Paolo Rumiz
-    - Paolo Sechi
-    - Patricia Cornwell
-    - Patricia Gibney
-    - Patrick Modiano
-    - Patrisha Mar
-    - Patrizia Ines Roggero
-    - Paulina Flores
-    - Pema Chödrön
-    - Penelope Douglas
-    - Penelope Ward
-    - Vi Keeland
-    - Penny Reid
-    - Perry Devney
-    - Peter Cameron
-    - Peter Handke
-    - Peter James
-    - Petros Markaris
-    - Phil Kansel
-    - Philippe Besson
-    - Pier Aldo Rovatti
-    - Pier Luigi Rossi
-    - Piero Fassino
-    - Pina La
-    - Pistolato Irene
-    - Preston Norton
-    - R.J. Palacio
-    - Rachel Caine
-    - Rachel Wells
-    - Rafel Nadal
-    - Ramiro Pinilla
-    - Raphael
-    - Raseiden
-    - Rebecca Donovan
-    - Rebecca La Spina
-    - Rebecca Martin
-    - Rebecca Moro
-    - Rebecca Reid
-    - Rebecca Stead
-    - Rebecca York
-    - Recalcati Massimo
-    - Regan Lisa
-    - Rhea Key
-    - Rhiannon Navin
-    - Rhoma G.
-    - Rhys Thomas
-    - Riccardo Bruni
-    - Richard Bach
-    - Richard Matheson
-    - Rick Moody
-    - Riley Lucinda
-    - Rina Kent
-    - Ripetta Tamara
-    - Rita Giaccari
-    - Ritratto In Seppia
-    - Rob Hart
-    - Robert Bryndza
-    - Robert Cormier
-    - Robert Dugoni
-    - Robert Harris
-    - Robert K. Patterson
-    - Robert Pogue Harrison
-    - Robert Westall
-    - Roberta Rubini
-    - Roberto Burioni
-    - Roberto Cipresso
-    - Roberto Esposito
-    - Roberto Graniglia
-    - Roberto Mercadini
-    - Roberto Saviano
-    - Robin Cook
-    - Romain Gary
-    - Romain Slocombe
-    - Romy Fölck
-    - Ronald H. Balson
-    - Ronaldo Wrobel
-    - Rosella Postorino
-    - Rossana Fanny Duvall
-    - Rossella Fogliani
-    - Roxane Van Iperen
-    - Royale Gingras
-    - Ruben Ygua
-    - Rum Etaf
-    - Ryan kennedy
-    - Ryan Kennedy
-    - Régis Jauffret
-    - S.D. Monaghan
-    - S.J.A. Turney
-    - Sada Mirsad
-    - Sally Franson
-    - Sally Rooney
-    - Salvo Di Caro
-    - Salvo Toscano
-    - Sam Stoner
-    - Samantha Downing
-    - Samantha Towle
-    - Samantha Young
-    - Sandro Veronesi
-    - Sara Rattaro
-    - Sara S.
-    - Sarah A. Denzil
-    - Sarah Bailey
-    - Sarah Lotz
-    - Sarah Morgan
-    - Sarah Pekkanen
-    - Sarah Rees Brennan
-    - Sarina Bowen
-    - Sarina Bowen
-    - Elle Kennedy
-    - Sasha Marianna Salzmann
-    - Saverio Gaeta
-    - SC Daiko
-    - Sconosciuto
-    - sconosciuto
-    - Seiji Ozawa
-    - Seneca
-    - Seo Miae
-    - Sepùlveda Luis
-    - Serena Brucculeri
-    - Serena McLeen
-    - Serena Santorelli
-    - Shane Stevens
-    - Sharon Bolton
-    - Sheila Sophia Swan
-    - Siliato Maria Grazia
-    - Silvia Gianatti
-    - Simi Giampaolo
-    - Simon Beckett
-    - Simon Scarrow
-    - Simon Wood
-    - Simona Burgio
-    - Simona Friio
-    - Simona La Corte
-    - Simone Lari
-    - Simonetta Agnello Hornby
-    - Sky Corgan
-    - Slaughter Karin
-    - Sophie Kinsella
-    - Soren Sveistrup
-    - Stefania Bernardo
-    - Stefano Medas
-    - Steiner Kandi
-    - Stephanie Foss
-    - Stephanie Knipper
-    - Stephen King
-    - Steve Martini
-    - Steve Pieczenik
-    - stevenlob
-    - Stoker Susan
-    - Sue Watson
-    - Sujata Massey
-    - Susan Elizabeth Phillips
-    - Susan Griscom
-    - Susan Stoker
-    - Susanna Tamaro
-    - Sylvia Day
-    - Sylvia Townsend Warner
-    - T.L. Smith
-    - Tahar Ben Jelloun
-    - Tami Hoag
-    - Tana French
-    - Taylor Jenkins Reid
-    - Teresa D.G.
-    - Teresa Greco
-    - Terri Osburn
-    - Terry Pinkard
-    - Tess Gerritsen
-    - Theodore F. Powys
-    - Tim Curran
-    - Tim Weaver
-    - Tina Isabel Leung
-    - Tom Clancy
-    - tom clancy
-    - Tom Clancy
-    - Steve Pieczenik
-    - Tom Clancy
-    - Mark Greaney
-    - Tom Clancy
-    - Mark Greaney
-    - Tommaso Carbone
-    - Tommaso Pagano
-    - Trevor Noah
-    - Trish Cook
-    - Trisha Ashley
-    - Tyler King
-    - Umberto Eco
-    - V.S. Naipaul
-    - Valentina Ferraro
-    - Valentina Furlanetto
-    - Valentina Mears
-    - Valerie Keogh
-    - Valerie Perrin
-    - Valerio Curcio
-    - Valerio Massimo Manfredi
-    - Vanessa Navicelli
-    - Vanessa Sobrero
-    - Vasilij Grossman
-    - Vera Demes
-    - Veronica Deanike
-    - Veronica Pivetti
-    - Vi Keeland
-    - Vi Keeland Penelope Ward
-    - Victoria Aveyard
-    - Violet Z.
-    - Virginia Baily
-    - Virginia Woolf
-    - Wallace Stegner
-    - Wallis Gordon
-    - Ward Penelope
-    - Well Read Translations
-    - werudane B
-    - Wilbur Smith
-    - Wilkie Collins
-    - Willa Cather
-    - William Dean Howells
-    - William McIlvanney
-    - William Trevor
-    - William Vollmann
-    - Winki
-    - Wioletta Greg
-    - Wlodek Goldkorn
-    - Wright Colleen
-    - Wu Ming
-    - Yangsze Choo
-    - Yannick Roch
-    - Ylenia Luciani
-    - Yokomizo Seishi
-    - Young Samantha
-    - Yu Hua
-    - Yuri Sterrore
-    - Yusra Mardini
-    - Zack McDermott
-    - Zara Stoneley
-    - Zeyn Joukhadar
-    - Zoey Morgan
-    - Ádám Bodor
-    - Ángeles Doñate
-    - Özgür Mumcu
+  Adler Olsen:
+  - Jussi
+  Agassi:
+  - Andre
+  Allende:
+  - Isabel
+  Annie:
+  - Dillard
+  Ardone:
+  - Viola
+  Arimah:
+  - Lesley Nneka
+  Ashley:
+  - Trisha
+  Asimov:
+  - Isaac
+  Auel:
+  - Jean
+  - Jean M
+  Bach:
+  - Richard
+  Badalamenti:
+  - Maria
+  Bailey:
+  - Alice A
+  - Elisabeth Tova
+  - Sarah
+  Balson:
+  - Ronald H
+  Barnard:
+  - Jules
+  Barrett:
+  - Neal jr
+  Bassignano:
+  - Ida
+  Bay:
+  - Louise
+  Beckett:
+  - Simon
+  Ben:
+  - Tahar Jelloun
+  Benedict:
+  - Marie
+  Berkel:
+  - Christian
+  Bertod:
+  - Cecile
+  Beyman:
+  - Giulia
+  Biaz:
+  - Marco
+  Blakely:
+  - Lauren
+  Bocchiola:
+  - Massimo
+  Bodor:
+  - Ádám
+  Bond:
+  - Gwenda
+  Bosc:
+  - Adrien
+  Bosco:
+  - Annamaria
+  Bourdain:
+  - Anthony
+  Bourdin:
+  - Françoise
+  Bowen:
+  - Sarina
+  Boyd:
+  - Damien
+  Boyne:
+  - John
+  Braccaioli:
+  - Riccardo
+  Brant:
+  - Kylie
+  Brontë:
+  - Charlotte
+  Brooks:
+  - Freddie Mercury Greg Simon Lupton
+  - Kevin
+  Brown:
+  - Dan
+  Brucculeri:
+  - Serena
+  BukBuk:
+  - Social Network
+  Bukowski:
+  - Charles
+  Burgio:
+  - Simona
+  Burnet:
+  - Graeme Macrae
+  Burton:
+  - Jessie
+  Butler:
+  - Nickolas
+  C:
+  - Brittainy Cherry
+  - Francesca Cominelli
+  - K Lynn
+  - M Beaton
+  Caine:
+  - Rachel
+  Callihan:
+  - Kristen
+  Camp:
+  - Candace
+  Cani:
+  - Francesca
+  Carlan:
+  - Audrey
+  Carlton:
+  - H D
+  Carofiglio:
+  - Gianrico
+  Carrisi:
+  - Donato
+  Casey:
+  - Jane
+  Cather:
+  - Willa
+  Chadwick:
+  - Elizabeth
+  Chaffee:
+  - Jessie
+  Chase:
+  - Emma
+  Cherry:
+  - Brittainy C
+  Chiozza:
+  - Paola
+  Clancy:
+  - Tom
+  - tom
+  - Tom con Mark Greaney
+  - Tom e Franks Fred Jr
+  - Tom Greaney Mark
+  - Tom Greenberg Martin
+  - Tom Mark Greaney
+  - Tom Steve Pieczenik
+  - Tom trama
+  Clarke:
+  - Arthur Charles
+  Cleeves:
+  - Ann
+  Collerone:
+  - Lucia Maria
+  Collins:
+  - Mary Pippa
+  Cominelli:
+  - Francesca C
+  Connelly:
+  - Michael
+  Contini:
+  - Giulia
+  Cook:
+  - Robin
+  Corgan:
+  - Sky
+  Cormier:
+  - Robert
+  Cornwell:
+  - Patricia
+  Costantini:
+  - Alberto
+  Cross:
+  - Colleen
+  Céline:
+  - Louis Ferdinand
+  D Amato:
+  - Giuseppina
+  D Amico:
+  - Fabiola
+  D Baroque:
+  - Morgana
+  Daugherty:
+  - Christi
+  David:
+  - Fivoli
+  - Keren
+  - Sedaris
+  - Szalay
+  Dawson:
+  - Jill
+  Day:
+  - Sylvia
+  De Amicis:
+  - Edmondo
+  De Masi:
+  - Domenico
+  Deanike:
+  - Veronica
+  Delacourt:
+  - Grégoire
+  Demes:
+  - Vera
+  Di Luna:
+  - Arianna
+  Dicker:
+  - Joel
+  - Joël
+  Douglas:
+  - Claire
+  - Penelope
+  Du Maurier:
+  - Daphne
+  Eco:
+  - Umberto
+  Elliot:
+  - Kendra
+  Entrada:
+  - Erin Kelly
+  Epstein:
+  - Jennifer Cody
+  Ereditato:
+  - Antonio
+  Eugenides:
+  - Jeffrey
+  F:
+  - Sally D
+  - Theodore Powys
+  Fallon:
+  - Jane
+  Fanzaga:
+  - Livio
+  Ferrari:
+  - Bianca
+  Ferraro:
+  - Valentina
+  Filippa:
+  - Marcella
+  Flores:
+  - Paulina
+  Foley:
+  - Lucy
+  Forgach:
+  - Andras
+  Forte:
+  - Franco
+  Fox:
+  - Amaryllis
+  - Nicole
+  Friedrich:
+  - Otto
+  Gabaldon:
+  - Diana
+  Gallert:
+  - Flora A
+  Gallino:
+  - Luciano
+  García Márquez:
+  - Gabriel
+  Garripoli:
+  - Diego
+  Gaskell:
+  - Elizabeth
+  Ghisleri:
+  - Alessandra Paola
+  Gianatti:
+  - Silvia
+  Gingras:
+  - Royale
+  Giuriatti:
+  - Loris
+  Goldkorn:
+  - Wlodek
+  Goldstein:
+  - Meredith
+  Grady:
+  - Andrea
+  Gray:
+  - Lena
+  Greco:
+  - Teresa
+  Greppi:
+  - Carlo
+  Griscom:
+  - Susan
+  Guccini:
+  - Francesco
+  Guerrieri:
+  - Greta
+  Hagen:
+  - Layla
+  Hale:
+  - Jenny
+  Hargrove:
+  - A M
+  Harmel:
+  - Kristin
+  Harper:
+  - Fiona
+  Harris:
+  - Joanne
+  - Marvin
+  - Robert
+  Hart:
+  - Rob
+  Hausmann:
+  - Romy
+  Hayward:
+  - Lili
+  Hazelwood:
+  - Ali
+  Higashino:
+  - Keigo
+  Hill:
+  - Joe
+  Howe:
+  - Cath
+  Howells:
+  - Debbie
+  - William Dean
+  Huang:
+  - Ana
+  Hulse:
+  - Caroline
+  ichiro Tanizaki:
+  - Jun
+  Iggulden:
+  - Conn
+  ignore:
+  - After 4 Anime Perdute
+  - Ester Corvi Trovaci sempre su Marapcana today
+  - Freddie Mercury Greg Brooks Simon Lupton
+  - I Denti Della Tigre Ita Libro
+  - La forza di Kinley
+  - La Mia Meravigliosa Rivincita
+  - Op Center Equilibri Di Potere Ita Libro
+  - Op Center Stato D Assedio Ita Libro
+  - Ritratto In Seppia
+  - Un tiro dritto al cuore (Game O
+  Imai Messina:
+  - Laura
+  Jakeman:
+  - Jo
+  James:
+  - Ella
+  - Patterson Andrew Gross
+  Jenkins:
+  - Taylor
+  - Taylor Reid
+  Jenner:
+  - Carmen
+  Jensen:
+  - Jens Henrik
+  Jewel:
+  - Bella
+  Jian:
+  - Ma
+  Joking:
+  - H
+  Joukhadar:
+  - Zeyn
+  Keeland:
+  - Penelope Ward Vi
+  - Vi
+  - Vi Penelope Ward
+  Kehlmann:
+  - Daniel
+  Kennedy:
+  - Elle
+  - Ryan
+  Kent:
+  - Haruf
+  Keogh:
+  - Valerie
+  Khemiri:
+  - Jonas Hassen
+  King:
+  - Tyler
+  Kingsley:
+  - Felicia
+  Kluger:
+  - Birgit
+  L:
+  - Jennifer Armentrout
+  - Jess
+  La Corte:
+  - Simona
+  La Spina:
+  - Rebecca
+  Lari:
+  - Simone
+  Latour:
+  - Bruno
+  Lawler:
+  - Liz
+  Le Bon:
+  - Gustav
+  Leigh:
+  - James
+  - Lora
+  - Melinda
+  Leung:
+  - Tina Isabel
+  Lexie:
+  - Elliott
+  LiRegan:
+  - Lisa
+  Long Chu:
+  - Andrea
+  Lorenzo:
+  - Jorge
+  - Marone
+  - Tomasin
+  Lynn:
+  - K C
+  Lyons:
+  - Jenn
+  Maalouf:
+  - Amin
+  Mackintosh:
+  - Clare
+  Malpas:
+  - Ellen Jodi
+  Manfredi:
+  - Valerio Massimo
+  March:
+  - Megan
+  - Meghan
+  Marino:
+  - Davide
+  Marly:
+  - Michelle
+  Marsons:
+  - Angela
+  Martin:
+  - Rebecca
+  Marwood:
+  - Alex
+  Masella:
+  - Marco
+  Massey:
+  - Sujata
+  Matheson:
+  - Richard
+  Mathieu:
+  - Nicolas
+  Mattiuzza:
+  - Maurizio
+  Mazzariol:
+  - Giacomo
+  Mazzilli:
+  - Giovanna
+  McAllister:
+  - Gillian
+  McDermott:
+  - Zack
+  McLeen:
+  - Serena
+  Mears:
+  - Valentina
+  Medas:
+  - Stefano
+  Merikan:
+  - K A
+  Messetti:
+  - Giada
+  Middei:
+  - Guendalina
+  Miller:
+  - Madeline
+  Mills:
+  - Ilsa Madden
+  - Ilsa Madden SCB
+  - Madden Ilsa
+  - sa Madden
+  Miéville:
+  - China
+  Moccia:
+  - Federico
+  Modiano:
+  - Patrick
+  Monda:
+  - Antonio
+  Montague:
+  - Caroline
+  Moody:
+  - Rick
+  Moreno:
+  - Eloy
+  Moro:
+  - Rebecca
+  Morpurgo:
+  - Michael
+  Moyes:
+  - Jojo
+  Murakami:
+  - Haruki
+  Navicelli:
+  - Vanessa
+  Navin:
+  - Rhiannon
+  Negrete:
+  - Javier
+  Noah:
+  - Trevor
+  North:
+  - Anna
+  Norton:
+  - Preston
+  Nove:
+  - Aldo
+  Offutt:
+  - Chris
+  Onuzo:
+  - Chibundo
+  Pancaldi:
+  - Maurizio
+  Pansa:
+  - Giampaolo
+  Pantzar:
+  - Katja
+  Paoli:
+  - Gigi
+  Paris:
+  - B A
+  Parpiglia:
+  - Gabriele
+  Pastoureau:
+  - Michel
+  Phillips:
+  - Susan Elizabeth
+  Pievani:
+  - Telmo
+  - Telmo Giuseppe Remuzzi
+  - Telmo Mauro Varotto
+  Pigozzo:
+  - Veronica
+  Piper:
+  - Lawson
+  Pistolato:
+  - Irene
+  Poe:
+  - Edgar Allan
+  Pontiggia:
+  - Giuseppe
+  Porter:
+  - Eleanor H
+  Prochnik:
+  - George
+  Ralston:
+  - Kristel
+  Raskin:
+  - Ellen
+  RAZZAMAGLIA:
+  - ELLE
+  Regan:
+  - Lisa
+  Reid:
+  - Penny
+  Reyes:
+  - Emma
+  Riley:
+  - Lucinda
+  Ripetta:
+  - Tamara
+  Ronzano:
+  - Lorenza
+  Rooney:
+  - Sally
+  Rosenkrantz:
+  - Linda
+  Ross:
+  - Eileen
+  Rovatti:
+  - Pier Aldo
+  Rufin:
+  - Jean Christophe
+  Ryan:
+  - Anthony
+  - kennedy
+  - Kennedy
+  Sally:
+  - F D
+  - Franson
+  Salzmann:
+  - Sasha Marianna
+  Sanchez:
+  - Clara
+  Sanders:
+  - Jill
+  Sanfilippo:
+  - Fina
+  Saterini:
+  - Annamaria
+  Saugrain:
+  - Joséphine
+  Scanzi:
+  - Andrea
+  Scarrow:
+  - Simon
+  Schätzing:
+  - Frank
+  Segal:
+  - Erich
+  Seishi:
+  - Yokomizo
+  Sepùlveda:
+  - Luis
+  Sepúlveda:
+  - Luis
+  - Luis Carlo Petrini
+  Setz:
+  - Clemens J
+  Severgnini:
+  - Beppe
+  Sharp:
+  - Adrienne
+  Siliato:
+  - Maria Grazia
+  Simi:
+  - Giampaolo
+  Siri:
+  - Jacobsen Ranva Hjelm
+  Slaughter:
+  - Karin
+  Smith:
+  - Wilbur
+  Sobrero:
+  - Alessia I Vanessa
+  - Vanessa
+  Socci:
+  - Antonio
+  Sohst:
+  - Kathrin
+  Sole:
+  - Francesco
+  Sophia:
+  - Sheila Swan
+  Sparks:
+  - Nicholas
+  Stasi:
+  - Irene
+  Stead:
+  - Rebecca
+  Steel:
+  - Danielle
+  Steiner:
+  - Kandi
+  Sterrore:
+  - Yuri
+  Stevens:
+  - Shane
+  Stoker:
+  - Susan
+  Strada:
+  - Annalisa
+  Strinati:
+  - Claudio
+  Strukul:
+  - Matteo
+  Subramanian:
+  - Mathangi
+  Swann:
+  - Leonie
+  Tamaro:
+  - Susanna
+  Therrien:
+  - Jessica
+  Thilliez:
+  - Franck
+  Thomson:
+  - Adam
+  Thyvold:
+  - Hans Olav
+  Todd:
+  - Anna
+  Tokarczuk:
+  - Olga
+  Tomforde:
+  - Liz
+  Townsend:
+  - Sylvia Warner
+  Tremonti:
+  - Giulio
+  Trevor:
+  - Noah
+  - William
+  Tugnoli:
+  - Linda
+  Turney:
+  - S J A
+  Tyce:
+  - Harriet
+  Un su:
+  - Kim
+  van Gogh:
+  - Vincent
+  Vandermeer:
+  - Jeff
+  Vanzin:
+  - Erika
+  Vargas:
+  - Fred
+  Vidal:
+  - Gore
+  Vila Matas:
+  - Enrique
+  Volonté:
+  - Daniela
+  von Arnim:
+  - Elizabeth
+  Wallis:
+  - Gordon
+  Weir:
+  - Alison
+  Weiz:
+  - Carmen
+  - Carmen Mme Romanzi Rosa
+  Wells:
+  - Rachel
+  werudane:
+  - B
+  Westall:
+  - Robert
+  Whitehead:
+  - Colson
+  Wilde:
+  - Oscar
+  Wolfe:
+  - Leslie
+  Wolitzer:
+  - Meg
+  Wood:
+  - Simon
+  Woods:
+  - Karen
+  Woolrich:
+  - Cornell

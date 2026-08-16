@@ -98,9 +98,9 @@ def copy_new(parser, name: str):
     group.add_argument('--source-epubs',  required=True, metavar='', default=None, type=check_dir,
                 help=f'{C.cyan}specify source epubs top directory {v.default}')
 
-    excl_group=group.add_mutually_exclusive_group(required=True)
-    excl_group.add_argument('--multiple-copies', action='store_true', help=f'{C.cyan}mantains more than one file per book {v.default}')
-    excl_group.add_argument('--one-copy',    action='store_true', help=f'{C.cyan}mantain just one copy for any title {v.default}')
+    # excl_group=group.add_mutually_exclusive_group(required=True)
+    # excl_group.add_argument('--multiple-copies', action='store_true', help=f'{C.cyan}mantains more than one file per book {v.default}')
+    # excl_group.add_argument('--one-copy',    action='store_true', help=f'{C.cyan}mantain just one copy for any title {v.default}')
 
     common_options(parser=subp, name=name)
 
