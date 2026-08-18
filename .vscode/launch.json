@@ -15,8 +15,28 @@
             "cwd": "${workspaceFolder}", 
             "args": [ 
                 "copy", 
-                "--source-epubs=/home/loreto/filu/ln-eBooks/calderone_incoming/Jussi Adler-Olsen", 
-                "--one" 
+                "--calibre", 
+                "--start-id=1"
+                // "--source-epubs=/home/loreto/filu/ln-eBooks/calderone_incoming/Jussi Adler-Olsen", 
+                // "--one" 
+            ], 
+            "env": { 
+                "PYTHONPATH": "${workspaceFolder}/src" 
+            } 
+        } ,
+        { 
+            "name": "authors", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "module": "src.eBooks.main", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "args": [ 
+                "authors", 
+                "--calibre", 
+                "--update-authors"
+                // "--source-epubs=/home/loreto/filu/ln-eBooks/calderone_incoming/Jussi Adler-Olsen", 
+                // "--one" 
             ], 
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 

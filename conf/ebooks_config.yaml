@@ -8,11 +8,11 @@ calibre_config:
     extensions:
         - epub
 
-epubs:
 
-    folders:
-        - '/home/loreto/filu/ln-eBooks/Calderone'
-        - '/home/loreto/filu/ln-eBooks/new_books'
+# epubs:
+#     folders:
+#         - '/home/loreto/filu/ln-eBooks/Calderone'
+#         - '/home/loreto/filu/ln-eBooks/new_books'
 
     current_library: null
     extensions:
@@ -24,7 +24,7 @@ epubs:
 #         author_name/
 #      text/
 #         author_name/
-main_epubs_path:  '/home/loreto/filu/ln-eBooks/calderone'
+main_epubs_path:  '/home/loreto/filu/ln-eBooks/ln_extracted'
 authors_list:  'authors.yaml'
 
 files_to_skip: []

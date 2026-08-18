@@ -5,6 +5,7 @@ Example usage of the EbookProcessor
 """
 # ruff: noqa: SIM114 Combine `if` branches using logical `or` operator help: Combine `if` branches (Ruff SIM114)
 
+from dis import show_code
 from pathlib import Path
 
 
@@ -14,10 +15,12 @@ from pyLnLib.logger    import get_logger
 from pyLnLib.files      import scan_directory
 from pyLnLib.varie      import menu_select_from_list
 
+from eBooks.epubs import showAuthors
+
 
 # --- project modules
 from .init.initialize_program import initialize_program
-from .epubs.calibre import initialize_calibre
+from .epubs.calibre import initialize_calibre, processCalibreLibrary
 from .epubs.epubs import extract_text, copy_new
 
 logger = get_logger()
@@ -29,6 +32,12 @@ def main():
     _ctx = initialize_program()
     args=pv.args
 
+    if args.choice == 'authors':
+        if args.calibre:
+            _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
+            showAuthors(library_path=Path(library))
+
+
     if args.choice == 'duplicated':
         ...
         # logger.info(ctx.calibre.get_duplicate_report())
@@ -37,12 +46,18 @@ def main():
         ...
 
     elif args.choice == 'copy_new':
-        source_top_dir=Path(args.source_epubs)
-        target_top_dir=Path(pv.config.main_epubs_path)
+        target_top_dir=Path(pv.config.main_epubs_path) / "epubs"
+        if args.calibre:
+            _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
+            processCalibreLibrary(library_path=Path(library), target_path=target_top_dir)
+        else: # ---> args.epubs
+            _choice, library = menu_select_from_list(pv.config.epubs_config.folders)
+            copy_new(epubs_path=Path(library), target_path=target_top_dir)
+
+        # source_top_dir=Path(args.source_epubs)
         """ copia il sorgente nella directory di destinazione
             cambiando nome del file come da titolo
         """
-        copy_new(epubs_path=source_top_dir, target_path=target_top_dir)
 
 
     elif args.choice == 'extract':

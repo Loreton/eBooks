@@ -10,28 +10,14 @@ import re
 from pyLnLib.context    import ctx, pVars as pv
 from pyLnLib.logger    import get_logger
 from pyLnLib.files import get_unique_filename
-from pyLnLib.epub      import EpubProcessor, get_epub_processor, manage_epub_processor
+from pyLnLib.epub      import EpubProcessor,  manage_epub_processor
 from pyLnLib.files      import scan_directory
-# from pyLnLib.epub      import AuthorRegistry
 
+
+
+from .clean_filename import clean_filename
 logger = get_logger()
 
-def clean_filename(text: str) -> str:
-    """
-    Es: filename = "Mate: edizione italiana (Bride Vol. 2).epub"
-    Rimuove tutto dal primo ':', '(', '[' o '-' fino alla fine della stringa
-    Come funziona la regex r"(s*[:([-].*)":
-        s*: ignora eventuali spazi prima del separatore.
-        [:([-]: individua il punto di inizio del taglio (due punti :, parentesi tonda (, parentesi quadra [, o trattino -).
-        .*: seleziona tutto il resto della stringa fino alla fine.
-        "": sostituisce tutta la parte selezionata con una stringa vuota, lasciando solo il titolo principale.
-    """
-
-
-# Rimuove tutto dal primo ':', '(', '[' o '-' fino alla fine della stringa
-    cleaned_text = re.sub(r"\s*[:\(\[-].*", "", text)
-    cleaned_text = re.sub(r"s*[:([-].*", "", text)
-    return cleaned_text.strip()
 
 
 #==========================================
@@ -97,8 +83,8 @@ def copy_new(epubs_path: Path, target_path: Path) -> None:
             cleaned_title = clean_filename(text=str(book.title))
             logger.info("\tcleaned_title: %s", cleaned_title)
 
-            rel_output_filename=Path("epubs") / author / f"{cleaned_title}.epub"
-            logger.info("\twill be copied as: \n%s", rel_output_filename)
+            rel_output_filename=Path(author) / f"{cleaned_title}.epub"
+            # logger.info("\twill be copied as: \n%s", rel_output_filename)
             rel_output_filename.parent.mkdir(parents=True, exist_ok=True)
 
             target_filename = get_unique_filename(rel_output_filename)
@@ -134,7 +120,3 @@ def copy_new(epubs_path: Path, target_path: Path) -> None:
 
         else:
             logger.error("\tno author found!")
-
-
-def init_epubs():
-    ...
