@@ -15,12 +15,12 @@ from pyLnLib.logger    import get_logger
 from pyLnLib.files      import scan_directory
 from pyLnLib.varie      import menu_select_from_list
 
-from eBooks.epubs import showAuthors
+from eBooks.epubs import loadAuthors_from_books
 
 
 # --- project modules
 from .init.initialize_program import initialize_program
-from .epubs.calibre import initialize_calibre, processCalibreLibrary
+from .epubs.calibre import initialize_calibre, processCalibreLibrary, loadAuthors
 from .epubs.epubs import extract_text, copy_new
 
 logger = get_logger()
@@ -35,7 +35,7 @@ def main():
     if args.choice == 'authors':
         if args.calibre:
             _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
-            showAuthors(library_path=Path(library))
+            loadAuthors_from_books(library_path=Path(library))
 
 
     if args.choice == 'duplicated':

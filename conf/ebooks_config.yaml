@@ -1,8 +1,9 @@
 calibre_config:
     folders:
-        - "/home/loreto/filu/ln-eBooks/lnLibraries/allInOne"
+        - "/home/loreto/filu/ln-eBooks/lnLibraries/MainLibrary"
         - "/home/loreto/filu/ln-eBooks/lnLibraries/new_Entries"
         - "/home/loreto/filu/ln-eBooks/lnLibraries/Ale"
+        - "/home/loreto/filu/ln-eBooks/lnLibraries/test_library"
 
     current_library: null
     extensions:

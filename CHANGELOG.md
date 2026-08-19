@@ -1,3 +1,9 @@
+## [0.1.4] - 2026-08-19
+
+## Other
+
+- affinamenti - (Release 0.1.4) (pylnlib_commit=757057e)
+
 ## [0.1.4] - 2026-08-16
 
 ## Other

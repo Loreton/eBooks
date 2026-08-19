@@ -113,6 +113,15 @@ def copy_new(parser, name: str):
 # ==================
 # mostra gli autori per capire se sono corretti "Cognome | Nome"
 # ==================
+def show_authors(parser, name: str):
+    subp = parser.add_parser(name=name, help=f"{C.cyan}{name} show all authors theid IDs{C.reset}")
+    group = subp.add_argument_group(f'{C.white}{name} flags{C.reset}', v.extra_description)
+    group.add_argument('--update-authors',    action='store_true', help=f'{C.cyan}update authors in authors.yaml {v.default}')
+    excl_group=group.add_mutually_exclusive_group(required=True)
+    excl_group.add_argument('--calibre',  action='store_true', help=f'{C.cyan}use files in calibre folders as source files  {v.default}')
+    excl_group.add_argument('--epubs',    action='store_true', help=f'{C.cyan}use files in epub folders as source files {v.default}')
+    common_options(parser=subp, name=name)
+
 def authors(parser, name: str):
     subp = parser.add_parser(name=name, help=f"{C.cyan}{name} show all authors theid IDs{C.reset}")
     group = subp.add_argument_group(f'{C.white}{name} flags{C.reset}', v.extra_description)
@@ -120,17 +129,6 @@ def authors(parser, name: str):
     excl_group=group.add_mutually_exclusive_group(required=True)
     excl_group.add_argument('--calibre',  action='store_true', help=f'{C.cyan}use files in calibre folders as source files  {v.default}')
     excl_group.add_argument('--epubs',    action='store_true', help=f'{C.cyan}use files in epub folders as source files {v.default}')
-
-    # _required = True if '--calibre' in sys.argv else False
-    # group.add_argument('--start-id',  type=int, default=0,required=_required,  help=f'{C.cyan}use files in epub folders as source files {v.default}')
-
-    # group.add_argument('--source-epubs',  required=True, metavar='', default=None, type=check_dir,
-    #             help=f'{C.cyan}specify source epubs top directory {v.default}')
-
-    # excl_group=group.add_mutually_exclusive_group(required=True)
-    # excl_group.add_argument('--multiple-copies', action='store_true', help=f'{C.cyan}mantains more than one file per book {v.default}')
-    # excl_group.add_argument('--one-copy',    action='store_true', help=f'{C.cyan}mantain just one copy for any title {v.default}')
-
     common_options(parser=subp, name=name)
 
 # ==================
