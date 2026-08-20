@@ -18,7 +18,7 @@ from pyLnLib.epub import AuthorRegistry
 
 
 # --- project modules
-from . import parseInput
+from ..input.parse_input import parseInput
 
 logger=get_logger()
 C=get_colors()

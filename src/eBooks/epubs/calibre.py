@@ -11,6 +11,7 @@ from pyLnLib import get_emoji, lnDict
 from pyLnLib.logger import get_logger
 from pyLnLib.files import get_unique_filename
 from pyLnLib.system import clean_doc
+from pyLnLib.varie      import menu_select_from_list
 
 from .clean_filename import clean_filename
 
@@ -20,8 +21,23 @@ logger=get_logger()
 # ============================================================
 # inizializza calibre con la libreria passata
 # ============================================================
-def initialize_calibre(library: str|Path) -> CalibreMetadataReader:
-    reader = CalibreMetadataReader(library)
+# def initialize_calibre(library: str|Path) -> CalibreMetadataReader:
+#     reader = CalibreMetadataReader(library)
+
+#     # ===== 1. Indici caricati all'avvio =====
+#     logger.info(clean_doc("""Libreria:\n
+#                 Totale libri:      %s\n
+#                 Totale autori:     %s\n
+#                 Duplicati trovati: %s\n
+#                 """), reader.count, len(reader.authors), reader.duplicate_count)
+#     return reader
+
+# ============================================================
+# inizializza calibre con la libreria passata
+# ============================================================
+def start_calibre(libraries: listr) -> None:
+    _choice, library = menu_select_from_list(libraries)
+    reader = CalibreMetadataReader(Path(library))
 
     # ===== 1. Indici caricati all'avvio =====
     logger.info(clean_doc("""Libreria:\n
@@ -29,18 +45,25 @@ def initialize_calibre(library: str|Path) -> CalibreMetadataReader:
                 Totale autori:     %s\n
                 Duplicati trovati: %s\n
                 """), reader.count, len(reader.authors), reader.duplicate_count)
-    return reader
+
+    # if action == "from_authors":
+    if pv.args.from_authors
+        authors_from_authors(reader=reader)
+    if pv.args.from_ebooks
+    # elif action == "from_ebooks":
+        authors_from_ebooks(reader=reader)
+
 
 
 #============================================================
 # - lavora con la lista degli autori e basta.
-# - Può essere utile per verificare author_registry.format() 
+# - Può essere utile per verificare author_registry.format()
 # - e per caricare gli autori nello yaml
 #============================================================
-def loadAuthors(library_path: Path):
-    pv.calibre = initialize_calibre(library_path)
+def authors_from_authors(reader: CalibreMetadataReader):
+    # pv.calibre = initialize_calibre(library_path)
 
-    authors_ln = pv.calibre.get_authors_ln()
+    authors_ln = reader.get_authors_ln()
     for index, (author, book_ids) in enumerate(authors_ln.items()):
         logger.info(f"{E.arrow_right}  {index:03d}: {author:<30} - {len(book_ids):3} libri - {book_ids} ")
 
@@ -54,13 +77,11 @@ def loadAuthors(library_path: Path):
 # - Per ogni libro potrei avere più di un autore.
 # - La stessa cosa di showAuthors ma con più dettagli del libro.
 #============================================================
-def loadAuthors_from_books(library_path: Path):
-    pv.calibre = initialize_calibre(library_path)
-
-    IDs = pv.calibre.get_all_ids()
+def authors_from_ebooks(reader: CalibreMetadataReader):
+    IDs = reader.get_all_ids()
 
     for book_id in IDs:
-        book: lnDict= pv.calibre.get_book(book_id)
+        book: lnDict= reader.get_book(book_id)
         authors: list = book.authors
         logger.warning(f"  {book_id:03d}: {authors} - {book.title}")
         authors: list=pv.author_registry.format(authors, canonical=True)

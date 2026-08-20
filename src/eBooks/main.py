@@ -5,8 +5,8 @@ Example usage of the EbookProcessor
 """
 # ruff: noqa: SIM114 Combine `if` branches using logical `or` operator help: Combine `if` branches (Ruff SIM114)
 
-from dis import show_code
 from pathlib import Path
+from tracemalloc import start
 
 
 # --- pyLnLib modules
@@ -20,7 +20,7 @@ from eBooks.epubs import loadAuthors_from_books
 
 # --- project modules
 from .init.initialize_program import initialize_program
-from .epubs.calibre import initialize_calibre, processCalibreLibrary, loadAuthors
+from .epubs.calibre import start_calibre #, processCalibreLibrary, loadAuthors
 from .epubs.epubs import extract_text, copy_new
 
 logger = get_logger()
@@ -32,10 +32,20 @@ def main():
     _ctx = initialize_program()
     args=pv.args
 
-    if args.choice == 'authors':
-        if args.calibre:
-            _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
-            loadAuthors_from_books(library_path=Path(library))
+    if args.choice == 'authors_calibre':
+        start_calibre(libraries=pv.config.calibre_config.folders)
+
+        # if args.from_authors:
+        #     start_calibre(libraries=pv.config.calibre_config.folders, action="from_authors")
+        # elif args.from_ebooks:
+        #     start_calibre(libraries=pv.config.epubs_config.folders, action="from_ebooks")
+
+
+        # if args.choice == 'authors' and args.calibre:
+        # _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
+        # loadAuthors_from_books(library_path=Path(library))
+        # start_calibre(libraries=pv.config.calibre_config.folders, action="load_authors")
+
 
 
     if args.choice == 'duplicated':
