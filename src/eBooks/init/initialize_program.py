@@ -1,24 +1,24 @@
 # /home/loreto/filu/Programming/gitREPO/eBooks/src/eBooks/init/initialize_program.py
 
 from pathlib import Path
+
+
+
 # --- pyLnLib modules
-# from eBooks.calibre.test01 import test01_main
-from pyLnLib.git.pyproject_class import PyProjectManager
+from pyLnLib.git        import PyProjectManager
 from pyLnLib.context   import ctx, lnContext, pVars as pv
 from pyLnLib.files     import get_yaml_engine
 from pyLnLib.lndict    import lnDict
 from pyLnLib.logger    import get_logger
 from pyLnLib.colors    import get_colors
 from pyLnLib.system import start_signal_handler
-
 from pyLnLib.epub import AuthorRegistry
 
-# from pyLnLib import keyboardPrompt
-# from pyLnLib.varie import menu_select_from_list
 
 
 # --- project modules
-from ..input.parse_input import parseInput
+from eBooks import parseInput
+
 
 logger=get_logger()
 C=get_colors()

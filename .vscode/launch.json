@@ -42,5 +42,23 @@
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
         } 
+        } ,
+        { 
+            "name": "extract", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "module": "src.eBooks.main", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "args": [ 
+                "calibre", 
+                "--extract-text"
+                // "--source-epubs=/home/loreto/filu/ln-eBooks/calderone_incoming/Jussi Adler-Olsen", 
+                // "--one" 
+            ], 
+            "env": { 
+                "PYTHONPATH": "${workspaceFolder}/src" 
+            } 
+        } 
     ]
 }

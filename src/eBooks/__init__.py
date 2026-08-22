@@ -22,7 +22,8 @@ else:
     # from .ebook_processor_new.ebook_manager_deepseek01 import EpubProcessor
     # from .ebook_processor_new.ebook_manager_gemini01 import EpubProcessor
     # from .ebook_processor_new.ebook_manager_gpt01 import EpubProcessor
-    from .input.parse_input import parseInput
+    # from .input.parse_input import parseInput
+    from .input import parseInput
     # from .core.ln_ebook_manager import EpubProcessor
 
     __all__ = [

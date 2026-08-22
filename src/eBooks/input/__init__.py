@@ -1,10 +1,11 @@
 # src/eBooks/parse_input/__init__.py
 
 
-from .authors           import authors
+from .calibre_options           import calibre
 from .common_options    import common_options
-
+from .parse_input import parseInput
 __all__ = [
-    'authors',
+    'calibre',
     'common_options',
+    'parseInput',
 ]

@@ -5,8 +5,8 @@ import os
 import shutil
 
 
-from pyLnLib.calibre import CalibreMetadataReader
 from pyLnLib.context import pVars as pv
+from pyLnLib.epub import CalibreMetadataReader, EpubProcessor
 from pyLnLib import get_emoji, lnDict
 from pyLnLib.logger import get_logger
 from pyLnLib.files import get_unique_filename
@@ -18,24 +18,12 @@ from .clean_filename import clean_filename
 E=get_emoji()
 logger=get_logger()
 
-# ============================================================
-# inizializza calibre con la libreria passata
-# ============================================================
-# def initialize_calibre(library: str|Path) -> CalibreMetadataReader:
-#     reader = CalibreMetadataReader(library)
 
-#     # ===== 1. Indici caricati all'avvio =====
-#     logger.info(clean_doc("""Libreria:\n
-#                 Totale libri:      %s\n
-#                 Totale autori:     %s\n
-#                 Duplicati trovati: %s\n
-#                 """), reader.count, len(reader.authors), reader.duplicate_count)
-#     return reader
 
 # ============================================================
 # inizializza calibre con la libreria passata
 # ============================================================
-def start_calibre(libraries: listr) -> None:
+def start_calibre(libraries: list) -> CalibreMetadataReader:
     _choice, library = menu_select_from_list(libraries)
     reader = CalibreMetadataReader(Path(library))
 
@@ -46,13 +34,8 @@ def start_calibre(libraries: listr) -> None:
                 Duplicati trovati: %s\n
                 """), reader.count, len(reader.authors), reader.duplicate_count)
 
-    # if action == "from_authors":
-    if pv.args.from_authors
-        authors_from_authors(reader=reader)
-    if pv.args.from_ebooks
-    # elif action == "from_ebooks":
-        authors_from_ebooks(reader=reader)
 
+    return reader
 
 
 #============================================================
@@ -61,15 +44,13 @@ def start_calibre(libraries: listr) -> None:
 # - e per caricare gli autori nello yaml
 #============================================================
 def authors_from_authors(reader: CalibreMetadataReader):
-    # pv.calibre = initialize_calibre(library_path)
-
     authors_ln = reader.get_authors_ln()
     for index, (author, book_ids) in enumerate(authors_ln.items()):
-        logger.info(f"{E.arrow_right}  {index:03d}: {author:<30} - {len(book_ids):3} libri - {book_ids} ")
+        logger.info(f"{index:03d}: {author:<30} - {len(book_ids):3} libri - {book_ids} ")
 
         author=pv.author_registry.format(author, canonical=False)
 
-        logger.info("result: %s", author)
+        logger.info("\tnormalized: %s", author)
 
 
 #============================================================
@@ -98,81 +79,54 @@ def authors_from_ebooks(reader: CalibreMetadataReader):
 # -     epubs/
 # -         author/
 #==========================================
-def processCalibreLibrary(library_path: Path, target_path: Path) -> None:
-    pv.calibre = initialize_calibre(library_path)
-
-    authors = pv.calibre.get_authors()
-    for index, author in enumerate(authors):
-        logger.debug(f"{E.arrow_right}  {index:03d}: {author}")
-
-    authors_ln = pv.calibre.get_authors_ln()
-    wrong_authors = []
-    for index, (author, book_ids) in enumerate(authors_ln.items()):
-        logger.info(f"{E.arrow_right}  {index:03d}: {author:<30} ({len(book_ids)} libri)")
-        if not '|' in author and len(author.split()) > 0:
-            wrong_authors.append(f"  {index:03d}: {author:<30} ({len(book_ids)} libri)")
-
-    for author in wrong_authors:
-        logger.warning(author)
-    # logger.warning(f"  {index:03d}: {author:<30} ({len(book_ids)} libri)")
-    import sys; sys.exit("Autori trovati: " + str(len(authors)))
+def epub_to_text(reader: CalibreMetadataReader, target_path: Path) -> None:
+    authors_ln = reader.get_authors_ln()
     # ----------------------------------------------------
     # - moving to target dir per lavorare con il relative_paths
     # ----------------------------------------------------
     os.chdir(target_path)
 
-    # ----------------------------------------------------
-    # - Itera sulla list libri
-    # - inserisce nel book l'indice di lista del libro
-    # ----------------------------------------------------
-    nfiles = pv.calibre.count
-    for index, id in enumerate(pv.calibre.ids[pv.args.start_id:]):
+    for index, (author, book_ids) in enumerate(authors_ln.items()):
         print()
+        author_name=pv.author_registry.format(author, canonical=False)[0]
+        dest_author_path = Path(author_name)
+        dest_author_path.mkdir(parents=True, exist_ok=True)
 
-        logger.info(f"id: {id}")
-        book = pv.calibre.get_book(id)
-        authors = book.get('authors')
-        authors=' '.join(authors) # per ora faccio il join anche se più di uno
-        logger.info(f"book: {book}")
-        logger.info(f"Autori: {authors}")
-        source_epub = book.file_path # type: ignore
-        author=pv.author_registry.format(authors, canonical=False) # type: ignore
-        # breakpoint()
-        # author = [ pv.author_registry.format(author, canonical=False) for author in book["authors"] ]
-        inx=f"{index:03d}/{nfiles:03d}"
-        logger.info("%s - processing:\n%s/%s", inx, author, source_epub.name) # type: ignore
+        logger.info(f"{index:03d}: {author_name:<30} - {len(book_ids):3} libri - {book_ids} ")
 
-        if author:
-            cleaned_title = clean_filename(text=book.title) # type: ignore
-            logger.info("\tcleaned_title: %s", cleaned_title)
-            rel_output_filename=Path(author) / f"{cleaned_title}.epub"
-            rel_output_filename.parent.mkdir(parents=True, exist_ok=True)
+        # - per l'author in questione vediamo i libri
+        for id in book_ids:
+            book = reader.get_book(id)
+            logger.info("\tepub title: %s", book.title)
+            cleaned_title = clean_filename(text=book.title)
+            logger.info("\ttext title: %s", cleaned_title)
 
+            # - creiamo l'istanza EpubProcess per il file epub
+            source_epub = book.file_path
+            epub_obj = EpubProcessor(source_epub)
+
+            rel_output_filename=dest_author_path / f"{cleaned_title}.txt"
             target_filename = get_unique_filename(rel_output_filename)
 
-            if target_filename is None:
-                """file esiste già, ha lo stesso size e lo stesso SHA256 - non facciamo nulla"""
-                continue
 
-
-            elif target_filename == rel_output_filename:
+            if target_filename:
                 """file non esiste"""
-                logger.info("\tcopying as: \n%s", rel_output_filename)
-                shutil.copy2(source_epub, target_filename)
+                if not epub_obj.to_text(txt_filename=target_filename, replace=False):
+                    logger.info("\tfile already exists!")
+                continue
+            else:
+                """file esiste già, ha lo stesso size e lo stesso SHA256 - non facciamo nulla"""
+                logger.info("\tfile already exists!")
                 continue
 
-            else:
-                """ file exists, change output_directory to put duplicated"""
-                # breakpoint()
-                logger.info("\talready exists! %s", rel_output_filename)
-                rel_output_filename=rel_output_filename.parent / "duplicated" / f"{cleaned_title}.epub"
-                rel_output_filename.parent.mkdir(parents=True, exist_ok=True)
-                target_filename = get_unique_filename(rel_output_filename, start_index=1)
-                if target_filename is None:
-                    logger.info("\talready exists on duplicated!")
-                else:
-                    logger.info("\tcopying as: \n%s", rel_output_filename)
-                    shutil.copy2(book.file_path, target_filename) # type: ignore
-
-        else:
-            logger.error("\tno author found!")
+            # else:
+            #     """ file exists, change output_directory to duplicated to mantains more copies of the same book ????"""
+            #     logger.info("\talready exists! %s", rel_output_filename)
+            #     rel_output_filename=rel_output_filename.parent / "duplicated" / f"{cleaned_title}.epub"
+            #     rel_output_filename.parent.mkdir(parents=True, exist_ok=True)
+            #     target_filename = get_unique_filename(rel_output_filename, start_index=1)
+            #     if target_filename is None:
+            #         logger.info("\talready exists on duplicated!")
+            #     else:
+            #         logger.info("\tcopying as: \n%s", rel_output_filename)
+            #         shutil.copy2(book.file_path, target_filename) # type: ignore

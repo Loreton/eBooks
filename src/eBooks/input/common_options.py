@@ -11,7 +11,10 @@ logger=get_logger()
 
 
 # -- add common options to specific parser
-def common_options(v:SimpleNamespace, parser, name: str):
+def common_options(v:SimpleNamespace, parser, func_name: str):
+    """
+        Aggiunge le opzioni comuni a un parser specifico.
+    """
     logger_levels: list[str]=logger.get_log_levels()
 
     _extra_descr=f'{C.white}arguments description{C.reset}'
@@ -31,7 +34,6 @@ def common_options(v:SimpleNamespace, parser, name: str):
                                     {logger_levels} {v.default} """.replace('  ', '')
                         )
 
-    # common_flags = parser.add_argument_group(f'{C.white}execution flags{C.reset}')
     # if parser_name in ['no_path']:
     # group.add_argument('--force-trace',   action='store_true', help=f'{C.green}force trace    level on log {v.default}')
     # group.add_argument('--force-notify',  action='store_true', help=f'{C.green}force notify   level on log {v.default}')

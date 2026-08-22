@@ -9,7 +9,8 @@ from pyLnLib.colors import get_colors
 from pyLnLib.logger import get_logger
 
 # - project modules
-from .authors           import authors, authors_from_authors, authors_from_ebook
+from .calibre_options           import calibre
+from .extract_text           import extract_text
 # from .common_options    import common_options
 
 
@@ -35,7 +36,7 @@ def parseInput() -> argparse.Namespace:
 
 
     # -----------------------------
-    import argparse
+    print('\n'*2)
     if len(sys.argv) == 1:
         sys.argv.append('-h')
 
@@ -57,11 +58,11 @@ def parseInput() -> argparse.Namespace:
     pos_parser = parser.add_subparsers(dest='choice',required=True, title=f'{C.white}choices - required positional arguments{C.reset}')
     # duplicated(parser=pos_parser, name='duplicated')
     # rename(parser=pos_parser, name="rename")
-    # extract(parser=pos_parser, name="extract")
     # search(parser=pos_parser, name="search")
     # copy_new(parser=pos_parser, name="copy_new")
-    authors_from_authors(v=v, parser=pos_parser, name="authors_from_authors")
-    authors_from_ebook(v=v, parser=pos_parser, name="authors_from_ebook")
+    # authors_from_authors(v=v, parser=pos_parser, name="authors_from_authors")
+    calibre(v=v, parser=pos_parser)
+    extract_text(v=v, parser=pos_parser)
 
 
 

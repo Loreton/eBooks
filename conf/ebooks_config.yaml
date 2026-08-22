@@ -20,12 +20,8 @@ calibre_config:
         - epub
 
 
-# calderone/
-#      epubs/
-#         author_name/
-#      text/
-#         author_name/
-main_epubs_path:  '/home/loreto/filu/ln-eBooks/ln_extracted'
+epubs_extracted_path:  '/home/loreto/filu/ln-eBooks/lnExtracted/epubs'
+text_extracted_path:  '/home/loreto/filu/ln-eBooks/lnExtracted/text'
 authors_list:  'authors.yaml'
 
 files_to_skip: []
