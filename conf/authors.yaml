@@ -5,6 +5,10 @@ authors:
     - Diana
     Allende:
     - Isabel
+    Ardat:
+    - ''
+    Aristofane:
+    - ''
     Anselmi:
     - Guido
     Ardone:
@@ -698,6 +702,7 @@ authors:
     Homes:
     - A. M.
     Hoover:
+    - ''
     - Colleen
     - Colleen Fisher Tarryn
     Hope:
@@ -1749,8 +1754,6 @@ authors:
     Ólafsdóttir:
     - Auður Ava
 ignore:
-- Ardat
-- Aristofane
 - Autore
 - Bluebook
 - Le querce non fanno limoni

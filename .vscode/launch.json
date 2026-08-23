@@ -44,7 +44,7 @@
         } 
         } ,
         { 
-            "name": "extract", 
+            "name": "extract_calibre", 
             "type": "debugpy", 
             "request": "launch", 
             "module": "src.eBooks.main", 
@@ -55,6 +55,24 @@
                 "--extract-text"
                 // "--source-epubs=/home/loreto/filu/ln-eBooks/calderone_incoming/Jussi Adler-Olsen", 
                 // "--one" 
+            ], 
+            "env": { 
+                "PYTHONPATH": "${workspaceFolder}/src" 
+            } 
+        } 
+        } ,
+        { 
+            "name": "extract_epub", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "module": "src.eBooks.main", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "args": [ 
+                "epubs", 
+                "--extract-text",
+                // "--top-dir=/home/loreto/filu/ln-eBooks/lnExtracted/epubs/Ardone, Viola", 
+                "--top-dir=/home/loreto/.aMule/Copied", 
             ], 
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 

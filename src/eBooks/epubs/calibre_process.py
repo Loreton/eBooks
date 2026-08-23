@@ -65,8 +65,9 @@ def authors_from_ebooks(reader: CalibreMetadataReader):
         book: lnDict= reader.get_book(book_id)
         authors: list = book.authors
         logger.warning(f"  {book_id:03d}: {authors} - {book.title}")
-        authors: list=pv.author_registry.format(authors, canonical=True)
+        authors = pv.author_registry.format(authors, canonical=True)
         logger.info(f"  {authors = }")
+
 
 
 
@@ -79,7 +80,54 @@ def authors_from_ebooks(reader: CalibreMetadataReader):
 # -     epubs/
 # -         author/
 #==========================================
-def epub_to_text(reader: CalibreMetadataReader, target_path: Path) -> None:
+def library_to_text(reader: CalibreMetadataReader, target_path: Path) -> None:
+    authors_ln = reader.get_authors_ln()
+    n_authors = len(authors_ln)
+    # ----------------------------------------------------
+    # - moving to target dir per lavorare con il relative_paths
+    # ----------------------------------------------------
+    os.chdir(target_path)
+
+    for index, (author, book_ids) in enumerate(authors_ln.items()):
+        print()
+        author_name=pv.author_registry.format(author, canonical=False, registry_update=True)
+        if not author_name:
+            logger.warning(f"{index:03d}: {author:<30} - {len(book_ids):3} libri - {book_ids} ")
+            logger.warning(f"Author not found in registry: {author}")
+            continue
+        else:
+            author_name = author_name[0]
+        dest_author_path = Path(author_name)
+        dest_author_path.mkdir(parents=True, exist_ok=True)
+
+        logger.info(f"{index:03d}/{n_authors:<3}: {author_name:<30} - {len(book_ids):3} libri - {book_ids} ")
+
+        # - per l'author in questione vediamo i libri
+        for id in book_ids:
+            book = reader.get_book(id)
+            logger.info("\tepub title: %s", book.title)
+            cleaned_title = clean_filename(text=book.title)
+            logger.info("\ttext title: %s", cleaned_title)
+
+            rel_output_filename=dest_author_path / f"{cleaned_title}.txt"
+            # - creiamo l'istanza EpubProcess per il file epub
+            # - ed il metodo to_text() per convertire il file epub in testo
+            epub_obj = EpubProcessor(book.file_path)
+            epub_obj.to_text(txt_filename=rel_output_filename, replace=False, force_log=False)
+
+
+
+
+
+
+#==========================================
+# - copy new epub_files to my target epub_main_path
+# -     text/
+# -         author/
+# -     epubs/
+# -         author/
+#==========================================
+def epub_to_text_OK0(reader: CalibreMetadataReader, target_path: Path) -> None:
     authors_ln = reader.get_authors_ln()
     # ----------------------------------------------------
     # - moving to target dir per lavorare con il relative_paths

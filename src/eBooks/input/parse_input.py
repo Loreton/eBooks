@@ -8,10 +8,11 @@ import argparse
 from pyLnLib.colors import get_colors
 from pyLnLib.logger import get_logger
 
+# from eBooks.input.scan_epubs import scan_extract_text
+
 # - project modules
 from .calibre_options           import calibre
-from .extract_text           import extract_text
-# from .common_options    import common_options
+from .epub_options           import epubs
 
 
 
@@ -49,7 +50,7 @@ def parseInput() -> argparse.Namespace:
     # - Main positional arguments
     # -    choice conterrà l'argomento posizionale
     # ===================================
-    positional_arguments = ["rename", "extract", "search", "duplicated", "copy_new"]
+    positional_arguments = ["calibre", "epubs"]
     for item in positional_arguments:
         if sys.argv[1].startswith(item[:3]):
             sys.argv[1] = item
@@ -62,7 +63,7 @@ def parseInput() -> argparse.Namespace:
     # copy_new(parser=pos_parser, name="copy_new")
     # authors_from_authors(v=v, parser=pos_parser, name="authors_from_authors")
     calibre(v=v, parser=pos_parser)
-    extract_text(v=v, parser=pos_parser)
+    epubs(v=v, parser=pos_parser)
 
 
 

@@ -20,13 +20,16 @@ from pyLnLib.logger    import get_logger
 
 # --- project modules
 from .init.initialize_program import initialize_program
-from .epubs.calibre import (
+from .epubs.calibre_process import (
                             start_calibre,
                             authors_from_authors,
                             authors_from_ebooks,
-                            epub_to_text,
+                            library_to_text,
                         )
 
+from .epubs.epub_process import (
+                            extract_text,
+                    )
 
 logger = get_logger()
 
@@ -55,7 +58,7 @@ def main():
         elif pv.args.authors_from_ebooks:
             authors_from_ebooks(reader=reader)
         elif pv.args.extract_text:
-            epub_to_text(reader=reader, target_path=pv.config.text_extracted_path)
+            library_to_text(reader=reader, target_path=pv.config.text_extracted_path)
 
 
         # if args.from_authors:
@@ -71,7 +74,17 @@ def main():
 
 
 
-    if args.choice == 'duplicated':
+    elif args.choice == 'epubs':
+        # epubs_top_dir = get_epubs_dir(libraries=pv.config.epubs_config.folders)
+
+        if pv.args.extract_text:
+            extract_text(epubs_top_dir=pv.args.top_dir, target_path=pv.config.text_extracted_path, replace=pv.args.replace)
+        # if pv.args.authors_from_authors:
+            # authors_from_authors(reader=reader)
+        # elif pv.args.authors_from_ebooks:
+            # authors_from_ebooks(reader=reader)
+
+        # breakpoint()
         ...
         # logger.info(ctx.calibre.get_duplicate_report())
 

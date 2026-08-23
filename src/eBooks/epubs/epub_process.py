@@ -1,5 +1,6 @@
-
 #
+# ruff: noqa: SIM113 - Use `enumerate()` for index variable `index` in `for` loop (Ruff SIM113)
+from multiprocessing.reduction import register
 import os
 from pathlib import Path
 import shutil
@@ -7,16 +8,21 @@ import re
 
 
 # --- pyLnLib modules
-from pyLnLib.context    import ctx, pVars as pv
+from pyLnLib.context    import pVars as pv
 from pyLnLib.logger    import get_logger
 from pyLnLib.files import get_unique_filename
 from pyLnLib.epub      import EpubProcessor,  manage_epub_processor
 from pyLnLib.files      import scan_directory
+from pyLnLib.varie      import menu_select_from_list
 
 
 
 from .clean_filename import clean_filename
 logger = get_logger()
+
+
+
+
 
 
 
@@ -26,27 +32,56 @@ logger = get_logger()
 # -         text/
 # -         epubs/
 #==========================================
-def extract_text(epub_path: str|Path, main_folder: Path | None = None, index: str|None=None) -> None:
-    book = EpubProcessor(epub_path)
-    author = book.author
-    index=f"{index} - "  if index is not None else ''
+# def extract_text(epub_path: str|Path, main_folder: Path | None = None, index: str|None=None) -> None:
+def extract_text(epubs_top_dir: Path, target_path: Path, replace: bool = False) -> None:
+    file_list = scan_directory(root_dir=epubs_top_dir, pattern='*.epub')
+    nfiles=len(file_list)
+    logger.debug(file_list)
 
-    logger.info("%sprocessing: %s/%s", index, book.author, book.filename.name)
-    # justxtract
-    if main_folder:
-        if author:
-            output_dir = Path(main_folder) / author / "text"
-            saved_filename = book.export_text(filename=output_dir / f"{book.filename.stem}.txt", replace=False, unique=False)
-            logger.debug("saved:      \"%s\"", saved_filename)
-        return
+    os.chdir(target_path)
+
+    for index, book in enumerate(manage_epub_processor(book_files=file_list), 1): # type: ignore
+        print()
+        if book.author.startswith("Colleen"):
+            pass
+
+        # non aggiorniamo il registry perché sugli epub sciolti potrebberossercirrori nei nomi autori
+        author_name=pv.author_registry.format(book.author, canonical=False, registry_update=False)[0]
+        print()
+        dest_author_path = Path(author_name)
+        dest_author_path.mkdir(parents=True, exist_ok=True)
+
+        logger.info(f"{index:03d}/{nfiles:03d}: -{author_name}-")
+
+        logger.info("\tepub title: %s", book.title)
+        cleaned_title = clean_filename(text=book.title)
+        logger.info("\ttext title: %s", cleaned_title)
+
+        rel_output_filename=dest_author_path / f"{cleaned_title}.txt"
+        # - creiamo l'istanza EpubProcess per il file epub
+        # - ed il metodo to_text() per convertire il file epub in testo
+        epub_obj = EpubProcessor(book.file_path)
+        epub_obj.to_text(txt_filename=rel_output_filename, replace=replace, force_log=False)
 
 
-    logger.info("filename:   %s", book.filename)
-    logger.info("title:      %s", book.title)
-    logger.info("author:     %s", book.author)
-    logger.info("language:   %s", book.language)
-    logger.info("identifier: %s", book.identifier)
-    logger.info("sections:   %s", len(book.get_sections()))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #==========================================
 # - copy new epub_files to my target epub_main_path
