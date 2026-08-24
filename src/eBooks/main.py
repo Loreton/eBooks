@@ -22,6 +22,7 @@ from .process import (
                         authors_from_ebooks,
                         library_to_text,
                         extract_text,
+                        OR_terms,
                     )
 
 logger = get_logger()
@@ -60,8 +61,10 @@ def main():
 
 
     elif args.choice == 'search':
-        ...
-
+        if args.or_arg:
+            OR_terms(args.or_arg)
+        if args.and_arg:
+            AND_terms(args.and_arg)
 
 
 if __name__ == "__main__":
