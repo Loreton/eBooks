@@ -1,10 +1,9 @@
 #
 # ruff: noqa: SIM113 - Use `enumerate()` for index variable `index` in `for` loop (Ruff SIM113)
-from multiprocessing.reduction import register
+
 import os
 from pathlib import Path
 import shutil
-import re
 
 
 # --- pyLnLib modules
@@ -13,7 +12,6 @@ from pyLnLib.logger    import get_logger
 from pyLnLib.files import get_unique_filename
 from pyLnLib.epub      import EpubProcessor,  manage_epub_processor
 from pyLnLib.files      import scan_directory
-from pyLnLib.varie      import menu_select_from_list
 
 
 

@@ -1,7 +1,6 @@
 # /home/loreto/filu/Programming/gitREPO/eBooks/src/eBooks/parse_input/authors.py
 # src/eBooks/parse_input/authors.py
 
-import argparse
 from types import SimpleNamespace
 from pathlib import Path
 
@@ -25,19 +24,19 @@ def check_dir(path):
 
 
 
-def epubs(v:SimpleNamespace, parser):
+def search(v:SimpleNamespace, parser):
     """
         Scan di epub in una dir/subdirs,
         per estrarre text
     """
     func_name=ctx.get_function_name()
-    subp = parser.add_parser(name=func_name, help=f"{C.cyan}{func_name} process directory with epub files{C.reset}")
+    subp = parser.add_parser(name=func_name, help=f"{C.cyan}{func_name} process directory for text in txt files{C.reset}")
     subp.add_argument('--replace',    action='store_true', help=f'{C.cyan}replace existing files {v.default}')
 
     subp.add_argument('--top-dir',  required=True, metavar='', default=None, type=check_dir,
-                help=f'{C.cyan}specify source epubs top directory {v.default}')
+                help=f'{C.cyan}specify source txt files top directory {v.default}')
 
-    exclusive_group=subp.add_mutually_exclusive_group(required=True)
-    exclusive_group.add_argument('--authors-from-ebooks',  action='store_true', help=f'{C.cyan}get authors from ebook in calibre library metadata {v.default}')
-    exclusive_group.add_argument('--extract-text',    action='store_true', help=f'{C.cyan}extract text from epub files {v.default}')
+    # exclusive_group=subp.add_mutually_exclusive_group(required=True)
+    # exclusive_group.add_argument('--authors-from-ebooks',  action='store_true', help=f'{C.cyan}get authors from ebook in calibre library metadata {v.default}')
+    # exclusive_group.add_argument('--extract-text',    action='store_true', help=f'{C.cyan}extract text from epub files {v.default}')
     common_options(v=v, parser=subp, func_name=func_name)

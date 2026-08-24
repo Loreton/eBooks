@@ -1,6 +1,5 @@
 # /home/loreto/filu/Programming/gitREPO/eBooks/src/eBooks/parse_input/common_options.py
 
-import argparse
 from types import SimpleNamespace
 
 from pyLnLib.colors import get_colors

@@ -17,7 +17,7 @@ from pyLnLib.epub import AuthorRegistry
 
 
 # --- project modules
-from eBooks import parseInput
+from .parse_input import parseInput
 
 
 logger=get_logger()

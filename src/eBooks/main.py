@@ -5,30 +5,23 @@ Example usage of the EbookProcessor
 """
 # ruff: noqa: SIM114 Combine `if` branches using logical `or` operator help: Combine `if` branches (Ruff SIM114)
 
-from pathlib import Path
-from tracemalloc import start
+import sys; sys.dont_write_bytecode = True
 
 
 # --- pyLnLib modules
-from pyLnLib.context    import ctx, pVars as pv
+from pyLnLib.context    import pVars as pv
 from pyLnLib.logger    import get_logger
-# from pyLnLib.files      import scan_directory
-# from pyLnLib.varie      import menu_select_from_list
 
-# from eBooks.epubs import loadAuthors_from_books
 
 
 # --- project modules
-from .init.initialize_program import initialize_program
-from .epubs.calibre_process import (
-                            start_calibre,
-                            authors_from_authors,
-                            authors_from_ebooks,
-                            library_to_text,
-                        )
-
-from .epubs.epub_process import (
-                            extract_text,
+from .input_init import initialize_program
+from .process import (
+                        start_calibre,
+                        authors_from_authors,
+                        authors_from_ebooks,
+                        library_to_text,
+                        extract_text,
                     )
 
 logger = get_logger()
@@ -61,79 +54,15 @@ def main():
             library_to_text(reader=reader, target_path=pv.config.text_extracted_path)
 
 
-        # if args.from_authors:
-        #     start_calibre(libraries=pv.config.calibre_config.folders, action="from_authors")
-        # elif args.from_ebooks:
-        #     start_calibre(libraries=pv.config.epubs_config.folders, action="from_ebooks")
-
-
-        # if args.choice == 'authors' and args.calibre:
-        # _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
-        # loadAuthors_from_books(library_path=Path(library))
-        # start_calibre(libraries=pv.config.calibre_config.folders, action="load_authors")
-
-
-
     elif args.choice == 'epubs':
-        # epubs_top_dir = get_epubs_dir(libraries=pv.config.epubs_config.folders)
-
         if pv.args.extract_text:
             extract_text(epubs_top_dir=pv.args.top_dir, target_path=pv.config.text_extracted_path, replace=pv.args.replace)
-        # if pv.args.authors_from_authors:
-            # authors_from_authors(reader=reader)
-        # elif pv.args.authors_from_ebooks:
-            # authors_from_ebooks(reader=reader)
 
-        # breakpoint()
-        ...
-        # logger.info(ctx.calibre.get_duplicate_report())
 
     elif args.choice == 'search':
         ...
 
-    elif args.choice == 'copy_new':
-        # target_top_dir=Path(pv.config.main_epubs_path) / "epubs"
-        # if args.calibre:
-        #     _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
-        #     processCalibreLibrary(library_path=Path(library), target_path=target_top_dir)
-        # else: # ---> args.epubs
-        #     _choice, library = menu_select_from_list(pv.config.epubs_config.folders)
-        #     copy_new(epubs_path=Path(library), target_path=target_top_dir)
 
-        # source_top_dir=Path(args.source_epubs)
-        """ copia il sorgente nella directory di destinazione
-            cambiando nome del file come da titolo
-        """
-
-
-    elif args.choice == 'extract':
-        ...
-        # if args.calibre:
-        #     _choice, library = menu_select_from_list(pv.config.calibre_config.folders)
-        #     pv.calibre = initialize_calibre(library)
-        # else: # ---> args.epubs
-        #     _choice, library = menu_select_from_list(pv.config.epubs_config.folders)
-
-        # if isinstance(library, str):
-        #     library=[library]
-        # for source_dir in library:
-        #     file_list = scan_directory(root_dir=source_dir, pattern='*.epub')
-        #     nfiles=len(file_list)
-        #     logger.info(file_list)
-
-        #     for index, file in enumerate(file_list):
-        #         if file.stem in pv.config.files_to_skip:
-        #             logger.warning(f"Skipping {file.stem}")
-        #             continue
-        #         extract_text(epub_path=file, export_dir=pv.config.main_folder, index=f"{index:04}/{nfiles:04}")
-
-    elif pv.args.choice == 'extract_from_calibre':
-        ...
-        # calibre_folders = pv.config.calibre
-        # print(calibre_folders.to_dict())
-        # breakpoint()
-
-    # sys.exit("temporary exit")
 
 if __name__ == "__main__":
     main()
