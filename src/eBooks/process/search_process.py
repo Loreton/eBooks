@@ -23,25 +23,26 @@ C=get_colors()
 
 
 
-def printOccurrences(occurrencies: list, words_list: list, filename: Path):
-    source_data=filename.read_text()
-    items = processContext(occurrencies, source_data=source_data)
-    logger.info("found occurrencies: %s", len(items))
+def printOccurrences(occurrencies: list, words_list: list):
+    items = processContext(occurrencies)
+    n_items=len(items)
+    logger.info("found occurrencies: %s", n_items)
 
-    if len(items) > 0:
+    if n_items > 0:
+        data=items[0].pop("source_data")  # - il text sorgente lo trovo nella prima occurrency.
         logger.info("searching words:\n%s", words_list)
-        for item in items:
+        for index, item in enumerate(items):
             print()
             if not item.valid:
                 continue
             logger.debug("item: %s", item)
-            content = item.context
+            content = data[item.context_start:item.context_end]
             for word in words_list:
                 content = regex.replace(content, word, f"{C.yellowH}{word}{C.reset}", ignore_case=True)
 
-            epub_file=filename.with_suffix(".epub")
-            logger.info("file:\n'%s' ...", str(epub_file).replace("text", "epubs"))
-            logger.info("content:\n%s ...", content)
+            # epub_file=filename.with_suffix(".epub")
+            # logger.info("file:\n'%s' ...", str(epub_file).replace("text", "epubs"))
+            logger.info("content[%s/%s] - merge of indexes: %s:\n%s ...", index, n_items, item.index, content)
 
     else:
         logger.info("non trovate")
@@ -92,7 +93,7 @@ def OR_terms(data: str):
     nfiles=len(file_list)
     logger.debug(file_list)
 
-    for index, book in enumerate(file_list[:10], 1):
+    for index, book in enumerate(file_list[:1], 1):
         logger.info(f"{index:03d}/{nfiles:03d}: {C.white}{book.parent.name}/{book.name}")
         file_content = book.read_text()
         occurrencies = regex.or_search( source_data=file_content,
@@ -101,4 +102,4 @@ def OR_terms(data: str):
                                         ignore_case=args.ignore_case,
                                         context_length=args.context_length,
                                         boundary=args.boundary)
-        printOccurrences(occurrencies=occurrencies, words_list=args.terms, filename=book)
+        printOccurrences(occurrencies=occurrencies, words_list=args.terms)

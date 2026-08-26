@@ -51,7 +51,7 @@ wheels = [
 
 [[package]]
 name = "ebooks"
-version = "0.1.4"
+version = "0.1.5"
 source = { editable = "." }
 dependencies = [
     { name = "bs4" },
@@ -170,7 +170,7 @@ wheels = [
 
 [[package]]
 name = "pylnlib"
-version = "0.1.41"
+version = "0.1.42"
 source = { editable = "../pyLnLib" }
 dependencies = [
     { name = "bs4" },

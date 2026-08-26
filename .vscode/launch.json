@@ -78,5 +78,25 @@
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
         } 
+        } ,
+        { 
+            "name": "search_or", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "module": "src.eBooks.main", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "args": [ 
+                "search", 
+                "--top-dir=/home/loreto/filu/ln-eBooks/lnExtracted/text/",
+                "--context-length=300",  
+                "--or",
+                "--terms", "ciao", "sapevo",
+                 "--bound",
+            ], 
+            "env": { 
+                "PYTHONPATH": "${workspaceFolder}/src" 
+            } 
+        } 
     ]
 }
