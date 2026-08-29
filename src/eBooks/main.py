@@ -22,7 +22,9 @@ from .process import (
                         authors_from_ebooks,
                         library_to_text,
                         extract_text,
-                        OR_terms,
+                        OR_search,
+                        AND_search,
+                        update_metadata,
                     )
 
 logger = get_logger()
@@ -47,24 +49,34 @@ def main():
 
     if args.choice == 'calibre':
         reader = start_calibre(libraries=pv.config.calibre_config.folders)
+
         if pv.args.authors_from_authors:
             authors_from_authors(reader=reader)
+
         elif pv.args.authors_from_ebooks:
             authors_from_ebooks(reader=reader)
+
         elif pv.args.extract_text:
             library_to_text(reader=reader, target_path=pv.config.text_extracted_path)
 
 
     elif args.choice == 'epubs':
-        if pv.args.extract_text:
-            extract_text(epubs_top_dir=pv.args.top_dir, target_path=pv.config.text_extracted_path, replace=pv.args.replace)
+
+        if args.extract_text:
+            extract_text(epubs_top_dir=pv.args.top_dir, target_path=pv.config.epubs_collection_path, replace=args.replace)
+
+        elif args.update_metadata:
+            update_metadata(epubs_top_dir=pv.args.top_dir, target_path=f"{pv.config.epubs_collection_path}/new", replace=args.replace)
 
 
     elif args.choice == 'search':
-        if args.or_arg:
-            OR_terms(args.or_arg)
         if args.and_arg:
-            AND_terms(args.and_arg)
+            if len(args.terms) < 2:
+                print(f'\t{C.yellowH}--and argument require at least two terms'.format(**locals()))
+                sys.exit(1)
+            AND_search()
+        else:
+            OR_search()
 
 
 if __name__ == "__main__":

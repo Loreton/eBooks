@@ -20,8 +20,9 @@ calibre_config:
         - epub
 
 
-epubs_extracted_path:  '/home/loreto/filu/ln-eBooks/lnExtracted/epubs'
-text_extracted_path:  '/home/loreto/filu/ln-eBooks/lnExtracted/text'
+epubs_collection_path:  '/home/loreto/filu/ln-eBooks/lnCollection'
+# epubs_extraction_path:  '/home/loreto/filu/ln-eBooks/epubs_collection/generic'
+# text_extraction_path:  '/home/loreto/filu/ln-eBooks/lnExtracted/text'
 authors_list:  'authors.yaml'
 
 files_to_skip: []

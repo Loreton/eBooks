@@ -2,16 +2,16 @@
 
 from pathlib import Path
 import os
-import shutil
+# import shutil
 
 
 from pyLnLib.context import pVars as pv
-from pyLnLib.epub import CalibreMetadataReader, EpubProcessor
+from pyLnLib.epub import CalibreMetadataReader, EpubManager
 from pyLnLib import get_emoji, lnDict
 from pyLnLib.logger import get_logger
 from pyLnLib.files import get_unique_filename
 from pyLnLib.system import clean_doc
-from pyLnLib.varie      import menu_select_from_list
+from pyLnLib.varie      import select_from_list
 
 from .clean_filename import clean_filename
 
@@ -24,7 +24,7 @@ logger=get_logger()
 # inizializza calibre con la libreria passata
 # ============================================================
 def start_calibre(libraries: list) -> CalibreMetadataReader:
-    _choice, library = menu_select_from_list(libraries)
+    library = menu_select_from_list(libraries)
     reader = CalibreMetadataReader(Path(library))
 
     # ===== 1. Indici caricati all'avvio =====
@@ -112,7 +112,7 @@ def library_to_text(reader: CalibreMetadataReader, target_path: Path) -> None:
             rel_output_filename=dest_author_path / f"{cleaned_title}.txt"
             # - creiamo l'istanza EpubProcess per il file epub
             # - ed il metodo to_text() per convertire il file epub in testo
-            epub_obj = EpubProcessor(book.file_path)
+            epub_obj = EpubManager(book.file_path)
             epub_obj.to_text(txt_filename=rel_output_filename, replace=False, force_log=False)
 
 
@@ -151,7 +151,7 @@ def epub_to_text_OK0(reader: CalibreMetadataReader, target_path: Path) -> None:
 
             # - creiamo l'istanza EpubProcess per il file epub
             source_epub = book.file_path
-            epub_obj = EpubProcessor(source_epub)
+            epub_obj = EpubManager(source_epub)
 
             rel_output_filename=dest_author_path / f"{cleaned_title}.txt"
             target_filename = get_unique_filename(rel_output_filename)

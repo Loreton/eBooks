@@ -97,6 +97,23 @@
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
+        } ,
+        { 
+            "name": "epubs_update", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "module": "src.eBooks.main", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "args": [ 
+                "epubs", 
+                // "--top-dir=/home/loreto/.aMule/Copied",
+                "--top-dir=/home/loreto/filu/ln-eBooks/lnLibraries/test_01/",
+                "--update-metadata",  
+            ], 
+            "env": { 
+                "PYTHONPATH": "${workspaceFolder}/src" 
+            } 
         } 
     ]
 }

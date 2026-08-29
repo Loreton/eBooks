@@ -66,6 +66,9 @@ def parseInput() -> argparse.Namespace:
 
 
     args = parser.parse_args()
+
+
+
     if args.display_args:
         import json
         json_data = json.dumps(vars(args), indent=4, sort_keys=True)

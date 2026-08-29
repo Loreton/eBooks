@@ -8,7 +8,7 @@ A package for processing EPUB files with author normalization and conflict manag
 
 
 #- ------ process folder
-from .process.epub_process      import extract_text, copy_new
+from .process.epub_process      import extract_text, update_metadata
 from .process.calibre_process    import start_calibre, authors_from_authors, authors_from_ebooks, library_to_text
 from .process.clean_filename    import clean_filename
 
@@ -23,7 +23,6 @@ __all__ = [
     'parseInput',
     "start_calibre",
     "extract_text",
-    "copy_new",
     "authors_from_authors",
     "authors_from_ebooks",
     "clean_filename",
@@ -31,5 +30,6 @@ __all__ = [
     "calibre",
     "common_options",
     "initialize_program",
+    "update_metadata",
 ]
 __version__ = "1.0.0"

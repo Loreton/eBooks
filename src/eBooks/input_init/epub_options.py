@@ -39,4 +39,5 @@ def epubs(v:SimpleNamespace, parser):
     exclusive_group=subp.add_mutually_exclusive_group(required=True)
     exclusive_group.add_argument('--authors-from-ebooks',  action='store_true', help=f'{C.cyan}get authors from ebook in calibre library metadata {v.default}')
     exclusive_group.add_argument('--extract-text',    action='store_true', help=f'{C.cyan}extract text from epub files {v.default}')
+    exclusive_group.add_argument('--update-metadata',    action='store_true', help=f'{C.cyan}update authors and title inpub metadata {v.default}')
     common_options(v=v, parser=subp, func_name=func_name)

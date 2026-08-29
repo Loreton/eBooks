@@ -61,15 +61,20 @@ def _operatorsFlags(v:SimpleNamespace, parser):
 def _mandatory(v:SimpleNamespace, parser):
     group = parser.add_argument_group(f'{C.cyanH}Mandatory options {C.white}(mandatory) {C.reset}')
     # operation = parser.add_argument_group(f'{C.white}Operators Group (mandatory) {C.reset}')
+    group.add_argument('--and',     action='store_true', dest="and_arg", default=False, help=f'{C.cyan}and between words{C.reset}')
     group.add_argument('--top-dir',  required=True, metavar='', default=None, type=check_dir,
                 help=f'{C.cyan}specify source txt files top directory {v.default}')
 
+    # if '--and' in sys.argv:
+    #     group.add_argument('--terms',  type=str, nargs=2, metavar='', default=0, required=True,
+    #         help=f'{C.cyan}terms to search for {v.default_color}(default 0 (no-limits)){C.reset}')
+    # else:
     group.add_argument('--terms',  type=str, nargs='*', metavar='', default=0, required=True,
-            help=f'{C.cyan}terms to search for {v.default_color}(default 0 (no-limits)){C.reset}')
+        help=f'{C.cyan}terms to search for {v.default_color}(default 0 (no-limits)){C.reset}')
 
-    exclusive_group = group.add_mutually_exclusive_group(required=True)
-    exclusive_group.add_argument('--and',     action='store_true', dest="and_arg", default=False, help=f'{C.cyan}and between words{C.reset}')
-    exclusive_group.add_argument('--or',      action='store_true', dest="or_arg", default=False, help=f'{C.cyan}or several words{C.reset}')
+    # exclusive_group = group.add_mutually_exclusive_group(required=True)
+    # exclusive_group.add_argument('--and',     action='store_true', dest="and_arg", default=False, help=f'{C.cyan}and between words{C.reset}')
+    # exclusive_group.add_argument('--or',      action='store_true', dest="or_arg", default=False, help=f'{C.cyan}or several words{C.reset}')
     # operators_group.add_argument('--terms',   action='store_true', default=False, help=f'{C.cyan}search for a single term{C.reset}')
     # operators_group.add_argument('--replace',     action='store_true', default=False, help=f'{C.cyan}replace string{C.reset}')
     # operators_group.add_argument('--single',     action='store_true', default=False, help=f'{C.cyan}find all occurrences of a single string{C.reset}')
