@@ -1,9 +1,9 @@
 #
 # ruff: noqa: SIM113 - Use `enumerate()` for index variable `index` in `for` loop (Ruff SIM113)
 
-import os
-from pathlib import Path
-import shutil
+# import os
+# from pathlib import Path
+# import shutil
 
 
 # --- pyLnLib modules
@@ -15,7 +15,7 @@ from pyLnLib.files      import scan_directory
 from pyLnLib import regex, processContext
 from pyLnLib.context import pVars as pv
 from pyLnLib.varie.keyboard_prompt import keyboardPrompt
-
+from pyLnLib.epub      import EpubManager
 
 # from .clean_filename import clean_filename
 logger = get_logger()
@@ -74,9 +74,66 @@ def OR_search():
         keyboardPrompt(text_msg="press 'ENTER' to continue", validKeys=["ENTER"])
 
 ####################################################
-#
+# - Cerca in epub files
+# - consideriamo che sono epubs salvati da Calibre in modo
+# - da avere anche i metadata di Calibre incorporati
 ####################################################
 def AND_search():
+    args = pv.args
+    file_list = scan_directory(root_dir=args.top_dir, pattern='*.epub')
+
+    nfiles=len(file_list)
+    logger.debug(file_list)
+
+    for index, epub_path in enumerate(file_list, 1):
+        with EpubManager(epub_path) as book:
+            _calibre_data: dict[str, str] = book.parse_calibre_metadata()
+            _metadata: lnDict = book.metadata.to_dict()
+            print(_metadata)
+            continue
+
+            print()
+            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.source_path}")
+            # non aggiorniamo il registry perché sugli epub sciolti potrebbero esserci errori nei nomi autori
+            author_name=pv.author_registry.format(book.author, canonical=True, registry_update=False)
+            if not author_name:
+                continue
+            author_name = author_name[0]
+
+
+            # cleaned_title = clean_filename(text=book.title)
+
+            logger.info("\tauthor: %s", book.author)
+            logger.info("\ttitle:  %s", book.title)
+            # logger.info("\tnew   title  %s", cleaned_title)
+
+
+            # dest_author_path = Path(target_path) / author_name
+            # dest_author_path.mkdir(parents=True, exist_ok=True)
+
+
+
+
+
+
+    # for index, book in enumerate(file_list, 1):
+    #     # logger.info(f"{index:03d}/{nfiles:03d}: {C.white}{book.parent.name}/{book.name}")
+    #     # breakpoint()
+    #     logger.info(f"{index:03d}/{nfiles:03d}: {C.white}{book}")
+    #     file_content = book.read_text()
+    #     occurrencies = regex.and_search( source_data=file_content,
+    #                                     words_list=args.terms,
+    #                                     normalize_text=args.normalize_text,
+    #                                     ignore_case=args.ignore_case,
+    #                                     context_length=args.context_length,
+    #                                     boundary=args.boundary)
+    #     printOccurrences(occurrencies=occurrencies, words_list=args.terms)
+    #     keyboardPrompt(text_msg="press 'ENTER' to continue", validKeys=["ENTER"])
+
+####################################################
+#
+####################################################
+def AND_search_txt():
     args = pv.args
     file_list = scan_directory(root_dir=args.top_dir, pattern='*.txt')
     nfiles=len(file_list)

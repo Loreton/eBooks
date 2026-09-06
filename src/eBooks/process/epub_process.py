@@ -166,7 +166,7 @@ def update_metadata(epubs_top_dir: Path, target_path: Path|str, replace: bool = 
                 continue
 
             author_name = author_name[0]
-            new_title = clean_filename(text=book.title)
+            new_title = clean_filename(text=str(book.title))
 
             chnged_by = book.get_custom_metadata("changed_by")
             logger.info("\torig. author %s", book.author)
@@ -196,18 +196,30 @@ def update_metadata(epubs_top_dir: Path, target_path: Path|str, replace: bool = 
 
 
             if f_save:
+                temporary_dir = Path('/tmp')
+                target_dir = target_path / author_name
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 book.set_custom_metadata(key="modified_by", value="Loreto")
                 book.set_custom_metadata(key="modified_date", value=now)
                 book.set_custom_metadata(key='processed_by', value='EpubManager v2.0')
 
-                # 5. Salva in nuovo file
-                output_file = target_path / author_name / f"{new_title}.epub"
-                path_for_duplicated=output_file.parent / "duplicated"
-                target_file=get_unique_filename(filename=output_file, path_for_duplicated=path_for_duplicated)
+                # Salva new file in area temp
+                fname = f"{new_title}.epub"
+                temporary_file = temporary_dir / fname
+                if temporary_file.exists():
+                    temporary_file.unlink()
+                book.save(temporary_file)
+
+                # Copy new file in target_dir
+                # output_file = target_dir / fname
+                # path_for_duplicated=target_dir / "duplicated"
+                target_file=get_unique_filename(source_file=temporary_file, 
+                                                dest_dir=target_dir,
+                                                dest_filename=fname,
+                                                path_for_duplicated=target_dir / "duplicated")
                 if target_file:
                     logger.info(f"Saving...: %s", target_file)
-                    book.save(target_file)
+                    shutil.copy2(temporary_file, target_file)
                 else:
                     logger.warning("file already exists: %s", target_file)
 

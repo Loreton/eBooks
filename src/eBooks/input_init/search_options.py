@@ -49,8 +49,8 @@ def _searchingFlags(v:SimpleNamespace, parser):
     flags.add_argument('--show-source-text', action='store_true', default=False, help=f'{C.cyan}print text used as source text {C.reset}')
 
 
-def _operatorsFlags(v:SimpleNamespace, parser):
-    operation = parser.add_argument_group(f'{C.white}Operators Group (mandatory) {C.reset}')
+# def _operatorsFlags(v:SimpleNamespace, parser):
+    # operation = parser.add_argument_group(f'{C.white}Operators Group (mandatory) {C.reset}')
     # operators_group = operation.add_mutually_exclusive_group(required=True)
     # operators_group.add_argument('--terms',   action='store_true', default=False, help=f'{C.cyan}search for a single term{C.reset}')
     # operators_group.add_argument('--and',     action='store_true', dest="and_arg", default=False, help=f'{C.cyan}and between words{C.reset}')

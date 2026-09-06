@@ -41,7 +41,6 @@
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
-        } 
         } ,
         { 
             "name": "extract_calibre", 
@@ -59,7 +58,6 @@
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
-        } 
         } ,
         { 
             "name": "extract_epub", 
@@ -77,7 +75,6 @@
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
-        } 
         } ,
         { 
             "name": "search_or", 
@@ -114,6 +111,28 @@
             "env": { 
                 "PYTHONPATH": "${workspaceFolder}/src" 
             } 
-        } 
+        },
+        { 
+            "name": "unique_file", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "program": "/home/loreto/filu/Programming/gitREPO/pyLnLib/src/pyLnLib/files/unique_filename.py",
+            "env": { 
+                "PYTHONPATH": "/home/loreto/filu/Programming/gitREPO/pyLnLib/src:/home/loreto/filu/Programming/gitREPO/pyLnLib/src:${workspaceFolder}/src" 
+            } 
+        },
+        { 
+            "name": "epub_manager", 
+            "type": "debugpy", 
+            "request": "launch", 
+            "console": "integratedTerminal", 
+            "cwd": "${workspaceFolder}", 
+            "program": "/home/loreto/filu/Programming/gitREPO/pyLnLib/src/pyLnLib/epub/epub_manager_new.py",
+            "env": { 
+                "PYTHONPATH": "/home/loreto/filu/Programming/gitREPO/pyLnLib/src:/home/loreto/filu/Programming/gitREPO/pyLnLib/src:${workspaceFolder}/src" 
+            } 
+        },
     ]
 }

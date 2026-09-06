@@ -4,10 +4,11 @@
 import sys; sys.dont_write_bytecode=True
 
 
-from .epub_process      import extract_text, update_metadata
+from .epub_extract_text  import extract_text
+from .epub_process      import update_metadata
 from .calibre_process    import start_calibre, authors_from_authors, authors_from_ebooks, library_to_text
 from .clean_filename    import clean_filename
-from .search_process    import OR_search, AND_search
+from .epub_search    import OR_search, AND_search
 
 __all__ = [
     "start_calibre",
