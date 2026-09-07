@@ -87,23 +87,24 @@ def AND_search():
 
     for index, epub_path in enumerate(file_list, 1):
         with EpubManager(epub_path) as book:
-            _calibre_data: dict[str, str] = book.parse_calibre_metadata()
-            _metadata: lnDict = book.metadata.to_dict()
-            print(_metadata)
-            continue
+            full_metadata = book.metadata.to_dict()
+            calibre = full_metadata.calibre
+            logger.info("calibre metadata: %s", calibre)
 
             print()
-            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.source_path}")
+            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
             # non aggiorniamo il registry perché sugli epub sciolti potrebbero esserci errori nei nomi autori
-            author_name=pv.author_registry.format(book.author, canonical=True, registry_update=False)
-            if not author_name:
-                continue
-            author_name = author_name[0]
+            # author_name=pv.author_registry.format(book.authors, canonical=True, registry_update=False)
+            # if not author_name:
+                # continue
+            # author_name = author_name[0]
 
+            file_content = book.to_text()
+            logger.info("file content: %s", file_content[:500])
 
             # cleaned_title = clean_filename(text=book.title)
-
-            logger.info("\tauthor: %s", book.author)
+            # breakpoint()
+            logger.info("\tauthor: %s", book.authors)
             logger.info("\ttitle:  %s", book.title)
             # logger.info("\tnew   title  %s", cleaned_title)
 
