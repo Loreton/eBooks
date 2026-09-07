@@ -57,20 +57,31 @@ def printOccurrences(occurrencies: list, words_list: list):
 ####################################################
 def OR_search():
     args = pv.args
-    file_list = scan_directory(root_dir=args.top_dir, pattern='*.txt')
+    file_list = scan_directory(root_dir=args.top_dir, pattern='*.epub')
+
     nfiles=len(file_list)
     logger.debug(file_list)
 
-    for index, book in enumerate(file_list, 1):
-        logger.info(f"{index:03d}/{nfiles:03d}: {C.white}{book.parent.name}/{book.name}")
-        file_content = book.read_text()
-        occurrencies = regex.or_search( source_data=file_content,
-                                        words_list=args.terms,
-                                        normalize_text=args.normalize_text,
-                                        ignore_case=args.ignore_case,
-                                        context_length=args.context_length,
-                                        boundary=args.boundary)
-        printOccurrences(occurrencies=occurrencies, words_list=args.terms)
+    for index, epub_path in enumerate(file_list, 1):
+        with EpubManager(epub_path) as book:
+            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
+            full_metadata = book.metadata.to_dict()
+            calibre = full_metadata.calibre
+            # logger.info("calibre metadata: %s", calibre)
+
+
+            content = book.to_text()
+            # logger.info("file content:\n%s", content[:1000])
+
+            logger.info("\tauthor: %s", book.authors)
+            logger.info("\ttitle:  %s", book.title)
+            occurrencies = regex.or_search( source_data=content,
+                                            words_list=args.terms,
+                                            normalize_text=args.normalize_text,
+                                            ignore_case=args.ignore_case,
+                                            context_length=args.context_length,
+                                            boundary=args.boundary)
+            printOccurrences(occurrencies=occurrencies, words_list=args.terms)
         keyboardPrompt(text_msg="press 'ENTER' to continue", validKeys=["ENTER"])
 
 ####################################################
@@ -87,32 +98,28 @@ def AND_search():
 
     for index, epub_path in enumerate(file_list, 1):
         with EpubManager(epub_path) as book:
+            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
             full_metadata = book.metadata.to_dict()
             calibre = full_metadata.calibre
-            logger.info("calibre metadata: %s", calibre)
+            # logger.info("calibre metadata: %s", calibre)
 
-            print()
-            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
-            # non aggiorniamo il registry perché sugli epub sciolti potrebbero esserci errori nei nomi autori
-            # author_name=pv.author_registry.format(book.authors, canonical=True, registry_update=False)
-            # if not author_name:
-                # continue
-            # author_name = author_name[0]
 
-            file_content = book.to_text()
-            logger.info("file content: %s", file_content[:500])
+            content = book.to_text()
+            # logger.info("file content:\n%s", content[:1000])
 
-            # cleaned_title = clean_filename(text=book.title)
-            # breakpoint()
             logger.info("\tauthor: %s", book.authors)
             logger.info("\ttitle:  %s", book.title)
-            # logger.info("\tnew   title  %s", cleaned_title)
 
+            occurrencies = regex.and_search( source_data=content,
+                                            words_list=args.terms,
+                                            normalize_text=args.normalize_text,
+                                            ignore_case=args.ignore_case,
+                                            context_length=args.context_length,
+                                            boundary=args.boundary)
+            printOccurrences(occurrencies=occurrencies, words_list=args.terms)
 
-            # dest_author_path = Path(target_path) / author_name
-            # dest_author_path.mkdir(parents=True, exist_ok=True)
-
-
+        keyboardPrompt(text_msg="press 'ENTER' to continue", validKeys=["ENTER"])
+        print("\n\n")
 
 
 

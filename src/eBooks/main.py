@@ -72,7 +72,7 @@ def main():
     elif args.choice == 'search':
         if args.and_arg:
             if len(args.terms) < 2:
-                print(f'\t{C.yellowH}--and argument require at least two terms'.format(**locals()))
+                logger.error('--and argument require at least two terms')
                 sys.exit(1)
             AND_search()
         else:
