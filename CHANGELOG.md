@@ -1,3 +1,11 @@
+## [0.1.6] - 2026-09-09
+
+## Other
+
+- affinamenti - (Release 0.1.6) (pylnlib_commit=70c663f)
+- affinamenti - (Release 0.1.6) (pylnlib_commit=70c663f)
+- update on 2026.09.06 19:59:07 - (Release 0.1.6) (pylnlib_commit=3d7b541)
+
 ## [0.1.6] - 2026-09-07
 
 ## Other

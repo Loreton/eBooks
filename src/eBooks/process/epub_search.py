@@ -43,7 +43,34 @@ def printOccurrences(occurrencies: list, words_list: list):
 
             # epub_file=filename.with_suffix(".epub")
             # logger.info("file:\n'%s' ...", str(epub_file).replace("text", "epubs"))
-            logger.info("content[%s/%s] - merge of indexes: %s:\n%s ...", index+1, n_items, item.index, content)
+            print(f"{C.yellowH}content[{index-1}/{n_items}] - indexes of occurrencies: {sorted(item.index)}:")
+            print(f"{C.reset}... {content} ...")
+
+    else:
+        logger.info("non trovate")
+    logger.info("found occurrencies: %s", len(items))
+
+
+def logOccurrences(occurrencies: list, words_list: list):
+    items = processContext(occurrencies)
+    n_items=len(items)
+    logger.info("found occurrencies: %s", n_items)
+
+    if n_items > 0:
+        data=items[0].pop("source_data")  # - il text sorgente lo trovo nella prima occurrency.
+        logger.info("searching words:\n%s", words_list)
+        for index, item in enumerate(items):
+            print()
+            if not item.valid:
+                continue
+            logger.debug("item: %s", item)
+            content = data[item.context_start:item.context_end]
+            for word in words_list:
+                content = regex.replace(content, word, f"{C.yellowH}{word}{C.reset}", ignore_case=True)
+
+            # epub_file=filename.with_suffix(".epub")
+            # logger.info("file:\n'%s' ...", str(epub_file).replace("text", "epubs"))
+            logger.info("content[%s/%s] - indexes of occurrencies: %s:\n%s ...", index+1, n_items, sorted(item.index), content)
 
     else:
         logger.info("non trovate")
@@ -64,17 +91,21 @@ def OR_search():
 
     for index, epub_path in enumerate(file_list, 1):
         with EpubManager(epub_path) as book:
-            logger.info(f"{C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
+            print("\n"*3)
+            logger.info("*"*90)
+            logger.info(f"* {C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
+            logger.info("*"*90)
             full_metadata = book.metadata.to_dict()
             calibre = full_metadata.calibre
-            # logger.info("calibre metadata: %s", calibre)
 
-
-            content = book.to_text()
+            logger.info(f"  Titolo:  {book.title}")
+            logger.info(f"  Autori:  {book.authors}")
+            logger.info(f"  Calibre:  {calibre}")
+            # logger.info(f"  Dizionario completo: {book.metadata.to_dict()}")
+            output_temp_file = "/tmp/book_temp.txt"
+            content = book.to_text(output_file=output_temp_file)
             # logger.info("file content:\n%s", content[:1000])
 
-            logger.info("\tauthor: %s", book.authors)
-            logger.info("\ttitle:  %s", book.title)
             occurrencies = regex.or_search( source_data=content,
                                             words_list=args.terms,
                                             normalize_text=args.normalize_text,
@@ -82,7 +113,11 @@ def OR_search():
                                             context_length=args.context_length,
                                             boundary=args.boundary)
             printOccurrences(occurrencies=occurrencies, words_list=args.terms)
-        keyboardPrompt(text_msg="press 'ENTER' to continue", validKeys=["ENTER"])
+            logger.info("output file: %s", output_temp_file)
+
+
+        keyboardPrompt(text_msg="press 'c' to continue", validKeys=["c"],exitKeys=["ENTER"])
+        logger.info("*"*60)
 
 ####################################################
 # - Cerca in epub files
