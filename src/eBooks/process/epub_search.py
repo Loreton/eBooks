@@ -61,10 +61,10 @@ def logOccurrences(occurrencies: list, words_list: list):
         logger.info("searching words:\n%s", words_list)
         for index, item in enumerate(items):
             print()
-            if not item.valid:
+            if not item.valid: # type: ignore - è un lnDict
                 continue
             logger.debug("item: %s", item)
-            content = data[item.context_start:item.context_end]
+            content = data[item.context_start:item.context_end]  # type: ignore - è un lnDict
             for word in words_list:
                 content = regex.replace(content, word, f"{C.yellowH}{word}{C.reset}", ignore_case=True)
 
@@ -95,15 +95,18 @@ def OR_search():
             logger.info("*"*90)
             logger.info(f"* {C.white}{index:03d}/{nfiles:03d}: {C.cyan}{book.epub_path}")
             logger.info("*"*90)
-            full_metadata = book.metadata.to_dict()
+            full_metadata: lnDict = book.get_metadata()
             calibre = full_metadata.calibre
-
             logger.info(f"  Titolo:  {book.title}")
             logger.info(f"  Autori:  {book.authors}")
             logger.info(f"  Calibre:  {calibre}")
+            # breakpoint()
+            if "status" in calibre and calibre.status and calibre.status.startswith("Read"):
+                logger.notify("  already read:  %s", calibre.status)
+                continue
             # logger.info(f"  Dizionario completo: {book.metadata.to_dict()}")
             output_temp_file = "/tmp/book_temp.txt"
-            content = book.to_text(output_file=output_temp_file)
+            content = book.to_text(output_file=output_temp_file, replace=True)
             # logger.info("file content:\n%s", content[:1000])
 
             occurrencies = regex.or_search( source_data=content,
@@ -111,12 +114,17 @@ def OR_search():
                                             normalize_text=args.normalize_text,
                                             ignore_case=args.ignore_case,
                                             context_length=args.context_length,
-                                            boundary=args.boundary)
-            printOccurrences(occurrencies=occurrencies, words_list=args.terms)
-            logger.info("output file: %s", output_temp_file)
+                                            boundary=args.boundary,
+                                            force_log=False)
+            if len(occurrencies) > 0:
+                printOccurrences(occurrencies=occurrencies, words_list=args.terms)
+                logger.notify("output file: %s", output_temp_file)
+                keyboardPrompt(text_msg="press 'n' next book", validKeys=["n"],exitKeys=["ENTER", "q"])
+            else:
+                logger.warning("no occurrencies found")
+            logger.notify("source file: %s", book.epub_path)
 
 
-        keyboardPrompt(text_msg="press 'c' to continue", validKeys=["c"],exitKeys=["ENTER"])
         logger.info("*"*60)
 
 ####################################################
