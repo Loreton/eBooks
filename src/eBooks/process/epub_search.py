@@ -16,6 +16,7 @@ from pyLnLib import regex, processContext
 from pyLnLib.context import pVars as pv
 from pyLnLib.varie.keyboard_prompt import keyboardPrompt
 from pyLnLib.epub      import EpubManager
+from pyLnLib.files      import writeFile
 
 # from .clean_filename import clean_filename
 logger = get_logger()
@@ -89,6 +90,8 @@ def OR_search():
     nfiles=len(file_list)
     logger.debug(file_list)
 
+    status_prefixes = ["read", "discard", "decanter"]
+    result_books=[]
     for index, epub_path in enumerate(file_list, 1):
         with EpubManager(epub_path) as book:
             print("\n"*3)
@@ -101,13 +104,14 @@ def OR_search():
             logger.info(f"  Autori:  {book.authors}")
             logger.info(f"  Calibre:  {calibre}")
             # breakpoint()
-            if "status" in calibre and calibre.status and calibre.status.startswith("Read"):
-                logger.notify("  already read:  %s", calibre.status)
+            # if "status" in calibre and calibre.status and calibre.status.startswith("Read"):
+            if "status" in calibre and calibre.status \
+                        and calibre.status.lower().startswith(tuple(status_prefixes)):
+                logger.notify("  skipping due to calibre status:  %s", calibre.status)
                 continue
-            # logger.info(f"  Dizionario completo: {book.metadata.to_dict()}")
-            output_temp_file = "/tmp/book_temp.txt"
+
+            output_temp_file = pv.temp_dir / "book_temp.txt"
             content = book.to_text(output_file=output_temp_file, replace=True)
-            # logger.info("file content:\n%s", content[:1000])
 
             occurrencies = regex.or_search( source_data=content,
                                             words_list=args.terms,
@@ -117,15 +121,17 @@ def OR_search():
                                             boundary=args.boundary,
                                             force_log=False)
             if len(occurrencies) > 0:
+                result_books.append(str(book.epub_path))
                 printOccurrences(occurrencies=occurrencies, words_list=args.terms)
                 logger.notify("output file: %s", output_temp_file)
+                logger.notify("source file: %s", book.epub_path)
                 keyboardPrompt(text_msg="press 'n' next book", validKeys=["n"],exitKeys=["ENTER", "q"])
             else:
                 logger.warning("no occurrencies found")
-            logger.notify("source file: %s", book.epub_path)
 
 
         logger.info("*"*60)
+        writeFile(filepath=pv.temp_dir / "result_books.txt", data=result_books, replace=True)
 
 ####################################################
 # - Cerca in epub files
